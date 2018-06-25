@@ -116,9 +116,9 @@ module.exports = function(sourceCode, componentName) {
             path.node.value.callee.name === 'arrayOf'
           ) {
             // console.log(path.node.value.arguments[0].name);
-            outputString += `  public ${
-              path.node.value.arguments[0].name
-            }[] { get; set; }\n`;
+            outputString += `  public ${path.node.value.arguments[0].name}[] ${
+              path.node.key.name
+            } { get; set; }\n`;
           }
         }
       });
