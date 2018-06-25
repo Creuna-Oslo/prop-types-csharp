@@ -50,7 +50,7 @@ module.exports = function(sourceCode, componentName) {
     },
 
     MemberExpression(path) {
-      // Replace 'PropTypes.x' with 'X'
+      // Replace 'PropTypes.x' with 'x'
       if (path.get('object').isIdentifier({ name: 'PropTypes' })) {
         path.replaceWith(path.node.property);
       }
@@ -112,7 +112,6 @@ module.exports = function(sourceCode, componentName) {
             path.get('value').isCallExpression() &&
             path.node.value.callee.name === 'arrayOf'
           ) {
-            // console.log(path.node.value.arguments[0].name);
             outputString += `  public ${path.node.value.arguments[0].name}[] ${
               path.node.key.name
             } { get; set; }\n`;
