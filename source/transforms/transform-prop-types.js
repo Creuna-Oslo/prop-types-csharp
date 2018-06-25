@@ -77,16 +77,13 @@ module.exports = function(sourceCode, componentName) {
           capitalize(propName) + (isArrayOf ? 'Item' : '');
 
         const program = path.findParent(parent => t.isProgram(parent));
-        program.replaceWith(
-          t.program(
-            program.node.body.concat(
-              t.expressionStatement(
-                t.assignmentExpression(
-                  '=',
-                  t.identifier(propDefinitionName),
-                  path.node.arguments[0]
-                )
-              )
+        program.pushContainer(
+          'body',
+          t.expressionStatement(
+            t.assignmentExpression(
+              '=',
+              t.identifier(propDefinitionName),
+              path.node.arguments[0]
             )
           )
         );
