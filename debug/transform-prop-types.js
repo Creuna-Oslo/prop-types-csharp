@@ -10,4 +10,8 @@ const componentSource = fs.readFileSync(
   'utf-8'
 );
 
-console.log(transformPropTypes(componentSource, 'component'));
+try {
+  console.log(transformPropTypes(componentSource, 'component'));
+} catch (error) {
+  console.log(error);
+}
