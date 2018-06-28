@@ -58,8 +58,6 @@ into this:
 ```cs
 public class Component
 {
-public class Component
-{
   [Required]
   public string { get; set; }
   public bool IsSomething { get; set; }
