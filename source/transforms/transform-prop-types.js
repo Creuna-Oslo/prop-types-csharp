@@ -135,34 +135,28 @@ module.exports = function(sourceCode, componentName) {
               typePath.node.object.callee.name === 'arrayOf'
             : typePath.isCallExpression() && typeNode.callee.name === 'arrayOf';
 
-          outputString += isRequired ? `  [Required]\n` : '';
-          outputString += '  public ';
+          let typeName;
 
-          // propName: type
+          // type
           if (typePath.isIdentifier()) {
-            outputString += `${typeNode.name} ${propName}`;
+            typeName = typeNode.name;
           }
 
-          // propName: type.isRequired
+          // type.isRequired
           if (isObject && typePath.get('object').isIdentifier()) {
-            outputString += `${typeNode.object.name} ${propName}`;
+            typeName = typeNode.object.name;
           }
 
-          // propName: arrayOf(type).isRequired
-          if (isObject && isArray) {
-            outputString += `${capitalize(typeNode.object.arguments[0].name)}${
-              isArray ? '[]' : ''
-            } ${propName}`;
+          if (isArray) {
+            typeName = isObject
+              ? typeNode.object.arguments[0].name // arrayOf(type).isRequired
+              : path.node.value.arguments[0].name; // arrayOf(type)
           }
 
-          // propName: arrayOf(type)
-          if (!isObject && isArray) {
-            outputString += `${
-              path.node.value.arguments[0].name
-            }[] ${propName}`;
-          }
-
-          outputString += ' { get; set; }\n';
+          outputString += isRequired ? `  [Required]\n` : '';
+          outputString += `  public ${typeName}`;
+          outputString += isArray ? '[]' : '';
+          outputString += ` ${propName} { get; set; }\n`;
         }
       });
       outputString += '}\n\n';
