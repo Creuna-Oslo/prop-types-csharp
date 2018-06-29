@@ -59,14 +59,14 @@ into this:
 public class Component
 {
   [Required]
-  public string { get; set; }
+  public string Text { get; set; }
   public bool IsSomething { get; set; }
   public int IntNumber { get; set; }
   public float FloatNumber { get; set; }
   public string[] Texts { get; set; }
   public SingleObject SingleObject { get; set; }
   [Required]
-  public undefined { get; set; } /* Needs fix. Broken because of isRequired */
+  public ObjectsItem[] Objects { get; set; }
   public Link ExternalType { get; set; }
   public Link[] ExternalTypeList { get; set; }
 }
@@ -74,7 +74,7 @@ public class Component
 public class SingleObject
 {
   [Required]
-  public string { get; set; }
+  public string PropertyA { get; set; }
 }
 
 public class ObjectsItem

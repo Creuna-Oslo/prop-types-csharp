@@ -7,8 +7,8 @@ const t = require('babel-types');
 const capitalize = require('../utils/capitalize');
 const getPropTypes = require('../utils/get-prop-types');
 
-const illegalTypes = ['element', 'func', 'instanceOf', 'node'];
-const typesThatShouldBeReplaced = ['number'];
+const typesToStrip = ['element', 'func', 'instanceOf', 'node'];
+const illegalTypes = ['number', 'object'];
 const allowedMetaValues = ['double', 'exclude', 'float', 'int'];
 
 module.exports = function(sourceCode, componentName) {
@@ -51,7 +51,7 @@ module.exports = function(sourceCode, componentName) {
         const propName = parent.node.key.name;
         const typeName = path.node.property.name;
 
-        if (illegalTypes.includes(typeName)) {
+        if (typesToStrip.includes(typeName)) {
           return parent.remove();
         }
 
@@ -60,7 +60,7 @@ module.exports = function(sourceCode, componentName) {
           return;
         }
 
-        if (typesThatShouldBeReplaced.includes(typeName)) {
+        if (illegalTypes.includes(typeName)) {
           throw new Error(
             `Missing meta type for ${propName} in component ${pascalComponentName}\n`
           );
@@ -78,15 +78,12 @@ module.exports = function(sourceCode, componentName) {
 
   traverse(syntaxTree, {
     ObjectProperty(path) {
-      // Capitalize object keys or remove excluded props
-      const name = path.node.key.name;
-
-      if (propTypesMeta[name] !== 'exclude') {
-        path.get('key').replaceWith(t.identifier(capitalize(name)));
-      } else {
+      // Remove excluded propTypes
+      if (propTypesMeta[path.node.key.name] === 'exclude') {
         path.remove();
       }
     },
+
     CallExpression(path) {
       // Replace propTypes.shape with new definitions
       if (path.get('callee').isIdentifier({ name: 'shape' })) {
@@ -122,35 +119,50 @@ module.exports = function(sourceCode, componentName) {
 
   traverse(syntaxTree, {
     AssignmentExpression(path) {
-      outputString += `public class ${path.node.left.name} \n{\n`;
+      outputString += `public class ${capitalize(path.node.left.name)} \n{\n`;
 
       path.get('right').traverse({
         ObjectProperty(path) {
-          const value = path.get('value');
+          const typeNode = path.node.value;
+          const typePath = path.get('value');
+          const propName = capitalize(path.node.key.name);
+          const isObject = typePath.isMemberExpression();
+          const isRequired =
+            isObject &&
+            typePath.get('property').isIdentifier({ name: 'isRequired' });
+          const isArray = isObject
+            ? typePath.get('object').isCallExpression() &&
+              typePath.node.object.callee.name === 'arrayOf'
+            : typePath.isCallExpression() && typeNode.callee.name === 'arrayOf';
 
-          if (value.isIdentifier()) {
-            outputString += `  public ${path.node.value.name} ${
-              path.node.key.name
-            } { get; set; }\n`;
+          outputString += isRequired ? `  [Required]\n` : '';
+          outputString += '  public ';
+
+          // propName: type
+          if (typePath.isIdentifier()) {
+            outputString += `${typeNode.name} ${propName}`;
           }
 
-          if (
-            value.isMemberExpression() &&
-            value.get('property').isIdentifier({ name: 'isRequired' })
-          ) {
-            outputString += `  [Required]\n  public ${
-              path.node.value.object.name
-            } { get; set; }\n`;
+          // propName: type.isRequired
+          if (isObject && typePath.get('object').isIdentifier()) {
+            outputString += `${typeNode.object.name} ${propName}`;
           }
 
-          if (
-            value.isCallExpression() &&
-            path.node.value.callee.name === 'arrayOf'
-          ) {
-            outputString += `  public ${path.node.value.arguments[0].name}[] ${
-              path.node.key.name
-            } { get; set; }\n`;
+          // propName: arrayOf(type).isRequired
+          if (isObject && isArray) {
+            outputString += `${capitalize(typeNode.object.arguments[0].name)}${
+              isArray ? '[]' : ''
+            } ${propName}`;
           }
+
+          // propName: arrayOf(type)
+          if (!isObject && isArray) {
+            outputString += `${
+              path.node.value.arguments[0].name
+            }[] ${propName}`;
+          }
+
+          outputString += ' { get; set; }\n';
         }
       });
       outputString += '}\n\n';
