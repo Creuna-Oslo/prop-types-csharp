@@ -1,4 +1,4 @@
-const generate = require('@babel/generator').default;
+// const generate = require('@babel/generator').default;
 const kebabToPascal = require('@creuna/utils/kebab-to-pascal').default;
 const { parse } = require('@babel/parser');
 const traverse = require('@babel/traverse').default;
@@ -6,175 +6,222 @@ const t = require('babel-types');
 
 const capitalize = require('../utils/capitalize');
 const getPropTypes = require('../utils/get-prop-types');
+const unknownToPascal = require('../utils/unknown-to-pascal');
 
-const typesToStrip = ['element', 'func', 'instanceOf', 'node'];
-const illegalTypes = ['number', 'object'];
 const allowedMetaValues = ['exclude', 'float', 'int'];
+const illegalTypes = ['number', 'object'];
+const typesToStrip = ['element', 'func', 'instanceOf', 'node'];
 
 module.exports = function(sourceCode, componentName) {
   const pascalComponentName = kebabToPascal(componentName);
 
-  const syntaxTree = parse(sourceCode, {
-    plugins: ['jsx', 'classProperties'],
-    sourceType: 'module'
-  });
+  try {
+    const syntaxTree = parse(sourceCode, {
+      plugins: ['jsx', 'classProperties'],
+      sourceType: 'module'
+    });
 
-  const { propTypesAST, propTypesIdentifier, propTypesMeta } = getPropTypes(
-    syntaxTree,
-    pascalComponentName
-  );
-
-  const illegalMetaType = Object.entries(propTypesMeta).find(
-    ([_, metaType]) =>
-      typeof metaType === 'string' && !allowedMetaValues.includes(metaType)
-  );
-
-  if (illegalMetaType) {
-    throw new Error(
-      `C# class generator: Invalid meta type in component ${pascalComponentName}:\n${
-        illegalMetaType[0]
-      }: ${illegalMetaType[1]}\nExpected one of [${allowedMetaValues}]\n`
+    const { propTypesAST, propTypesIdentifier, propTypesMeta } = getPropTypes(
+      syntaxTree,
+      pascalComponentName
     );
-  }
 
-  traverse(syntaxTree, {
-    Program(path) {
-      path.replaceWith(t.program([propTypesAST]));
-      path.stop();
+    const illegalMetaType = Object.entries(propTypesMeta).find(
+      ([_, metaType]) =>
+        typeof metaType === 'string' && !allowedMetaValues.includes(metaType)
+    );
+
+    if (illegalMetaType) {
+      throw new Error(
+        `Invalid meta type '${illegalMetaType[1]}' for '${
+          illegalMetaType[0]
+        }'. Expected one of [${allowedMetaValues}]`
+      );
     }
-  });
 
-  traverse(syntaxTree, {
-    MemberExpression(path) {
-      // Replace 'PropTypes.x' with 'x' and strip illegal types
-      if (path.get('object').isIdentifier({ name: propTypesIdentifier })) {
-        const parent = path.findParent(parent => parent.isObjectProperty());
-        const propName = parent.node.key.name;
-        const typeName = path.node.property.name;
+    traverse(syntaxTree, {
+      Program(path) {
+        path.replaceWith(t.program([propTypesAST]));
+        path.stop();
+      }
+    });
 
-        if (typesToStrip.includes(typeName)) {
-          return parent.remove();
+    traverse(syntaxTree, {
+      MemberExpression(path) {
+        // Replace 'PropTypes.x' with 'x' and strip illegal types
+        if (path.get('object').isIdentifier({ name: propTypesIdentifier })) {
+          const parent = path.findParent(parent => parent.isObjectProperty());
+          const propName = parent.node.key.name;
+          const typeName = path.node.property.name;
+
+          if (typesToStrip.includes(typeName)) {
+            return parent.remove();
+          }
+
+          if (propTypesMeta[propName]) {
+            path.replaceWith(t.identifier(propTypesMeta[propName]));
+            return;
+          }
+
+          if (illegalTypes.includes(typeName)) {
+            throw new Error(
+              `Invalid type '${typeName}' for prop '${propName}'`
+            );
+          }
+
+          path.replaceWith(path.node.property);
         }
 
-        if (propTypesMeta[propName]) {
-          path.replaceWith(t.identifier(propTypesMeta[propName]));
-          return;
+        // Replace 'CompomentName.propTypes' with 'ComponentName'
+        if (path.get('property').isIdentifier({ name: 'propTypes' })) {
+          path.replaceWith(path.node.object);
         }
+      }
+    });
 
-        if (illegalTypes.includes(typeName)) {
-          throw new Error(
-            `C# class generator: Invalid type '${typeName}' for prop '${propName}' in component '${pascalComponentName}'\n`
-          );
+    traverse(syntaxTree, {
+      ObjectProperty(path) {
+        // Remove excluded propTypes
+        if (propTypesMeta[path.node.key.name] === 'exclude') {
+          path.remove();
         }
+      },
 
-        path.replaceWith(path.node.property);
-      }
-
-      // Replace 'CompomentName.propTypes' with 'ComponentName'
-      if (path.get('property').isIdentifier({ name: 'propTypes' })) {
-        path.replaceWith(path.node.object);
-      }
-    }
-  });
-
-  traverse(syntaxTree, {
-    ObjectProperty(path) {
-      // Remove excluded propTypes
-      if (propTypesMeta[path.node.key.name] === 'exclude') {
-        path.remove();
-      }
-    },
-
-    CallExpression(path) {
-      // Replace propTypes.shape with new definitions
-      if (path.get('callee').isIdentifier({ name: 'shape' })) {
-        const isIdentifier = t.isIdentifier(path.node.arguments[0]);
+      CallExpression(path) {
+        const argument = path.node.arguments[0];
         const isArrayOf = path.findParent(
           parent =>
             t.isCallExpression(parent) &&
             parent.get('callee').isIdentifier({ name: 'arrayOf' })
         );
+        const isIdentifier = t.isIdentifier(argument);
+        const isOneOf = path.get('callee').isIdentifier({ name: 'oneOf' });
+        const isShape = path.get('callee').isIdentifier({ name: 'shape' });
         const prop = path.findParent(parent => t.isObjectProperty(parent));
         const propName = prop.node.key.name;
         const propDefinitionName =
           capitalize(propName) + (isArrayOf ? 'Item' : '');
+        const program = path.findParent(parent => t.isProgram(parent));
 
+        if (!isShape && !isOneOf) {
+          return;
+        }
+
+        // Replace propTypes.shape and propTypes.oneOf with new definitions
         // Identifiers as shape are interpreted as a reference to the propTypes of another components (propTypes.shape(SomeComponent.propTypes)). If the call argument is an identifier, skip creating a new definition for it.
-        if (!isIdentifier) {
-          const program = path.findParent(parent => t.isProgram(parent));
+        if (!isIdentifier || isOneOf) {
           program.pushContainer(
             'body',
             t.expressionStatement(
               t.assignmentExpression(
                 '=',
                 t.identifier(propDefinitionName),
-                path.node.arguments[0]
+                argument
               )
             )
           );
         }
 
         path.replaceWith(
-          isIdentifier
-            ? path.node.arguments[0]
-            : t.identifier(propDefinitionName)
+          isIdentifier ? argument : t.identifier(propDefinitionName)
         );
       }
-    }
-  });
+    });
 
-  // Hack hackity hack custom 'generator'
-  let outputString = '';
+    // At this point, the code has been transformed into something like this:
 
-  traverse(syntaxTree, {
-    AssignmentExpression(path) {
-      outputString += `public class ${capitalize(path.node.left.name)} \n{\n`;
+    // Component = {
+    //   text: string.isRequired,
+    //   texts: arrayOf(string),
+    //   singleObject: SingleObject,
+    //   objects: arrayOf(ObjectsItem).isRequired,
+    //   enumArray: EnumArray,
+    // };
+    // SingleObject = {
+    //   propertyA: string.isRequired
+    // };
+    // ObjectsItem = {
+    //   propertyB: string
+    // };
+    // EnumArray = ['value-1', 'value-2'];
 
-      path.get('right').traverse({
-        ObjectProperty(path) {
-          const typeNode = path.node.value;
-          const typePath = path.get('value');
-          const propName = capitalize(path.node.key.name);
-          const isObject = typePath.isMemberExpression();
-          const isRequired =
-            isObject &&
-            typePath.get('property').isIdentifier({ name: 'isRequired' });
-          const isArray = isObject
-            ? typePath.get('object').isCallExpression() &&
-              typePath.node.object.callee.name === 'arrayOf'
-            : typePath.isCallExpression() && typeNode.callee.name === 'arrayOf';
+    let outputString = '';
 
-          let typeName;
+    // Hack hackity hack custom 'generator'
+    traverse(syntaxTree, {
+      AssignmentExpression(path) {
+        const className = capitalize(path.node.left.name);
+        const isArrayExpression = path.get('right').isArrayExpression();
 
-          // type
-          if (typePath.isIdentifier()) {
-            typeName = typeNode.name;
-          }
+        outputString += `public ${
+          isArrayExpression ? 'enum' : 'class'
+        } ${className} \n{\n`;
 
-          // type.isRequired
-          if (isObject && typePath.get('object').isIdentifier()) {
-            typeName = typeNode.object.name;
-          }
+        if (!isArrayExpression) {
+          path.get('right').traverse({
+            ObjectProperty(path) {
+              const typeNode = path.node.value;
+              const typePath = path.get('value');
+              const propName = capitalize(path.node.key.name);
+              const isObject = typePath.isMemberExpression();
+              const isRequired =
+                isObject &&
+                typePath.get('property').isIdentifier({ name: 'isRequired' });
+              const isArray = isObject
+                ? typePath.get('object').isCallExpression() &&
+                  typePath.node.object.callee.name === 'arrayOf'
+                : typePath.isCallExpression() &&
+                  typeNode.callee.name === 'arrayOf';
 
-          if (isArray) {
-            typeName = isObject
-              ? typeNode.object.arguments[0].name // arrayOf(type).isRequired
-              : path.node.value.arguments[0].name; // arrayOf(type)
-          }
+              let typeName;
 
-          outputString += isRequired ? `  [Required]\n` : '';
-          outputString += `  public ${typeName}`;
-          outputString += isArray ? '[]' : '';
-          outputString += ` ${propName} { get; set; }\n`;
+              // type
+              if (typePath.isIdentifier()) {
+                typeName = typeNode.name;
+              }
+
+              // type.isRequired
+              if (isObject && typePath.get('object').isIdentifier()) {
+                typeName = typeNode.object.name;
+              }
+
+              if (isArray) {
+                typeName = isObject
+                  ? typeNode.object.arguments[0].name // arrayOf(type).isRequired
+                  : path.node.value.arguments[0].name; // arrayOf(type)
+              }
+
+              outputString += isRequired ? `  [Required]\n` : '';
+              outputString += `  public ${typeName}`;
+              outputString += isArray ? '[]' : '';
+              outputString += ` ${propName} { get; set; }\n`;
+            }
+          });
+        } else {
+          const array = path.node.right.elements;
+          array.forEach((enumProperty, index) => {
+            const value = enumProperty.value;
+            const isNumber = typeof value === 'number';
+            const prefix = isNumber ? className : '';
+
+            outputString += isNumber ? '' : `  [StringValue("${value}")]`;
+            outputString += ` ${unknownToPascal(prefix + value)} = ${
+              isNumber ? value : index
+            },\n`;
+          });
         }
-      });
-      outputString += '}\n\n';
-    }
-  });
+        outputString += '}\n\n';
+      }
+    });
 
-  return outputString;
+    return outputString;
 
-  // const { code } = generate(syntaxTree);
+    // const { code } = generate(syntaxTree);
 
-  // return code;
+    // return code;
+  } catch (error) {
+    throw new Error(
+      `C# class generator (in component ${pascalComponentName}):\n${error}\n`
+    );
+  }
 };

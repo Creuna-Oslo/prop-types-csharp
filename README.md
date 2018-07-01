@@ -19,31 +19,44 @@ node debug/transform-prop-types.js
 Currently, the transform script turns this:
 
 ```jsx
+import pt from "prop-types";
+
 import Link from "components/link";
 
+const enumArray = ["value-1", "value-2"];
+const enumObject = {
+  valueA: "value-a",
+  valueB: "value-b"
+};
+
+const Component = props => <div>{props.text}</div>;
+
 Component.propTypes = {
-  text: PropTypes.string.isRequired,
-  isSomething: PropTypes.bool,
-  intNumber: PropTypes.number,
-  floatNumber: PropTypes.number,
-  texts: PropTypes.arrayOf(PropTypes.string),
-  singleObject: PropTypes.shape({
-    propertyA: PropTypes.string.isRequired
+  text: pt.string.isRequired,
+  isSomething: pt.bool,
+  intNumber: pt.number,
+  floatNumber: pt.number,
+  texts: pt.arrayOf(pt.string),
+  singleObject: pt.shape({
+    propertyA: pt.string.isRequired
   }),
-  objects: PropTypes.arrayOf(
-    PropTypes.shape({
-      propertyB: PropTypes.string
+  objects: pt.arrayOf(
+    pt.shape({
+      propertyB: pt.string
     })
   ).isRequired,
-  externalType: Link.propTypes,
-  externalTypeList: PropTypes.arrayOf(Link.propTypes),
+  externalType: pt.shape(Link.propTypes),
+  externalTypeList: pt.arrayOf(pt.shape(Link.propTypes)),
+  enumArray: pt.oneOf(enumArray).isRequired,
+  enumInline: pt.oneOf([1, 2]),
+  enumObject: pt.oneOf(Object.keys(enumObject)),
 
   // These should be excluded
-  instance: PropTypes.instanceOf(Link),
-  excludeMe: PropTypes.number,
-  node: PropTypes.node,
-  element: PropTypes.element,
-  function: PropTypes.func
+  instance: pt.instanceOf(Link),
+  excludeMe: pt.number,
+  node: pt.node,
+  element: pt.element,
+  function: pt.func
 };
 
 Component.propTypesMeta = {
@@ -69,6 +82,10 @@ public class Component
   public ObjectsItem[] Objects { get; set; }
   public Link ExternalType { get; set; }
   public Link[] ExternalTypeList { get; set; }
+  [Required]
+  public EnumArray EnumArray { get; set; }
+  public EnumInline EnumInline { get; set; }
+  public EnumObject EnumObject { get; set; }
 }
 
 public class SingleObject
@@ -80,5 +97,23 @@ public class SingleObject
 public class ObjectsItem
 {
   public string PropertyB { get; set; }
+}
+
+public enum EnumArray
+{
+  [StringValue("value-1")] Value1 = 0,
+  [StringValue("value-2")] Value2 = 1,
+}
+
+public enum EnumInline
+{
+ EnumInline1 = 1,
+ EnumInline2 = 2,
+}
+
+public enum EnumObject
+{
+  [StringValue("valueA")] ValueA = 0,
+  [StringValue("valueB")] ValueB = 1,
 }
 ```

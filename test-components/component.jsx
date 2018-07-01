@@ -3,6 +3,12 @@ import pt from 'prop-types';
 
 import Link from 'components/link';
 
+const enumArray = ['value-1', 'value-2'];
+const enumObject = {
+  valueA: 'value-a',
+  valueB: 'value-b'
+};
+
 const Component = props => <div>{props.text}</div>;
 
 Component.propTypes = {
@@ -21,6 +27,9 @@ Component.propTypes = {
   ).isRequired,
   externalType: pt.shape(Link.propTypes),
   externalTypeList: pt.arrayOf(pt.shape(Link.propTypes)),
+  enumArray: pt.oneOf(enumArray).isRequired,
+  enumInline: pt.oneOf([1, 2]),
+  enumObject: pt.oneOf(Object.keys(enumObject)),
 
   // These should be excluded
   instance: pt.instanceOf(Link),
