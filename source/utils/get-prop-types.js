@@ -2,8 +2,18 @@ const traverse = require('@babel/traverse').default;
 const t = require('babel-types');
 
 module.exports = function(syntaxTree, pascalComponentName) {
-  let propTypes,
+  let propTypesIdentifier,
+    propTypesAST,
     propTypesMeta = {};
+
+  // Get PropTypes variable name from import statement.
+  traverse(syntaxTree, {
+    ImportDeclaration(path) {
+      if (path.get('source').isStringLiteral({ value: 'prop-types' })) {
+        propTypesIdentifier = path.node.specifiers[0].local.name;
+      }
+    }
+  });
 
   traverse(syntaxTree, {
     AssignmentExpression(path) {
@@ -18,7 +28,7 @@ module.exports = function(syntaxTree, pascalComponentName) {
 
       // Get propTypes for functional component
       if (left.get('property').isIdentifier({ name: 'propTypes' })) {
-        propTypes = t.expressionStatement(
+        propTypesAST = t.expressionStatement(
           t.assignmentExpression(
             '=',
             t.identifier(pascalComponentName),
@@ -40,8 +50,8 @@ module.exports = function(syntaxTree, pascalComponentName) {
     }
   });
 
-  if (propTypes) {
-    return { propTypes, propTypesMeta };
+  if (propTypesAST) {
+    return { propTypesAST, propTypesIdentifier, propTypesMeta };
   }
 
   traverse(syntaxTree, {
@@ -49,7 +59,7 @@ module.exports = function(syntaxTree, pascalComponentName) {
       const key = path.get('key');
 
       if (key.isIdentifier({ name: 'propTypes' })) {
-        propTypes = t.expressionStatement(
+        propTypesAST = t.expressionStatement(
           t.assignmentExpression(
             '=',
             t.identifier(pascalComponentName),
@@ -72,8 +82,8 @@ module.exports = function(syntaxTree, pascalComponentName) {
     }
   });
 
-  if (propTypes) {
-    return { propTypes, propTypesMeta };
+  if (propTypesAST) {
+    return { propTypesAST, propTypesIdentifier, propTypesMeta };
   }
 
   throw new Error('PropTypes not found');

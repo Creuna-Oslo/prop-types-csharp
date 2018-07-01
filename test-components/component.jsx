@@ -1,33 +1,33 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import pt from 'prop-types';
 
 import Link from 'components/link';
 
 const Component = props => <div>{props.text}</div>;
 
 Component.propTypes = {
-  text: PropTypes.string.isRequired,
-  isSomething: PropTypes.bool,
-  intNumber: PropTypes.number,
-  floatNumber: PropTypes.number,
-  texts: PropTypes.arrayOf(PropTypes.string),
-  singleObject: PropTypes.shape({
-    propertyA: PropTypes.string.isRequired
+  text: pt.string.isRequired,
+  isSomething: pt.bool,
+  intNumber: pt.number,
+  floatNumber: pt.number,
+  texts: pt.arrayOf(pt.string),
+  singleObject: pt.shape({
+    propertyA: pt.string.isRequired
   }),
-  objects: PropTypes.arrayOf(
-    PropTypes.shape({
-      propertyB: PropTypes.string
+  objects: pt.arrayOf(
+    pt.shape({
+      propertyB: pt.string
     })
   ).isRequired,
-  externalType: Link.propTypes,
-  externalTypeList: PropTypes.arrayOf(Link.propTypes),
+  externalType: pt.shape(Link.propTypes),
+  externalTypeList: pt.arrayOf(pt.shape(Link.propTypes)),
 
   // These should be excluded
-  instance: PropTypes.instanceOf(Link),
-  excludeMe: PropTypes.number,
-  node: PropTypes.node,
-  element: PropTypes.element,
-  function: PropTypes.func
+  instance: pt.instanceOf(Link),
+  excludeMe: pt.number,
+  node: pt.node,
+  element: pt.element,
+  function: pt.func
 };
 
 Component.propTypesMeta = {

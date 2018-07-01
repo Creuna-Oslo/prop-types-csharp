@@ -1,4 +1,4 @@
-// const generate = require('@babel/generator').default;
+const generate = require('@babel/generator').default;
 const kebabToPascal = require('@creuna/utils/kebab-to-pascal').default;
 const { parse } = require('@babel/parser');
 const traverse = require('@babel/traverse').default;
@@ -9,7 +9,7 @@ const getPropTypes = require('../utils/get-prop-types');
 
 const typesToStrip = ['element', 'func', 'instanceOf', 'node'];
 const illegalTypes = ['number', 'object'];
-const allowedMetaValues = ['double', 'exclude', 'float', 'int'];
+const allowedMetaValues = ['exclude', 'float', 'int'];
 
 module.exports = function(sourceCode, componentName) {
   const pascalComponentName = kebabToPascal(componentName);
@@ -19,26 +19,27 @@ module.exports = function(sourceCode, componentName) {
     sourceType: 'module'
   });
 
-  const { propTypes, propTypesMeta } = getPropTypes(
+  const { propTypesAST, propTypesIdentifier, propTypesMeta } = getPropTypes(
     syntaxTree,
     pascalComponentName
   );
 
   const illegalMetaType = Object.entries(propTypesMeta).find(
-    ([_, value]) => !allowedMetaValues.includes(value)
+    ([_, metaType]) =>
+      typeof metaType === 'string' && !allowedMetaValues.includes(metaType)
   );
 
   if (illegalMetaType) {
     throw new Error(
-      `Invalid meta type in component ${pascalComponentName}:\n${
+      `C# class generator: Invalid meta type in component ${pascalComponentName}:\n${
         illegalMetaType[0]
-      }: ${illegalMetaType[1]}\nExpected one of [${allowedMetaValues}]`
+      }: ${illegalMetaType[1]}\nExpected one of [${allowedMetaValues}]\n`
     );
   }
 
   traverse(syntaxTree, {
     Program(path) {
-      path.replaceWith(t.program([propTypes]));
+      path.replaceWith(t.program([propTypesAST]));
       path.stop();
     }
   });
@@ -46,7 +47,7 @@ module.exports = function(sourceCode, componentName) {
   traverse(syntaxTree, {
     MemberExpression(path) {
       // Replace 'PropTypes.x' with 'x' and strip illegal types
-      if (path.get('object').isIdentifier({ name: 'PropTypes' })) {
+      if (path.get('object').isIdentifier({ name: propTypesIdentifier })) {
         const parent = path.findParent(parent => parent.isObjectProperty());
         const propName = parent.node.key.name;
         const typeName = path.node.property.name;
@@ -62,7 +63,7 @@ module.exports = function(sourceCode, componentName) {
 
         if (illegalTypes.includes(typeName)) {
           throw new Error(
-            `Missing meta type for ${propName} in component ${pascalComponentName}\n`
+            `C# class generator: Invalid type '${typeName}' for prop '${propName}' in component '${pascalComponentName}'\n`
           );
         }
 
@@ -87,6 +88,7 @@ module.exports = function(sourceCode, componentName) {
     CallExpression(path) {
       // Replace propTypes.shape with new definitions
       if (path.get('callee').isIdentifier({ name: 'shape' })) {
+        const isIdentifier = t.isIdentifier(path.node.arguments[0]);
         const isArrayOf = path.findParent(
           parent =>
             t.isCallExpression(parent) &&
@@ -97,19 +99,26 @@ module.exports = function(sourceCode, componentName) {
         const propDefinitionName =
           capitalize(propName) + (isArrayOf ? 'Item' : '');
 
-        const program = path.findParent(parent => t.isProgram(parent));
-        program.pushContainer(
-          'body',
-          t.expressionStatement(
-            t.assignmentExpression(
-              '=',
-              t.identifier(propDefinitionName),
-              path.node.arguments[0]
+        // Identifiers as shape are interpreted as a reference to the propTypes of another components (propTypes.shape(SomeComponent.propTypes)). If the call argument is an identifier, skip creating a new definition for it.
+        if (!isIdentifier) {
+          const program = path.findParent(parent => t.isProgram(parent));
+          program.pushContainer(
+            'body',
+            t.expressionStatement(
+              t.assignmentExpression(
+                '=',
+                t.identifier(propDefinitionName),
+                path.node.arguments[0]
+              )
             )
-          )
-        );
+          );
+        }
 
-        path.replaceWith(t.identifier(propDefinitionName));
+        path.replaceWith(
+          isIdentifier
+            ? path.node.arguments[0]
+            : t.identifier(propDefinitionName)
+        );
       }
     }
   });
