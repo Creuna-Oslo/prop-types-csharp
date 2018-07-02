@@ -69,6 +69,8 @@ Component.propTypesMeta = {
 into this:
 
 ```cs
+using System.Collections.Generic;
+
 public class Component
 {
   [Required]
@@ -76,12 +78,12 @@ public class Component
   public bool IsSomething { get; set; }
   public int IntNumber { get; set; }
   public float FloatNumber { get; set; }
-  public string[] Texts { get; set; }
+  public IList<string> Texts { get; set; }
   public SingleObject SingleObject { get; set; }
   [Required]
-  public ObjectsItem[] Objects { get; set; }
+  public IList<ObjectsItem> Objects { get; set; }
   public Link ExternalType { get; set; }
-  public Link[] ExternalTypeList { get; set; }
+  public IList<Link> ExternalTypeList { get; set; }
   [Required]
   public EnumArray EnumArray { get; set; }
   public EnumInline EnumInline { get; set; }
@@ -101,19 +103,23 @@ public class ObjectsItem
 
 public enum EnumArray
 {
-  [StringValue("value-1")] Value1 = 0,
-  [StringValue("value-2")] Value2 = 1,
+  [StringValue("value-1")]
+  Value1 = 0,
+  [StringValue("value-2")]
+  Value2 = 1,
 }
 
 public enum EnumInline
 {
- EnumInline1 = 1,
- EnumInline2 = 2,
+  EnumInline1 = 1,
+  EnumInline2 = 2,
 }
 
 public enum EnumObject
 {
-  [StringValue("valueA")] ValueA = 0,
-  [StringValue("valueB")] ValueB = 1,
+  [StringValue("valueA")]
+  ValueA = 0,
+  [StringValue("valueB")]
+  ValueB = 1,
 }
 ```

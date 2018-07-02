@@ -145,7 +145,7 @@ module.exports = function(sourceCode, componentName) {
     // };
     // EnumArray = ['value-1', 'value-2'];
 
-    let outputString = '';
+    let outputString = 'using System.Collections;\n\n';
 
     // Hack hackity hack custom 'generator'
     traverse(syntaxTree, {
@@ -191,10 +191,10 @@ module.exports = function(sourceCode, componentName) {
                   : path.node.value.arguments[0].name; // arrayOf(type)
               }
 
+              const type = isArray ? `IList<${typeName}>` : typeName;
+
               outputString += isRequired ? `  [Required]\n` : '';
-              outputString += `  public ${typeName}`;
-              outputString += isArray ? '[]' : '';
-              outputString += ` ${propName} { get; set; }\n`;
+              outputString += `  public ${type} ${propName} { get; set; }\n`;
             }
           });
         } else {
@@ -204,8 +204,8 @@ module.exports = function(sourceCode, componentName) {
             const isNumber = typeof value === 'number';
             const prefix = isNumber ? className : '';
 
-            outputString += isNumber ? '' : `  [StringValue("${value}")]`;
-            outputString += ` ${unknownToPascal(prefix + value)} = ${
+            outputString += isNumber ? '' : `  [StringValue("${value}")]\n`;
+            outputString += `  ${unknownToPascal(prefix + value)} = ${
               isNumber ? value : index
             },\n`;
           });
