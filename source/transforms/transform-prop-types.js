@@ -1,5 +1,5 @@
 // const generate = require('@babel/generator').default;
-const kebabToPascal = require('@creuna/utils/kebab-to-pascal').default;
+const anyToKebab = require('@creuna/utils/any-to-kebab').default;
 const { parse } = require('@babel/parser');
 const traverse = require('@babel/traverse').default;
 const t = require('babel-types');
@@ -21,11 +21,11 @@ module.exports = function(sourceCode, filePath) {
     });
 
     const { componentName } = getComponentName(syntaxTree, filePath);
-    const pascalComponentName = kebabToPascal(componentName);
+    const kebabComponentName = anyToKebab(componentName);
 
     const { propTypesAST, propTypesIdentifier, propTypesMeta } = getPropTypes(
       syntaxTree,
-      pascalComponentName
+      componentName
     );
 
     const illegalMetaType = Object.entries(propTypesMeta).find(
@@ -216,7 +216,7 @@ module.exports = function(sourceCode, filePath) {
       }
     });
 
-    return outputString;
+    return { code: outputString, kebabComponentName };
   } catch (error) {
     throw new Error(`C# class generator plugin, file ${filePath}:\n${error}\n`);
   }

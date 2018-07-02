@@ -3,7 +3,7 @@
 import React from 'react';
 import pt from 'prop-types';
 
-import Link from 'components/link';
+import Link from './link';
 
 const enumArray = ['value-1', 'value-2'];
 const enumObject = {
@@ -11,7 +11,7 @@ const enumObject = {
   valueB: 'value-b'
 };
 
-export default class Component extends React.Component {
+class ClassComponent extends React.Component {
   static propTypes = {
     text: pt.string.isRequired,
     isSomething: pt.bool,
@@ -51,4 +51,4 @@ export default class Component extends React.Component {
   }
 }
 
-// export default Component;
+export default ClassComponent;

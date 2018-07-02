@@ -9,7 +9,7 @@ const componentPath = path.join(__dirname, '../fixtures/func-component.jsx');
 const componentSource = fs.readFileSync(componentPath, 'utf-8');
 
 try {
-  console.log(transformPropTypes(componentSource, componentPath));
+  console.log(transformPropTypes(componentSource, componentPath).code);
 } catch (error) {
   console.log(error);
 }

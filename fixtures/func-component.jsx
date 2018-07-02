@@ -2,7 +2,7 @@
 import React from 'react';
 import pt from 'prop-types';
 
-import Link from 'components/link';
+import Link from './link';
 
 const enumArray = ['value-1', 'value-2'];
 const enumObject = {
@@ -10,9 +10,9 @@ const enumObject = {
   valueB: 'value-b'
 };
 
-const Component = props => <div>{props.text}</div>;
+const FunctionalComponent = props => <div>{props.text}</div>;
 
-Component.propTypes = {
+FunctionalComponent.propTypes = {
   text: pt.string.isRequired,
   isSomething: pt.bool,
   intNumber: pt.number,
@@ -40,10 +40,10 @@ Component.propTypes = {
   function: pt.func
 };
 
-Component.propTypesMeta = {
+FunctionalComponent.propTypesMeta = {
   intNumber: 'int',
   floatNumber: 'float',
   excludeMe: 'exclude'
 };
 
-export default Component;
+export default FunctionalComponent;

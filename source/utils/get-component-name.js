@@ -15,6 +15,7 @@ module.exports = function(syntaxTree) {
         }
 
         componentName = path.node.specifiers[0].exported.name;
+        path.stop();
         return;
       }
 
@@ -35,9 +36,11 @@ module.exports = function(syntaxTree) {
         switch (path.node.declaration.type) {
           case 'Identifier':
             componentName = declaration.name;
+            path.stop();
             return;
           case 'ClassDeclaration':
             componentName = declaration.id.name;
+            path.stop();
             return;
         }
       }
