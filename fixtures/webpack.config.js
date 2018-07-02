@@ -2,7 +2,7 @@ const path = require('path');
 
 const PropTypesCSharpPlugin = require('../index');
 
-module.exports = function(options = {}) {
+module.exports = function(env, options = {}) {
   const production = options.mode === 'production';
 
   return {

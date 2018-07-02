@@ -28,7 +28,6 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
       module.resource
     );
 
-    // compilation.assets[`${kebabComponentName}.cs`] = {
     compilation.assets[path.join(outputPath, `${kebabComponentName}.cs`)] = {
       source: () => code,
       size: () => code.length
