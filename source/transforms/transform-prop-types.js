@@ -5,6 +5,7 @@ const traverse = require('@babel/traverse').default;
 const t = require('babel-types');
 
 const capitalize = require('../utils/capitalize');
+const getComponentName = require('../utils/get-component-name');
 const getPropTypes = require('../utils/get-prop-types');
 const unknownToPascal = require('../utils/unknown-to-pascal');
 
@@ -12,14 +13,15 @@ const allowedMetaValues = ['exclude', 'float', 'int'];
 const illegalTypes = ['number', 'object'];
 const typesToStrip = ['element', 'func', 'instanceOf', 'node'];
 
-module.exports = function(sourceCode, componentName) {
-  const pascalComponentName = kebabToPascal(componentName);
-
+module.exports = function(sourceCode, filePath) {
   try {
     const syntaxTree = parse(sourceCode, {
       plugins: ['jsx', 'classProperties'],
       sourceType: 'module'
     });
+
+    const { componentName } = getComponentName(syntaxTree, filePath);
+    const pascalComponentName = kebabToPascal(componentName);
 
     const { propTypesAST, propTypesIdentifier, propTypesMeta } = getPropTypes(
       syntaxTree,
@@ -215,13 +217,7 @@ module.exports = function(sourceCode, componentName) {
     });
 
     return outputString;
-
-    // const { code } = generate(syntaxTree);
-
-    // return code;
   } catch (error) {
-    throw new Error(
-      `C# class generator (in component ${pascalComponentName}):\n${error}\n`
-    );
+    throw new Error(`C# class generator plugin, file ${filePath}:\n${error}\n`);
   }
 };
