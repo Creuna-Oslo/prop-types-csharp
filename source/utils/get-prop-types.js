@@ -27,13 +27,12 @@ module.exports = function(syntaxTree, pascalComponentName) {
       }
 
       const parent = path.findParent(parent => parent.isObjectProperty());
+      const propName = parent.node.key.name;
       const oneOfArgument = path.node.arguments[0];
 
       const missingLiteralError = argumentName =>
         new Error(
-          `Couldn't resolve value for '${
-            parent.node.key.name
-          }'. Make sure '${argumentName}' is defined in component '${pascalComponentName}'`
+          `Couldn't resolve value for prop '${propName}'. Make sure '${argumentName}' is defined in the above file.`
         );
 
       // Reference to an array
@@ -42,8 +41,13 @@ module.exports = function(syntaxTree, pascalComponentName) {
           throw missingLiteralError(oneOfArgument.name);
         }
 
-        const arrayLiteral =
-          path.scope.bindings[oneOfArgument.name].path.node.init;
+        // Class components have their bindings nested inside a key equal to the class name
+        const bindings = path.scope.hasOwnBinding(oneOfArgument.name)
+          ? path.scope.bindings
+          : path.scope.bindings[pascalComponentName].scope.bindings;
+
+        const arrayLiteral = bindings[oneOfArgument.name].path.node.init;
+
         path.replaceWith(t.callExpression(path.node.callee, [arrayLiteral]));
         return;
       }
@@ -61,7 +65,13 @@ module.exports = function(syntaxTree, pascalComponentName) {
           throw missingLiteralError(argument.name);
         }
 
-        const objectLiteral = path.scope.bindings[argument.name].path.node.init;
+        // Class components have their bindings nested inside a key equal to the class name
+        const bindings = path.scope.hasOwnBinding(argument.name)
+          ? path.scope.bindings
+          : path.scope.bindings[pascalComponentName].scope.bindings;
+
+        const objectLiteral = bindings[argument.name].path.node.init;
+
         const { properties } = objectLiteral;
         let enumValues;
 
