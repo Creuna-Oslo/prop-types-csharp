@@ -23,12 +23,12 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
     }
 
     const fileContent = fs.readFileSync(module.resource, 'utf-8');
-    const { code, kebabComponentName } = transformPropTypes(
+    const { code, componentName } = transformPropTypes(
       fileContent,
       module.resource
     );
 
-    compilation.assets[path.join(outputPath, `${kebabComponentName}.cs`)] = {
+    compilation.assets[path.join(outputPath, `${componentName}.cs`)] = {
       source: () => code,
       size: () => code.length
     };

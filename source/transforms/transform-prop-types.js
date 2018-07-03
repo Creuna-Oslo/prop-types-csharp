@@ -1,5 +1,4 @@
 // const generate = require('@babel/generator').default;
-const anyToKebab = require('@creuna/utils/any-to-kebab').default;
 const { parse } = require('@babel/parser');
 const traverse = require('@babel/traverse').default;
 const t = require('babel-types');
@@ -21,7 +20,6 @@ module.exports = function(sourceCode, filePath) {
     });
 
     const { componentName } = getComponentName(syntaxTree, filePath);
-    const kebabComponentName = anyToKebab(componentName);
 
     const { propTypesAST, propTypesIdentifier, propTypesMeta } = getPropTypes(
       syntaxTree,
@@ -216,7 +214,7 @@ module.exports = function(sourceCode, filePath) {
       }
     });
 
-    return { code: outputString, kebabComponentName };
+    return { componentName, code: outputString };
   } catch (error) {
     throw new Error(`C# class generator plugin, file ${filePath}:\n${error}\n`);
   }
