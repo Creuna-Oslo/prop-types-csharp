@@ -12,7 +12,6 @@
   "dependencies": {
     "@babel/parser": "^7.0.0-beta.51",
     "@babel/traverse": "^7.0.0-beta.51",
-    "@creuna/utils": "^0.3.4",
     "babel-types": "^6.26.0"
   },
   "devDependencies": {
