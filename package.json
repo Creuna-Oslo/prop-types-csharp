@@ -4,6 +4,12 @@
   "description": "Webpack plugin for generating C# classes from React component propTypes",
   "author": "Asbjørn Hegdahl <asbjorn.hegdahl@creuna.no>",
   "main": "index.js",
+  "files": [
+    "index.js",
+    "source",
+    "LICENSE",
+    "README.md"
+  ],
   "license": "MIT",
   "scripts": {
     "transform": "node debug/transform-prop-types.js",
