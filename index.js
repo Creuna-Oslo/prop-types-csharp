@@ -6,6 +6,7 @@ const transformPropTypes = require('./source/transforms/transform-prop-types');
 function PropTypesCSharpPlugin(options) {
   this.options = Object.assign(
     {
+      filter: () => true,
       path: ''
     },
     options
@@ -21,7 +22,8 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
     if (
       !filePath ||
       filePath.includes('node_modules') ||
-      !filePath.match(/\.jsx$/)
+      !filePath.match(/\.jsx$/) ||
+      !this.options.filter(filePath)
     ) {
       return;
     }
