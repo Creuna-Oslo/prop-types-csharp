@@ -1,5 +1,7 @@
 # PropTypes C# Webpack Plugin
 
+[![Travis status](https://travis-ci.org/Creuna-Oslo/prop-types-csharp-webpack-plugin.svg?branch=master)](https://travis-ci.org/Creuna-Oslo/prop-types-csharp-webpack-plugin)
+
 A Webpack plugin that generates C# classes from React component propTypes
 
 This is a work in progress!

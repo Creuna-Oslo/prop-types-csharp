@@ -4,10 +4,10 @@ cache: yarn
 install: yarn
 script:
   - yarn test
-# deploy:
-#   provider: npm
-#   email: $NPM_EMAIL
-#   api_key: $NPM_TOKEN
-#   on:
-#     branch: master
-#   skip_cleanup: true
+deploy:
+  provider: npm
+  email: $NPM_EMAIL
+  api_key: $NPM_TOKEN
+  on:
+    branch: master
+  skip_cleanup: true
