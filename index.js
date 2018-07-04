@@ -18,7 +18,11 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
   const buildModule = (compilation, module) => {
     const filePath = module.resource;
 
-    if (filePath.includes('node_modules') || !filePath.match(/\.jsx$/)) {
+    if (
+      !filePath ||
+      filePath.includes('node_modules') ||
+      !filePath.match(/\.jsx$/)
+    ) {
       return;
     }
 
