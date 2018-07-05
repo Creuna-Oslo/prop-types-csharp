@@ -1,7 +1,8 @@
 const { fork } = require('child_process');
 const path = require('path');
 
-const generateClasses = require('./source/plugin/generate-classes');
+const PropTypesMetaLoader = require('./source/loader/proptypes-meta-loader');
+const transformPropTypes = require('./source/transforms/transform-prop-types');
 
 function PropTypesCSharpPlugin(options) {
   this.options = Object.assign(
@@ -105,4 +106,8 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
 };
 
 PropTypesCSharpPlugin['default'] = PropTypesCSharpPlugin;
-module.exports = PropTypesCSharpPlugin;
+
+module.exports = {
+  PropTypesCSharpPlugin, 
+  PropTypesMetaLoader
+};
