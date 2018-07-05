@@ -4,7 +4,7 @@ const t = require('babel-types');
 // Returns:
 //  - propTypesAST: Babel syntax tree containing only propTypes
 
-module.exports = function({ componentName, requirePropTypes, syntaxTree }) {
+module.exports = function({ componentName, syntaxTree }) {
   let propTypesAST;
 
   traverse(syntaxTree, {
@@ -58,7 +58,5 @@ module.exports = function({ componentName, requirePropTypes, syntaxTree }) {
     return { propTypesAST };
   }
 
-  if (requirePropTypes) {
-    throw new Error('PropTypes not found');
-  }
+  throw new Error('PropTypes not found');
 };

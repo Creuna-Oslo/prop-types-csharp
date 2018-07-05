@@ -7,8 +7,7 @@ function PropTypesCSharpPlugin(options) {
   this.options = Object.assign(
     {
       exclude: ['node_modules'],
-      path: '',
-      requirePropTypes: true
+      path: ''
     },
     options
   );
@@ -32,7 +31,6 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
     try {
       const sourceCode = fs.readFileSync(module.resource, 'utf-8');
       const { code, componentName } = transformPropTypes({
-        requirePropTypes: this.options.requirePropTypes,
         sourceCode
       });
 

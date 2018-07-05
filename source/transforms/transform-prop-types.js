@@ -12,7 +12,7 @@ const getPropTypes = require('../utils/get-prop-types');
 const getPropTypesIdentifierName = require('../utils/get-prop-types-identifier-name');
 const stripValidateSimplify = require('./strip-validate-simplify');
 
-module.exports = function({ requirePropTypes, sourceCode }) {
+module.exports = function({ sourceCode }) {
   const syntaxTree = parse(sourceCode, {
     plugins: ['jsx', 'classProperties'],
     sourceType: 'module'
@@ -33,7 +33,6 @@ module.exports = function({ requirePropTypes, sourceCode }) {
 
   const { propTypesAST } = getPropTypes({
     componentName,
-    requirePropTypes,
     syntaxTree
   });
 
