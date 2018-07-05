@@ -1,7 +1,7 @@
 const traverse = require('@babel/traverse').default;
 const t = require('babel-types');
 
-module.exports = function(syntaxTree) {
+module.exports = function({ syntaxTree }) {
   let componentName;
 
   traverse(syntaxTree, {

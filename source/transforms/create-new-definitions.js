@@ -1,7 +1,7 @@
 const traverse = require('@babel/traverse').default;
 const t = require('babel-types');
 
-const capitalize = require('./capitalize');
+const capitalize = require('../utils/capitalize');
 
 // This function mutates the provided syntax tree, doing the following
 //  - Finds any calls to 'oneOf' and 'shape'
@@ -29,7 +29,9 @@ module.exports = function({ syntaxTree }) {
           t.isCallExpression(parent) &&
           parent.get('callee').isIdentifier({ name: 'arrayOf' })
       );
-      const isIdentifier = t.isIdentifier(argument);
+      const isTypeReference =
+        t.isMemberExpression(argument) &&
+        argument.property.name === 'propTypes';
       const isOneOf = path.get('callee').isIdentifier({ name: 'oneOf' });
       const isShape = path.get('callee').isIdentifier({ name: 'shape' });
       const prop = path.findParent(parent => t.isObjectProperty(parent));
@@ -43,8 +45,7 @@ module.exports = function({ syntaxTree }) {
       }
 
       // Replace shape and oneOf with new definitions
-      // Identifiers as shape are interpreted as a reference to the propTypes of another components (propTypes.shape(SomeComponent.propTypes)). If the call argument is an identifier, skip creating a new definition for it.
-      if (!isIdentifier || isOneOf) {
+      if (!isTypeReference || isOneOf) {
         program.pushContainer(
           'body',
           t.expressionStatement(
@@ -58,7 +59,7 @@ module.exports = function({ syntaxTree }) {
       }
 
       path.replaceWith(
-        isIdentifier ? argument : t.identifier(propDefinitionName)
+        isTypeReference ? argument : t.identifier(propDefinitionName)
       );
     }
   });
