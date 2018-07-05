@@ -4,9 +4,10 @@ const t = require('babel-types');
 const typesToStrip = ['element', 'func', 'instanceOf', 'node'];
 
 const illegalTypes = {
+  array: `Replace with 'PropTypes.arrayOf' or provide a meta type`,
   number: `Add meta type 'int' or 'float'`,
   object: `Replace with 'PropTypes.shape' or provide a meta type`,
-  array: `Replace with 'PropTypes.arrayOf' or provide a meta type`
+  oneOfType: `'PropTypes.oneOfType' is not yet supported`
 };
 
 // This function mutates the provided syntaxTree, doing the following (in this order):
