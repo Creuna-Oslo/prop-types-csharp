@@ -29,18 +29,23 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
       return;
     }
 
-    const sourceCode = fs.readFileSync(module.resource, 'utf-8');
-    const { code, componentName } = transformPropTypes({
-      filePath: module.resource,
-      requirePropTypes: this.options.requirePropTypes,
-      sourceCode
-    });
+    try {
+      const sourceCode = fs.readFileSync(module.resource, 'utf-8');
+      const { code, componentName } = transformPropTypes({
+        requirePropTypes: this.options.requirePropTypes,
+        sourceCode
+      });
 
-    if (code && componentName) {
-      compilation.assets[path.join(outputPath, `${componentName}.cs`)] = {
-        source: () => code,
-        size: () => code.length
-      };
+      if (code && componentName) {
+        compilation.assets[path.join(outputPath, `${componentName}.cs`)] = {
+          source: () => code,
+          size: () => code.length
+        };
+      }
+    } catch (error) {
+      compilation.errors.push(
+        new Error(`C# class generator plugin\n${filePath}\n${error}\n`)
+      );
     }
   };
 
