@@ -1,6 +1,6 @@
 const path = require('path');
 
-const PropTypesCSharpPlugin = require('../index');
+const PropTypesCSharpPlugin = require('../index').PropTypesCSharpPlugin;
 
 module.exports = function(env, options = {}) {
   return {
