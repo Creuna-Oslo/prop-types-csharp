@@ -1,7 +1,7 @@
 const traverse = require('@babel/traverse').default;
 const t = require('babel-types');
 
-module.exports = function(syntaxTree, pascalComponentName) {
+module.exports = function({ componentName, requirePropTypes, syntaxTree }) {
   let propTypesIdentifier,
     propTypesAST,
     propTypesMeta = {};
@@ -44,7 +44,7 @@ module.exports = function(syntaxTree, pascalComponentName) {
         // Class components have their bindings nested inside a key equal to the class name
         const bindings = path.scope.hasOwnBinding(oneOfArgument.name)
           ? path.scope.bindings
-          : path.scope.bindings[pascalComponentName].scope.bindings;
+          : path.scope.bindings[componentName].scope.bindings;
 
         const arrayLiteral = bindings[oneOfArgument.name].path.node.init;
 
@@ -68,7 +68,7 @@ module.exports = function(syntaxTree, pascalComponentName) {
         // Class components have their bindings nested inside a key equal to the class name
         const bindings = path.scope.hasOwnBinding(argument.name)
           ? path.scope.bindings
-          : path.scope.bindings[pascalComponentName].scope.bindings;
+          : path.scope.bindings[componentName].scope.bindings;
 
         const objectLiteral = bindings[argument.name].path.node.init;
 
@@ -103,7 +103,7 @@ module.exports = function(syntaxTree, pascalComponentName) {
 
       if (
         !t.isMemberExpression(left) ||
-        !left.get('object').isIdentifier({ name: pascalComponentName })
+        !left.get('object').isIdentifier({ name: componentName })
       ) {
         return;
       }
@@ -113,7 +113,7 @@ module.exports = function(syntaxTree, pascalComponentName) {
         propTypesAST = t.expressionStatement(
           t.assignmentExpression(
             '=',
-            t.identifier(pascalComponentName),
+            t.identifier(componentName),
             path.node.right
           )
         );
@@ -144,7 +144,7 @@ module.exports = function(syntaxTree, pascalComponentName) {
         propTypesAST = t.expressionStatement(
           t.assignmentExpression(
             '=',
-            t.identifier(pascalComponentName),
+            t.identifier(componentName),
             path.node.value
           )
         );
@@ -168,5 +168,7 @@ module.exports = function(syntaxTree, pascalComponentName) {
     return { propTypesAST, propTypesIdentifier, propTypesMeta };
   }
 
-  throw new Error('PropTypes not found');
+  if (requirePropTypes) {
+    throw new Error('PropTypes not found');
+  }
 };

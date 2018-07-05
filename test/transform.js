@@ -17,17 +17,17 @@ const classComponentPath = path.join(
 const classComponentSource = fs.readFileSync(classComponentPath, 'utf-8');
 
 test('Functional component', t => {
-  const transformedSource = transformPropTypes(
-    funcComponentSource,
-    funcComponentPath
-  );
+  const transformedSource = transformPropTypes({
+    filePath: funcComponentPath,
+    sourceCode: funcComponentSource
+  });
   t.snapshot(transformedSource.code);
 });
 
 test('Class component', t => {
-  const transformedSource = transformPropTypes(
-    classComponentSource,
-    classComponentPath
-  );
+  const transformedSource = transformPropTypes({
+    filePath: classComponentPath,
+    sourceCode: classComponentSource
+  });
   t.snapshot(transformedSource.code);
 });

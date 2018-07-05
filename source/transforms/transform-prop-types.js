@@ -12,7 +12,7 @@ const allowedMetaValues = ['exclude', 'float', 'int'];
 const illegalTypes = ['number', 'object'];
 const typesToStrip = ['element', 'func', 'instanceOf', 'node'];
 
-module.exports = function(sourceCode, filePath) {
+module.exports = function({ filePath, requirePropTypes, sourceCode }) {
   try {
     const syntaxTree = parse(sourceCode, {
       plugins: ['jsx', 'classProperties'],
@@ -21,10 +21,11 @@ module.exports = function(sourceCode, filePath) {
 
     const { componentName } = getComponentName(syntaxTree, filePath);
 
-    const { propTypesAST, propTypesIdentifier, propTypesMeta } = getPropTypes(
-      syntaxTree,
-      componentName
-    );
+    const { propTypesAST, propTypesIdentifier, propTypesMeta } = getPropTypes({
+      componentName,
+      requirePropTypes,
+      syntaxTree
+    });
 
     const illegalMetaType = Object.entries(propTypesMeta).find(
       ([_, metaType]) =>

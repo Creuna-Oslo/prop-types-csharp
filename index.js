@@ -6,8 +6,9 @@ const transformPropTypes = require('./source/transforms/transform-prop-types');
 function PropTypesCSharpPlugin(options) {
   this.options = Object.assign(
     {
-      filter: () => true,
-      path: ''
+      exclude: ['node_modules'],
+      path: '',
+      requirePropTypes: true
     },
     options
   );
@@ -18,26 +19,29 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
 
   const buildModule = (compilation, module) => {
     const filePath = module.resource;
+    const shouldExclude =
+      filePath &&
+      this.options.exclude.some(excludeStringOrRegExp =>
+        filePath.match(excludeStringOrRegExp)
+      );
 
-    if (
-      !filePath ||
-      filePath.includes('node_modules') ||
-      !filePath.match(/\.jsx$/) ||
-      !this.options.filter(filePath)
-    ) {
+    if (!filePath || !filePath.match(/\.jsx$/) || shouldExclude) {
       return;
     }
 
-    const fileContent = fs.readFileSync(module.resource, 'utf-8');
-    const { code, componentName } = transformPropTypes(
-      fileContent,
-      module.resource
-    );
+    const sourceCode = fs.readFileSync(module.resource, 'utf-8');
+    const { code, componentName } = transformPropTypes({
+      filePath: module.resource,
+      requirePropTypes: this.options.requirePropTypes,
+      sourceCode
+    });
 
-    compilation.assets[path.join(outputPath, `${componentName}.cs`)] = {
-      source: () => code,
-      size: () => code.length
-    };
+    if (code && componentName) {
+      compilation.assets[path.join(outputPath, `${componentName}.cs`)] = {
+        source: () => code,
+        size: () => code.length
+      };
+    }
   };
 
   const plugin = { name: 'PropTypesCSharpPlugin' };
