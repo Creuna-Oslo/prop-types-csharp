@@ -1,0 +1,64 @@
+const traverse = require('@babel/traverse').default;
+const t = require('babel-types');
+
+const typesToStrip = ['element', 'func', 'instanceOf', 'node'];
+
+const illegalTypes = {
+  number: `Add meta type 'int' or 'float'`,
+  object: `Replace with 'PropTypes.shape' or provide a meta type`,
+  array: `Replace with 'PropTypes.arrayOf' or provide a meta type`
+};
+
+// This function mutates the provided syntaxTree, doing the following (in this order):
+//  - Strip props that match typesToStrip
+//  - Excludes props that have an 'exclude' meta type
+//  - Replaces PropType definitions with meta types if provided
+//  - Validates type against illegalTypes
+//  - Replaces 'PropTypes.x' with 'x'
+
+// This is a lot of different things in a single function, but it is necessary in order to avoid excessive traversal of the syntax tree.
+
+module.exports = function({
+  propTypesIdentifierName,
+  propTypesMeta,
+  syntaxTree
+}) {
+  traverse(syntaxTree, {
+    MemberExpression(path) {
+      // Replace 'PropTypes.x' with 'x' and strip types that only makes sense on the client
+      if (path.get('object').isIdentifier({ name: propTypesIdentifierName })) {
+        const parent = path.findParent(parent => parent.isObjectProperty());
+        const propName = parent.node.key.name;
+        const typeName = path.node.property.name;
+        const meta = propTypesMeta[propName];
+
+        // Strip if type matches typesToStrip
+        if (typesToStrip.includes(typeName)) {
+          return parent.remove();
+        }
+
+        // Strip if meta type is 'exclude'
+        if (t.isIdentifier(meta, { name: 'exclude' })) {
+          return parent.remove();
+        }
+
+        // Replace type with meta type if a meta type exists
+        if (meta) {
+          path.replaceWith(propTypesMeta[propName]);
+          return;
+        }
+
+        if (illegalTypes[typeName]) {
+          throw new Error(
+            `Invalid type '${typeName}' for prop '${propName}'.\n${
+              illegalTypes[typeName]
+            }`
+          );
+        }
+
+        // Replace PropTypes.x with x
+        path.replaceWith(path.node.property);
+      }
+    }
+  });
+};

@@ -26,8 +26,8 @@ FunctionalComponent.propTypes = {
       propertyB: pt.string
     })
   ).isRequired,
-  externalType: pt.shape(Link.propTypes),
-  externalTypeList: pt.arrayOf(pt.shape(Link.propTypes)),
+  externalType: pt.object,
+  externalTypeList: pt.array,
   enumArray: pt.oneOf(enumArray).isRequired,
   enumInline: pt.oneOf([1, 2]),
   enumObject: pt.oneOf(Object.keys(enumObject)),
@@ -43,7 +43,9 @@ FunctionalComponent.propTypes = {
 FunctionalComponent.propTypesMeta = {
   intNumber: 'int',
   floatNumber: 'float',
-  excludeMe: 'exclude'
+  excludeMe: 'exclude',
+  externalType: Link,
+  externalTypeList: Array(Link)
 };
 
 export default FunctionalComponent;

@@ -1,8 +1,15 @@
 const traverse = require('@babel/traverse').default;
 const t = require('babel-types');
 
+const extractMeta = require('./extract-meta');
+
+// Returns:
+//  - propTypesIdentifierName: String.
+//  - propTypesAST: Babel syntax tree containing only propTypes
+//  - propTypesMeta: JS Object with Babel nodes as values
+
 module.exports = function({ componentName, requirePropTypes, syntaxTree }) {
-  let propTypesIdentifier,
+  let propTypesIdentifierName,
     propTypesAST,
     propTypesMeta = {};
 
@@ -10,7 +17,7 @@ module.exports = function({ componentName, requirePropTypes, syntaxTree }) {
     // Get PropTypes variable name from import statement.
     ImportDeclaration(path) {
       if (path.get('source').isStringLiteral({ value: 'prop-types' })) {
-        propTypesIdentifier = path.node.specifiers[0].local.name;
+        propTypesIdentifierName = path.node.specifiers[0].local.name;
       }
     },
 
@@ -20,7 +27,7 @@ module.exports = function({ componentName, requirePropTypes, syntaxTree }) {
 
       if (
         !callee.isMemberExpression() ||
-        !callee.get('object').isIdentifier({ name: propTypesIdentifier }) ||
+        !callee.get('object').isIdentifier({ name: propTypesIdentifierName }) ||
         !callee.get('property').isIdentifier({ name: 'oneOf' })
       ) {
         return;
@@ -121,19 +128,13 @@ module.exports = function({ componentName, requirePropTypes, syntaxTree }) {
       }
 
       if (left.get('property').isIdentifier({ name: 'propTypesMeta' })) {
-        propTypesMeta = path.node.right.properties.reduce(
-          (accum, property) =>
-            Object.assign({}, accum, {
-              [property.key.name]: property.value.value
-            }),
-          {}
-        );
+        propTypesMeta = extractMeta(path.node.right.properties);
       }
     }
   });
 
   if (propTypesAST) {
-    return { propTypesAST, propTypesIdentifier, propTypesMeta };
+    return { propTypesAST, propTypesIdentifierName, propTypesMeta };
   }
 
   traverse(syntaxTree, {
@@ -151,13 +152,7 @@ module.exports = function({ componentName, requirePropTypes, syntaxTree }) {
       }
 
       if (key.isIdentifier({ name: 'propTypesMeta' })) {
-        propTypesMeta = path.node.value.properties.reduce(
-          (accum, property) =>
-            Object.assign({}, accum, {
-              [property.key.name]: property.value.value
-            }),
-          {}
-        );
+        propTypesMeta = extractMeta(path.node.value.properties);
       }
 
       path.skip();
@@ -165,7 +160,11 @@ module.exports = function({ componentName, requirePropTypes, syntaxTree }) {
   });
 
   if (propTypesAST) {
-    return { propTypesAST, propTypesIdentifier, propTypesMeta };
+    return {
+      propTypesAST,
+      propTypesIdentifierName,
+      propTypesMeta
+    };
   }
 
   if (requirePropTypes) {
