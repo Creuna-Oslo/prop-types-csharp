@@ -1,86 +1,99 @@
-const traverse = require('@babel/traverse').default;
+const t = require('babel-types');
 
 const capitalize = require('./capitalize');
 const unknownToPascal = require('./unknown-to-pascal');
 
+const badTypeError = propName => {
+  return new Error(
+    `Found bad type for ${propName}. Please check for incompatibilities with this plugin:\n
+• Wrap references other Components' propTypes with 'PropTypes.shape'
+• Don't reference imported objects/arrays in 'PropTypes.oneOf'
+• Don't use non-PropTypes functions in propType definition`
+  );
+};
+
 module.exports = function({ syntaxTree }) {
-  let outputString = 'using System.Collections;\n\n';
+  const assignmentExpressions = syntaxTree.program.body.map(
+    expressionStatement => expressionStatement.expression
+  );
 
-  traverse(syntaxTree, {
-    AssignmentExpression(path) {
-      const className = capitalize(path.node.left.name);
-      const isArrayExpression = path.get('right').isArrayExpression();
+  const code = assignmentExpressions.reduce((accum, assignmentNode) => {
+    const className = capitalize(assignmentNode.left.name);
+    const isArrayExpression = t.isArrayExpression(assignmentNode.right);
 
-      outputString += `public ${
-        isArrayExpression ? 'enum' : 'class'
-      } ${className} \n{\n`;
+    if (isArrayExpression) {
+      return (
+        accum +
+        `public enum ${className} \n{\n` +
+        assignmentNode.right.elements.reduce(
+          (accum, enumProperty, index, array) => {
+            const value = enumProperty.value;
+            const isNumber = typeof value === 'number';
+            const prefix = isNumber ? className : '';
+            const isLast = index === array.length - 1;
 
-      if (!isArrayExpression) {
-        path.get('right').traverse({
-          ObjectProperty(path) {
-            const typeNode = path.node.value;
-            const typePath = path.get('value');
-            const propName = capitalize(path.node.key.name);
-            const isObject = typePath.isMemberExpression();
-            const isRequired =
-              isObject &&
-              typePath.get('property').isIdentifier({ name: 'isRequired' });
-            const isArray = isObject
-              ? typePath.get('object').isCallExpression() &&
-                typePath.node.object.callee.name === 'arrayOf'
-              : typePath.isCallExpression() &&
-                typeNode.callee.name === 'arrayOf';
+            accum += isNumber ? '' : `  [StringValue("${value}")]\n`;
+            accum += `  ${unknownToPascal(prefix + value)} = ${
+              isNumber ? value : index
+            },\n`;
+            accum += isLast ? '}\n\n' : '';
+            return accum;
+          },
+          ''
+        )
+      );
+    } else {
+      return (
+        accum +
+        `public class ${className} \n{\n` +
+        assignmentNode.right.properties.reduce((accum, node, index, array) => {
+          const typeNode = node.value;
+          const propName = capitalize(node.key.name);
+          const isLast = index === array.length - 1;
+          const isObject = t.isMemberExpression(typeNode);
+          const isRequired =
+            isObject &&
+            t.isIdentifier(typeNode.property, { name: 'isRequired' });
+          const isArray = isObject
+            ? t.isCallExpression(typeNode.object) &&
+              typeNode.object.callee.name === 'arrayOf'
+            : t.isCallExpression(typeNode) &&
+              typeNode.callee.name === 'arrayOf';
 
-            let typeName;
+          let typeName;
 
-            // type
-            if (typePath.isIdentifier()) {
-              typeName = typeNode.name;
-            }
-
-            // type.isRequired
-            if (isObject && typePath.get('object').isIdentifier()) {
-              typeName = typeNode.object.name;
-            }
-
-            if (isArray) {
-              typeName = isObject
-                ? typeNode.object.arguments[0].name // arrayOf(type).isRequired
-                : path.node.value.arguments[0].name; // arrayOf(type)
-            }
-
-            if (!typeName) {
-              throw new Error(
-                `Found bad type for ${
-                  path.node.key.name
-                }. Please check for incompatibilities with this plugin:\n
-• Make sure you've wrapped references other Components' propTypes with 'PropTypes.shape'
-• Make sure you're not referencing imported objects/arrays in 'PropTypes.oneOf'`
-              );
-            }
-
-            const type = isArray ? `IList<${typeName}>` : typeName;
-
-            outputString += isRequired ? `  [Required]\n` : '';
-            outputString += `  public ${type} ${propName} { get; set; }\n`;
+          // type
+          if (t.isIdentifier(typeNode)) {
+            typeName = typeNode.name;
           }
-        });
-      } else {
-        const array = path.node.right.elements;
-        array.forEach((enumProperty, index) => {
-          const value = enumProperty.value;
-          const isNumber = typeof value === 'number';
-          const prefix = isNumber ? className : '';
 
-          outputString += isNumber ? '' : `  [StringValue("${value}")]\n`;
-          outputString += `  ${unknownToPascal(prefix + value)} = ${
-            isNumber ? value : index
-          },\n`;
-        });
-      }
-      outputString += '}\n\n';
+          // type.isRequired
+          if (isObject && t.isIdentifier(typeNode.object)) {
+            typeName = typeNode.object.name;
+          }
+
+          if (isArray) {
+            typeName = isObject
+              ? typeNode.object.arguments[0].name // arrayOf(type).isRequired
+              : typeNode.arguments[0].name; // arrayOf(type)
+          }
+
+          if (!typeName) {
+            throw badTypeError(node.key.name);
+          }
+
+          const type = isArray ? `IList<${typeName}>` : typeName;
+
+          accum += isRequired ? `  [Required]\n` : '';
+          accum += `  public ${type} ${propName} { get; set; }\n`;
+          accum += isLast ? '}\n\n' : '';
+          return accum;
+        }, '')
+      );
     }
-  });
+  }, '');
 
-  return outputString;
+  const hasList = code.match(/IList<.+>/);
+
+  return hasList ? `using System.Collections;\n\n${code}` : code;
 };
