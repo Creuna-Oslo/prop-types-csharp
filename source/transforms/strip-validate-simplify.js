@@ -10,8 +10,8 @@ const illegalTypes = {
 };
 
 // This function mutates the provided syntaxTree, doing the following (in this order):
-//  - Strip props that match typesToStrip
 //  - Excludes props that have an 'exclude' meta type
+//  - Strip props that match typesToStrip
 //  - Replaces PropType definitions with meta types if provided
 //  - Validates type against illegalTypes
 //  - Replaces 'PropTypes.x' with 'x'
@@ -24,22 +24,29 @@ module.exports = function({
   propTypesMeta,
   syntaxTree
 }) {
+  // Strip props excluded in propTypesMeta
+  traverse(syntaxTree, {
+    ObjectProperty(path) {
+      const propName = path.node.key.name;
+
+      if (t.isIdentifier(propTypesMeta[propName], { name: 'exclude' })) {
+        path.remove();
+        path.skip();
+      }
+    }
+  });
+
   traverse(syntaxTree, {
     MemberExpression(path) {
       // Replace 'PropTypes.x' with 'x' and strip types that only makes sense on the client
       if (path.get('object').isIdentifier({ name: propTypesIdentifierName })) {
         const parent = path.findParent(parent => parent.isObjectProperty());
-        const propName = parent.node.key.name;
+        const propName = parent && parent.node.key.name;
         const typeName = path.node.property.name;
         const meta = propTypesMeta[propName];
 
         // Strip if type matches typesToStrip
         if (typesToStrip.includes(typeName)) {
-          return parent.remove();
-        }
-
-        // Strip if meta type is 'exclude'
-        if (t.isIdentifier(meta, { name: 'exclude' })) {
           return parent.remove();
         }
 
@@ -67,18 +74,17 @@ module.exports = function({
   traverse(syntaxTree, {
     CallExpression(path) {
       const parent = path.findParent(parent => parent.isObjectProperty());
+      const propName = parent && parent.node.key.name;
       const callee = path.get('callee');
       const argument = path.node.arguments[0];
 
       if (
-        parent &&
         t.isMemberExpression(argument) &&
         argument.property.name === 'propTypes' &&
         callee.isIdentifier({ name: 'arrayOf' })
       ) {
-        const propName = parent.node.key.name;
         throw new Error(
-          `Illegal value provided to 'PropTypes.arrayOf' on prop ${propName}. References to Other components' propTypes must be wrapped in 'PropTypes.shape'`
+          `Illegal value provided to 'PropTypes.arrayOf' on prop '${propName}'. References to Other components' propTypes must be wrapped in 'PropTypes.shape'`
         );
       }
     }

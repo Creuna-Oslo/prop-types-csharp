@@ -36,14 +36,15 @@ module.exports = function({ syntaxTree }) {
       const isOneOf = path.get('callee').isIdentifier({ name: 'oneOf' });
       const isShape = path.get('callee').isIdentifier({ name: 'shape' });
       const prop = path.findParent(parent => t.isObjectProperty(parent));
+
+      if (!prop || (!isShape && !isOneOf)) {
+        return;
+      }
+
       const propName = prop.node.key.name;
       const propDefinitionName =
         capitalize(propName) + (isArrayOf ? 'Item' : '');
       const program = path.findParent(parent => t.isProgram(parent));
-
-      if (!isShape && !isOneOf) {
-        return;
-      }
 
       // Generate new definitions from oneOf and shape
       if (!isTypeReference || isOneOf) {
