@@ -26,8 +26,10 @@ module.exports = function(metaProperties) {
     }
 
     // Array(Component) -> "arrayOf(Component)" (Return PropTypes-like string);
-    if (t.isCallExpression(property.value)) {
-      const typeName = property.value.arguments[0].name;
+    if (
+      t.isCallExpression(property.value) &&
+      property.value.callee.name === 'Array'
+    ) {
       propertyValue = t.callExpression(
         t.identifier('arrayOf'),
         property.value.arguments

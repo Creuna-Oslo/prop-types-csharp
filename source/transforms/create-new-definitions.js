@@ -5,7 +5,8 @@ const capitalize = require('../utils/capitalize');
 
 // This function mutates the provided syntax tree, doing the following
 //  - Finds any calls to 'oneOf' and 'shape'
-//  - If any, adds new nodes to the syntaxTree for types in the arguments of these calls
+//  - Checks whether it holds a reference
+//  - If any matching calls are found and they don't hold a reference, new nodes are added to the syntaxTree for types in the arguments of these calls
 //     Basically, turning this:
 //       Component = {
 //         propA: string,
@@ -44,7 +45,7 @@ module.exports = function({ syntaxTree }) {
         return;
       }
 
-      // Replace shape and oneOf with new definitions
+      // Generate new definitions from oneOf and shape
       if (!isTypeReference || isOneOf) {
         program.pushContainer(
           'body',
@@ -59,7 +60,7 @@ module.exports = function({ syntaxTree }) {
       }
 
       path.replaceWith(
-        isTypeReference ? argument : t.identifier(propDefinitionName)
+        isTypeReference ? argument.object : t.identifier(propDefinitionName)
       );
     }
   });

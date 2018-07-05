@@ -26,8 +26,10 @@ class ClassComponent extends React.Component {
         propertyB: pt.string
       })
     ).isRequired,
-    externalType: pt.object,
-    externalTypeList: pt.array,
+    link: pt.shape(Link.propTypes),
+    linkList: pt.arrayOf(pt.shape(Link.propTypes)),
+    linkMeta: pt.object,
+    linkListMeta: pt.array,
     enumArray: pt.oneOf(enumArray).isRequired,
     enumInline: pt.oneOf([1, 2]),
     enumObject: pt.oneOf(Object.keys(enumObject)),
@@ -44,8 +46,8 @@ class ClassComponent extends React.Component {
     intNumber: 'int',
     floatNumber: 'float',
     excludeMe: 'exclude',
-    externalType: Link,
-    externalTypeList: Array(Link)
+    linkMeta: Link,
+    linkListMeta: Array(Link)
   };
 
   render() {

@@ -1,9 +1,9 @@
 const traverse = require('@babel/traverse').default;
 const t = require('babel-types');
 
+// Replace references in 'oneOf' with value literals
 module.exports = function({ componentName, syntaxTree }) {
   traverse(syntaxTree, {
-    // Replace references in 'oneOf' with value literals
     CallExpression(path) {
       const callee = path.get('callee');
 
@@ -17,7 +17,7 @@ module.exports = function({ componentName, syntaxTree }) {
 
       const missingLiteralError = argumentName =>
         new Error(
-          `Couldn't resolve value for prop '${propName}'. Make sure '${argumentName}' is defined in the above file.`
+          `Couldn't resolve enum value for prop '${propName}'. Make sure '${argumentName}' is defined in the above file.`
         );
 
       // Reference to an array

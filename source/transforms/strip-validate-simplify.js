@@ -15,6 +15,7 @@ const illegalTypes = {
 //  - Replaces PropType definitions with meta types if provided
 //  - Validates type against illegalTypes
 //  - Replaces 'PropTypes.x' with 'x'
+//  - Validates References to other components in 'arrayOf'
 
 // This is a lot of different things in a single function, but it is necessary in order to avoid excessive traversal of the syntax tree.
 
@@ -58,6 +59,26 @@ module.exports = function({
 
         // Replace PropTypes.x with x
         path.replaceWith(path.node.property);
+      }
+    }
+  });
+
+  // Throw when there's a reference to 'Component.propTypes' inside an 'arrayOf'
+  traverse(syntaxTree, {
+    CallExpression(path) {
+      const parent = path.findParent(parent => parent.isObjectProperty());
+      const propName = parent.node.key.name;
+      const callee = path.get('callee');
+      const argument = path.node.arguments[0];
+
+      if (
+        t.isMemberExpression(argument) &&
+        argument.property.name === 'propTypes' &&
+        callee.isIdentifier({ name: 'arrayOf' })
+      ) {
+        throw new Error(
+          `Illegal value provided to 'PropTypes.arrayOf' on prop ${propName}. References to Other components' propTypes must be wrapped in 'PropTypes.shape'`
+        );
       }
     }
   });

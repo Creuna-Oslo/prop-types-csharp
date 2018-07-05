@@ -49,6 +49,16 @@ module.exports = function({ syntaxTree }) {
                 : path.node.value.arguments[0].name; // arrayOf(type)
             }
 
+            if (!typeName) {
+              throw new Error(
+                `Found bad type for ${
+                  path.node.key.name
+                }. Please check for incompatibilities with this plugin:\n
+• Make sure you've wrapped references other Components' propTypes with 'PropTypes.shape'
+• Make sure you're not referencing imported objects/arrays in 'PropTypes.oneOf'`
+              );
+            }
+
             const type = isArray ? `IList<${typeName}>` : typeName;
 
             outputString += isRequired ? `  [Required]\n` : '';
