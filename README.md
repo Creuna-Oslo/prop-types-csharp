@@ -22,7 +22,9 @@ Props of type `func`, `element`, `node` and `instanceOf` are excluded when creat
 
 Props of type `number` and `object` are ambiguous and cannot be included in C# classes as-is.
 
-`number` should have a `propTypesMeta` definition (see below). `object` should be replaced by a `shape` containing an object literal or another component's propTypes. Alternatively, `number` or `object` can be excluded using `propTypesMeta`
+`number` should have a `propTypesMeta` definition (see below). `object` should be replaced by a `shape` containing an object literal or another component's propTypes. Alternatively, `number` or `object` can be excluded using `propTypesMeta`.
+
+`oneOfType` is currently also illegal until we figure out how to deal with it.
 
 ### Excluding propTypes
 
@@ -68,7 +70,7 @@ class Component extends React.Component {
 
 ### Running in development mode
 
-Running this in development is not recommended, as it may slow down your build.
+This plugin does a bit of heavy lifting. If you experience slow development builds, you could try limiting class generation to production.
 
 ### Config example
 
@@ -82,7 +84,10 @@ module.exports = function(env, options = {}) {
     entry: { ... },
     output: { ... },
     module: { ... },
-    plugins: production ? [new PropTypesCSharpPlugin()] : []
+    plugins: production ? [new PropTypesCSharpPlugin({
+      path: 'classes',
+      exclude: ['node_modules', 'some/path']
+    })] : []
   };
 };
 ```
@@ -92,3 +97,7 @@ module.exports = function(env, options = {}) {
 ### path: `String`
 
 Path relative to `output.path` to put `.cs` files.
+
+### exclude: `Array` of `String | RegExp` = `['node-modules']`
+
+Use this to exclude paths or files from class generation.
