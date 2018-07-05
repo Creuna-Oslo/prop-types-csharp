@@ -14,6 +14,8 @@
   "scripts": {
     "build": "webpack --config=fixtures/webpack.config --mode=production",
     "transform": "node debug/transform-prop-types.js",
+    "lint:fix": "eslint --fix",
+    "lint": "eslint",
     "test": "ava -v"
   },
   "dependencies": {
