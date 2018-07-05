@@ -6,7 +6,7 @@ const webpack = require('webpack');
 const webpackConfig = require('../fixtures/webpack.config');
 
 test.cb('Webpack plugin', t => {
-  t.plan(3);
+  t.plan(4);
 
   webpack(webpackConfig({}, { mode: 'production' }), (error, stats) => {
     if (error) {
@@ -20,7 +20,7 @@ test.cb('Webpack plugin', t => {
       .filter(asset => asset.name.match(/\.cs$/))
       .map(file => file.name);
 
-    t.is(CSharpFilePaths.length, 2);
+    t.is(CSharpFilePaths.length, 3);
 
     CSharpFilePaths.forEach(filePath => {
       const fileContent = fs.readFileSync(
