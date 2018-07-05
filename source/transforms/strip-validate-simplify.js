@@ -67,15 +67,16 @@ module.exports = function({
   traverse(syntaxTree, {
     CallExpression(path) {
       const parent = path.findParent(parent => parent.isObjectProperty());
-      const propName = parent.node.key.name;
       const callee = path.get('callee');
       const argument = path.node.arguments[0];
 
       if (
+        parent &&
         t.isMemberExpression(argument) &&
         argument.property.name === 'propTypes' &&
         callee.isIdentifier({ name: 'arrayOf' })
       ) {
+        const propName = parent.node.key.name;
         throw new Error(
           `Illegal value provided to 'PropTypes.arrayOf' on prop ${propName}. References to Other components' propTypes must be wrapped in 'PropTypes.shape'`
         );
