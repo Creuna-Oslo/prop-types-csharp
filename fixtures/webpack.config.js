@@ -17,7 +17,11 @@ module.exports = function(env, options = {}) {
         {
           test: /\.jsx?$/,
           exclude: /node_modules/,
-          use: ['babel-loader', 'eslint-loader']
+          use: [
+            'babel-loader',
+            'eslint-loader',
+            path.resolve('source/loader/proptypes-meta-loader')
+          ]
         }
       ]
     },
