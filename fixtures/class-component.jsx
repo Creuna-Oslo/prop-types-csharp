@@ -26,6 +26,7 @@ class ClassComponent extends React.Component {
         propertyB: pt.string
       })
     ).isRequired,
+    nestedList: pt.arrayOf(pt.arrayOf(pt.arrayOf(pt.string))),
     link: pt.shape(Link.propTypes),
     linkList: pt.arrayOf(pt.shape(Link.propTypes)),
     linkMeta: pt.object,

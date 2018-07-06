@@ -15,14 +15,20 @@ function generateCSharpType(node, propName) {
   const isObject = t.isMemberExpression(node);
 
   // If node is a member expression node, the node we're interested in will be nested under 'node.object'. This typically happens with arrayOf(something).isRequired, with 'arrayOf' being the 'object' and 'isRequired' being the 'property'
-  const typeNode = isObject ? node.object : node;
-  const isArrayOf =
-    t.isCallExpression(typeNode) && typeNode.callee.name === 'arrayOf';
+  const maybeArrayOfNode = isObject ? node.object : node;
 
-  const typeName = isArrayOf ? typeNode.arguments[0].name : typeNode.name;
+  const isArrayOf =
+    t.isCallExpression(maybeArrayOfNode) &&
+    maybeArrayOfNode.callee.name === 'arrayOf';
+
+  // Value might be a call to 'arrayOf'. In that case we need to extract the node we want from maybeArrayNode.arguments
+  const typeNode = isArrayOf ? maybeArrayOfNode.arguments[0] : maybeArrayOfNode;
+
+  const typeName = t.isCallExpression(typeNode)
+    ? generateCSharpType(typeNode, propName)
+    : typeNode.name;
 
   if (!typeName) {
-    console.log(typeNode);
     throw badTypeError(propName);
   }
 

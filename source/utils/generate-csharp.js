@@ -59,7 +59,7 @@ module.exports = function({ syntaxTree }) {
     }
   }, '');
 
-  const hasList = code.match(/IList<.+>/);
+  const hasList = code.match(/IList</);
 
   return hasList ? `using System.Collections;\n\n${code}` : code;
 };
