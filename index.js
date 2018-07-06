@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
+const PropTypesMetaLoader = require('./source/loader/proptypes-meta-loader');
 const transformPropTypes = require('./source/transforms/transform-prop-types');
 
 function PropTypesCSharpPlugin(options) {
@@ -68,4 +69,8 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
 };
 
 PropTypesCSharpPlugin['default'] = PropTypesCSharpPlugin;
-module.exports = PropTypesCSharpPlugin;
+
+module.exports = {
+  PropTypesCSharpPlugin, 
+  PropTypesMetaLoader
+};
