@@ -1,16 +1,8 @@
 const t = require('babel-types');
 
 const capitalize = require('./capitalize');
+const generateCSharpType = require('../utils/generate-csharp-type');
 const unknownToPascal = require('./unknown-to-pascal');
-
-const badTypeError = propName => {
-  return new Error(
-    `Found bad type for ${propName}. Please check for incompatibilities with this plugin:\n
-• Wrap references other Components' propTypes with 'PropTypes.shape'
-• Don't reference imported objects/arrays in 'PropTypes.oneOf'
-• Don't use non-PropTypes functions in propType definition`
-  );
-};
 
 module.exports = function({ syntaxTree }) {
   const assignmentExpressions = syntaxTree.program.body.map(
@@ -47,6 +39,7 @@ module.exports = function({ syntaxTree }) {
         accum +
         `public class ${className} \n{\n` +
         assignmentNode.right.properties.reduce((accum, node, index, array) => {
+          // 'node' is an ObjectProperty node
           const typeNode = node.value;
           const propName = capitalize(node.key.name);
           const isLast = index === array.length - 1;
@@ -54,35 +47,8 @@ module.exports = function({ syntaxTree }) {
           const isRequired =
             isObject &&
             t.isIdentifier(typeNode.property, { name: 'isRequired' });
-          const isArray = isObject
-            ? t.isCallExpression(typeNode.object) &&
-              typeNode.object.callee.name === 'arrayOf'
-            : t.isCallExpression(typeNode) &&
-              typeNode.callee.name === 'arrayOf';
 
-          let typeName;
-
-          // type
-          if (t.isIdentifier(typeNode)) {
-            typeName = typeNode.name;
-          }
-
-          // type.isRequired
-          if (isObject && t.isIdentifier(typeNode.object)) {
-            typeName = typeNode.object.name;
-          }
-
-          if (isArray) {
-            typeName = isObject
-              ? typeNode.object.arguments[0].name // arrayOf(type).isRequired
-              : typeNode.arguments[0].name; // arrayOf(type)
-          }
-
-          if (!typeName) {
-            throw badTypeError(node.key.name);
-          }
-
-          const type = isArray ? `IList<${typeName}>` : typeName;
+          const type = generateCSharpType(typeNode, node.key.name);
 
           accum += isRequired ? `  [Required]\n` : '';
           accum += `  public ${type} ${propName} { get; set; }\n`;
