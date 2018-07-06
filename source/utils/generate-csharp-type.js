@@ -24,6 +24,7 @@ function generateCSharpType(node, propName) {
   // Value might be a call to 'arrayOf'. In that case we need to extract the node we want from maybeArrayNode.arguments
   const typeNode = isArrayOf ? maybeArrayOfNode.arguments[0] : maybeArrayOfNode;
 
+  // the type might be another call expression. If so, RECURSE
   const typeName = t.isCallExpression(typeNode)
     ? generateCSharpType(typeNode, propName)
     : typeNode.name;
