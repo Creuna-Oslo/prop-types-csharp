@@ -36,6 +36,11 @@ module.exports = function({ sourceCode }) {
     syntaxTree
   });
 
+  // getPropTypes returns an Expression node, which contains an AssignmentExpression node, which has a 'right' property which is where the propType definitions live. If the 'right' property is not an ObjectExpression node, something other than an object literal has been assigned to the component propType definition. In that case, don't generate a class
+  if (!t.isObjectExpression(propTypesAST.expression.right)) {
+    return {};
+  }
+
   // Replace Syntax tree representing the component with a tree only representing the propTypes. Sadly, I found no way of doing this without mutating the exising tree because generating a new program node will require a parentPath and a scope and who knows what they are.
   traverse(syntaxTree, {
     Program(path) {
