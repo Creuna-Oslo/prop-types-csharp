@@ -3,8 +3,6 @@ const path = require('path');
 const PropTypesCSharpPlugin = require('../index');
 
 module.exports = function(env, options = {}) {
-  const production = options.mode === 'production';
-
   return {
     entry: './fixtures/app.js',
     output: {
@@ -24,6 +22,6 @@ module.exports = function(env, options = {}) {
     resolve: {
       extensions: ['.js', '.jsx']
     },
-    plugins: production ? [new PropTypesCSharpPlugin({ path: 'classes' })] : []
+    plugins: [new PropTypesCSharpPlugin({ path: 'classes' })]
   };
 };
