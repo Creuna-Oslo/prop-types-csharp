@@ -1,55 +1,62 @@
-const traverse = require('@babel/traverse').default;
 const t = require('babel-types');
 
+const getNameFromDeclaration = node => {
+  const { declaration } = node;
+
+  switch (node.declaration.type) {
+    case 'Identifier':
+      return { componentName: declaration.name };
+    case 'ClassDeclaration':
+      return { componentName: declaration.id.name };
+    default:
+      throw new Error(
+        `Couldn't get component name because export is a ${declaration.type}.`
+      );
+  }
+};
+
+const multipleExportsError = new Error(
+  `Couldn't get component name because of multiple exports.`
+);
+
+// Gets component name from export declaration. Expects a File node
 module.exports = function({ syntaxTree }) {
-  let componentName;
+  const exportDeclarations = syntaxTree.program.body.filter(statement =>
+    t.isExportDeclaration(statement)
+  );
 
-  traverse(syntaxTree, {
-    // Get PropTypes variable name from import statement.
-    ExportDeclaration(path) {
-      if (path.isExportNamedDeclaration()) {
-        if (path.node.specifiers.length > 1) {
-          throw new Error(
-            `Couldn't get component name because of multiple exports.`
-          );
-        }
+  const exportDefaultDeclaration = exportDeclarations.find(declaration =>
+    t.isExportDefaultDeclaration(declaration)
+  );
 
-        componentName = path.node.specifiers[0].exported.name;
-        path.stop();
-        return;
-      }
-
-      if (path.isExportDefaultDeclaration()) {
-        const { declaration } = path.node;
-
-        if (
-          !t.isIdentifier(declaration) &&
-          !t.isClassDeclaration(declaration)
-        ) {
-          throw new Error(
-            `Couldn't get component name because export is a ${
-              declaration.type
-            }.`
-          );
-        }
-
-        switch (path.node.declaration.type) {
-          case 'Identifier':
-            componentName = declaration.name;
-            path.stop();
-            return;
-          case 'ClassDeclaration':
-            componentName = declaration.id.name;
-            path.stop();
-            return;
-        }
-      }
-    }
-  });
-
-  if (componentName) {
-    return { componentName };
+  if (exportDefaultDeclaration) {
+    return getNameFromDeclaration(exportDefaultDeclaration);
   }
 
-  throw new Error('Component name not found');
+  if (exportDeclarations.length > 1) {
+    throw multipleExportsError;
+  }
+
+  const [declaration] = exportDeclarations;
+
+  // An ExportDeclaration may have a 'declaration' property
+  if (declaration.declaration) {
+    return getNameFromDeclaration(declaration);
+  }
+
+  // It may also have a 'specifiers' property which holds a list of exports
+  if (declaration.specifiers.length > 1) {
+    throw multipleExportsError;
+  }
+
+  if (declaration.specifiers.length === 1) {
+    const [specifier] = declaration.specifiers;
+    return { componentName: specifier.exported.name };
+  }
+
+  throw new Error(
+    `Component name not found. Make sure that:
+• your component is exported as an ES module
+• the file has at most one named export or a default export`
+  );
 };
