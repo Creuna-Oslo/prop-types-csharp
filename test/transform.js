@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const test = require('ava');
 
-const transformPropTypes = require('../source/transforms/transform-prop-types');
+const generateClass = require('../source/generate-class');
 
 const funcComponentPath = path.join(
   __dirname,
@@ -17,7 +17,7 @@ const classComponentPath = path.join(
 const classComponentSource = fs.readFileSync(classComponentPath, 'utf-8');
 
 test('Functional component', t => {
-  const transformedSource = transformPropTypes({
+  const transformedSource = generateClass({
     filePath: funcComponentPath,
     sourceCode: funcComponentSource
   });
@@ -25,7 +25,7 @@ test('Functional component', t => {
 });
 
 test('Class component', t => {
-  const transformedSource = transformPropTypes({
+  const transformedSource = generateClass({
     filePath: classComponentPath,
     sourceCode: classComponentSource
   });

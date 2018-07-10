@@ -3,14 +3,14 @@ const { parse } = require('@babel/parser');
 const traverse = require('@babel/traverse').default;
 const t = require('babel-types');
 
-const createNewDefinitions = require('./create-new-definitions');
-const expandReferences = require('./expand-references');
-const generateCSharp = require('../utils/generate-csharp');
-const getComponentName = require('../utils/get-component-name');
-const getMeta = require('../utils/get-meta');
-const getPropTypes = require('../utils/get-prop-types');
-const getPropTypesIdentifierName = require('../utils/get-prop-types-identifier-name');
-const stripValidateSimplify = require('./strip-validate-simplify');
+const createNewDefinitions = require('./transforms/create-new-definitions');
+const expandReferences = require('./transforms/expand-references');
+const generateCSharp = require('./utils/generate-csharp');
+const getComponentName = require('./utils/get-component-name');
+const getMeta = require('./utils/get-meta');
+const getPropTypes = require('./utils/get-prop-types');
+const getPropTypesIdentifierName = require('./utils/get-prop-types-identifier-name');
+const stripValidateSimplify = require('./transforms/strip-validate-simplify');
 
 module.exports = function({ sourceCode }) {
   const syntaxTree = parse(sourceCode, {

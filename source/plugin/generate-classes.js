@@ -1,11 +1,11 @@
 const fs = require('fs');
 
-const transformPropTypes = require('../transforms/transform-prop-types');
+const generateClass = require('../generate-class');
 
 const attemptGenerateClass = modulePath => {
   try {
     const sourceCode = fs.readFileSync(modulePath, 'utf-8');
-    const { code, componentName } = transformPropTypes({
+    const { code, componentName } = generateClass({
       sourceCode
     });
 
