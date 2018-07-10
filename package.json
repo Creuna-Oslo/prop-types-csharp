@@ -13,7 +13,6 @@
   "license": "MIT",
   "scripts": {
     "build": "webpack --config=fixtures/webpack.config --mode=production",
-    "transform": "node debug/transform-prop-types.js",
     "test": "ava -v"
   },
   "dependencies": {
