@@ -11,8 +11,7 @@ const illegalTypes = {
 };
 
 // This function mutates the provided syntaxTree, doing the following (in this order):
-//  - Excludes props that have an 'exclude' meta type
-//  - Strip props that match typesToStrip
+//  - Excludes props that match typesToStrip or have an 'exclude' meta type
 //  - Replaces PropType definitions with meta types if provided
 //  - Validates type against illegalTypes
 //  - Replaces 'PropTypes.x' with 'x'
@@ -27,7 +26,6 @@ module.exports = function({
 }) {
   traverse(syntaxTree, {
     MemberExpression(path) {
-      // Replace 'PropTypes.x' with 'x' and strip types that only makes sense on the client
       if (path.get('object').isIdentifier({ name: propTypesIdentifierName })) {
         const parent = path.findParent(parent => parent.isObjectProperty());
         const propName = parent && parent.node.key.name;

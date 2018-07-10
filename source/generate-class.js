@@ -10,7 +10,7 @@ const getComponentName = require('./utils/get-component-name');
 const getMeta = require('./utils/get-meta');
 const getPropTypes = require('./utils/get-prop-types');
 const getPropTypesIdentifierName = require('./utils/get-prop-types-identifier-name');
-const stripValidateSimplify = require('./transforms/strip-validate-simplify');
+const transformPropTypes = require('./transforms/transform-prop-types');
 
 module.exports = function({ sourceCode }) {
   const syntaxTree = parse(sourceCode, {
@@ -26,7 +26,7 @@ module.exports = function({ sourceCode }) {
   });
 
   // Strip client-only types, apply meta types and simplify type definitions
-  stripValidateSimplify({ propTypesIdentifierName, propTypesMeta, syntaxTree });
+  transformPropTypes({ propTypesIdentifierName, propTypesMeta, syntaxTree });
 
   // Expand references to arrays and objects in 'oneOf'
   expandReferences({ componentName, syntaxTree });
