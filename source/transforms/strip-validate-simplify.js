@@ -25,18 +25,6 @@ module.exports = function({
   propTypesMeta,
   syntaxTree
 }) {
-  // Strip props excluded in propTypesMeta
-  traverse(syntaxTree, {
-    ObjectProperty(path) {
-      const propName = path.node.key.name;
-
-      if (t.isIdentifier(propTypesMeta[propName], { name: 'exclude' })) {
-        path.remove();
-        path.skip();
-      }
-    }
-  });
-
   traverse(syntaxTree, {
     MemberExpression(path) {
       // Replace 'PropTypes.x' with 'x' and strip types that only makes sense on the client
@@ -46,8 +34,11 @@ module.exports = function({
         const typeName = path.node.property.name;
         const meta = propTypesMeta[propName];
 
-        // Strip if type matches typesToStrip
-        if (typesToStrip.includes(typeName)) {
+        // Strip if type matches typesToStrip or has 'exclude' meta type
+        if (
+          typesToStrip.includes(typeName) ||
+          t.isIdentifier(meta, { name: 'exclude' })
+        ) {
           return parent.remove();
         }
 
