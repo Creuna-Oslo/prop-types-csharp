@@ -1,8 +1,7 @@
 const traverse = require('@babel/traverse').default;
 const t = require('babel-types');
 
-// Returns:
-//  - propTypesAST: Babel syntax tree containing only propTypes
+// Returns Babel node containing only propTypes
 
 module.exports = function({ componentName, syntaxTree }) {
   let propTypesAST;
