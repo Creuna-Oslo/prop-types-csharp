@@ -3,9 +3,9 @@ const { parse } = require('@babel/parser');
 const traverse = require('@babel/traverse').default;
 const t = require('babel-types');
 
+const ASTToCsharp = require('./utils/ast-to-csharp');
 const createNewDefinitions = require('./transforms/create-new-definitions');
 const expandReferences = require('./transforms/expand-references');
-const generateCSharp = require('./utils/generate-csharp');
 const getComponentName = require('./utils/get-component-name');
 const getMeta = require('./utils/get-meta');
 const getPropTypes = require('./utils/get-prop-types');
@@ -76,7 +76,7 @@ module.exports = function({ sourceCode }) {
   // EnumArray = ['value-1', 'value-2'];
 
   // Stringify!
-  const code = generateCSharp({ syntaxTree });
+  const code = ASTToCsharp({ syntaxTree });
 
   return { componentName, code };
 };
