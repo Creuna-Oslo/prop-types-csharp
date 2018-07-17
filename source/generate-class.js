@@ -25,12 +25,18 @@ module.exports = function({ sourceCode }) {
     syntaxTree
   });
 
+  // Abort if file doesn't import 'prop-types'
+  if (!propTypesIdentifierName) {
+    return {};
+  }
+
   // Strip client-only types, apply meta types and simplify type definitions
   transformPropTypes({ propTypesIdentifierName, propTypesMeta, syntaxTree });
 
   // Expand references to arrays and objects in 'oneOf'
   expandReferences({ componentName, syntaxTree });
 
+  // Extract the propTypes part of the syntax tree
   const { propTypesAST } = getPropTypes({
     componentName,
     syntaxTree
@@ -49,7 +55,7 @@ module.exports = function({ sourceCode }) {
     }
   });
 
-  // Create new type nodes in the program for props of type 'shape', 'oneOf'
+  // Create new nodes in the Program node for props of type 'shape' and 'oneOf'. These will be used to create new classes in the same .cs-file as the component class.
   createNewDefinitions({ syntaxTree });
 
   // At this point, the syntax tree has been transformed into something that would look like this:
