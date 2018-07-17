@@ -20,20 +20,28 @@ module.exports = function(metaProperties) {
       propertyValue = t.identifier(type);
     }
 
-    // Component -> "Component" (Return React component name as string)
     if (t.isIdentifier(property.value)) {
-      propertyValue = property.value;
+      // Create new Identifier from existing Identifier for easier testing
+      propertyValue = t.identifier(property.value.name);
     }
 
-    // Array(Component) -> "arrayOf(Component)" (Return PropTypes-like string);
-    if (
-      t.isCallExpression(property.value) &&
-      property.value.callee.name === 'Array'
-    ) {
+    // Convert to PropTypes-like definition.
+    // Array(Component) -> arrayOf(Component)
+    if (t.isCallExpression(property.value)) {
+      if (property.value.callee.name !== 'Array') {
+        throw new Error(
+          `Unsupported function call in meta type for '${propertyName}'`
+        );
+      }
+
       propertyValue = t.callExpression(
         t.identifier('arrayOf'),
         property.value.arguments
       );
+    }
+
+    if (!propertyValue) {
+      throw new Error(`Unsupported meta type for '${propertyName}'`);
     }
 
     return Object.assign({}, accum, {

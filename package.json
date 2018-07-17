@@ -13,7 +13,7 @@
   "license": "MIT",
   "scripts": {
     "build": "webpack --config=fixtures/webpack.config --mode=production",
-    "test": "ava -v"
+    "test": "ava --verbose"
   },
   "dependencies": {
     "@babel/parser": "^7.0.0-beta.51",
