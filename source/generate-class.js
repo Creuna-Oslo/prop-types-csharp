@@ -30,7 +30,7 @@ module.exports = function({ sourceCode }) {
     return {};
   }
 
-  // Strip client-only types, apply meta types and simplify type definitions
+  // Strip client-only types, apply meta types and strip 'PropTypes' prefix from types
   transformPropTypes({ propTypesIdentifierName, propTypesMeta, syntaxTree });
 
   // Expand references to arrays and objects in 'oneOf'

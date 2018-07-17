@@ -30,7 +30,7 @@ module.exports = function({ syntaxTree }) {
           t.isCallExpression(parent) &&
           parent.get('callee').isIdentifier({ name: 'arrayOf' })
       );
-      const isTypeReference =
+      const isComponentReference =
         t.isMemberExpression(argument) &&
         argument.property.name === 'propTypes';
       const isOneOf = path.get('callee').isIdentifier({ name: 'oneOf' });
@@ -46,8 +46,8 @@ module.exports = function({ syntaxTree }) {
         capitalize(propName) + (isArrayOf ? 'Item' : '');
       const program = path.findParent(parent => t.isProgram(parent));
 
-      // Generate new definitions from oneOf and shape
-      if (!isTypeReference || isOneOf) {
+      // Create new nodes from oneOf and shape
+      if (!isComponentReference || isOneOf) {
         program.pushContainer(
           'body',
           t.expressionStatement(
@@ -61,7 +61,9 @@ module.exports = function({ syntaxTree }) {
       }
 
       path.replaceWith(
-        isTypeReference ? argument.object : t.identifier(propDefinitionName)
+        isComponentReference
+          ? argument.object
+          : t.identifier(propDefinitionName)
       );
     }
   });
