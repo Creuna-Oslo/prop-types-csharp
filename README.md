@@ -66,9 +66,7 @@ Props of type `func`, `element`, `node` and `instanceOf` are ignored when creati
 
 ### Illegal propTypes
 
-Props of type `number`, `object` and `array` are ambiguous and cannot be included in C# classes as-is.
-
-`number` should have a `propTypesMeta` definition (see below).
+Props of type `object` and `array` are ambiguous and cannot be included in C# classes as-is.
 
 `object` should have a `propTypesMeta` definition or be replaced by a `shape` containing an object literal or another component's propTypes.
 
@@ -87,6 +85,8 @@ Supported values for props in `propTypesMeta` are
 - `"exclude"`
 - React component
 - Array(<React component>)
+
+`"int"` and `"float"` replace `PropTypes.number` if supplied. By default, `PropTypes.number` will result in `int` in C# classes.
 
 Functional component:
 
