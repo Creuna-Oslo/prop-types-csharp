@@ -6,7 +6,7 @@ module.exports = function(env, options = {}) {
   return {
     entry: './fixtures/app.js',
     output: {
-      path: path.resolve(__dirname, '..', 'dist'),
+      path: env.path || path.resolve(__dirname, '..', 'dist'),
       filename: '[name].js'
     },
     mode: options.mode,
@@ -15,7 +15,15 @@ module.exports = function(env, options = {}) {
         {
           test: /\.jsx?$/,
           exclude: /node_modules/,
-          use: ['babel-loader', 'eslint-loader']
+          use: [
+            {
+              loader: 'babel-loader',
+              options: {
+                plugins: env.babelPlugin ? ['../babel-plugin'] : []
+              }
+            },
+            'eslint-loader'
+          ]
         }
       ]
     },
