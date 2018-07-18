@@ -2,7 +2,7 @@ const path = require('path');
 
 const PropTypesCSharpPlugin = require('../index');
 
-module.exports = function(env, options = {}) {
+module.exports = function(env = {}, options = {}) {
   return {
     entry: './fixtures/app.js',
     output: {
