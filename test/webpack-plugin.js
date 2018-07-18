@@ -6,7 +6,7 @@ const webpack = require('webpack');
 
 const webpackConfig = require('../fixtures/webpack.config');
 
-test.cb('Webpack plugin', t => {
+test.cb('Writes C# files to disk', t => {
   t.plan(4);
 
   webpack(
