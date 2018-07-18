@@ -11,7 +11,7 @@ module.exports = function({ types: t }) {
           path.stop();
         }
 
-        // Skip traversing of nested assignments, like in a functional component
+        // In some cases there might be deeply nested assignments, like in a complex functional component. This plugin is only interested in the outermost scope, so traversal of nested assignments are skipped
         path.skip();
       },
       ClassProperty(path) {
