@@ -15,6 +15,7 @@ const FunctionalComponent = props => <div>{props.text}</div>;
 FunctionalComponent.propTypes = {
   text: pt.string.isRequired,
   isSomething: pt.bool,
+  number: pt.number,
   intNumber: pt.number,
   floatNumber: pt.number,
   texts: pt.arrayOf(pt.string),

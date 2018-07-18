@@ -5,7 +5,6 @@ const typesToStrip = ['element', 'func', 'instanceOf', 'node'];
 
 const illegalTypes = {
   array: `Replace with 'PropTypes.arrayOf' or provide a meta type`,
-  number: `Add meta type 'int' or 'float'`,
   object: `Replace with 'PropTypes.shape' or provide a meta type`,
   oneOfType: `'PropTypes.oneOfType' is not yet supported`
 };
@@ -43,6 +42,12 @@ module.exports = function({
         // Replace type with meta type if a meta type exists
         if (meta) {
           path.replaceWith(propTypesMeta[propName]);
+          return;
+        }
+
+        // Replace `PropTypes.number` with 'int' if meta type is missing
+        if (typeName === 'number') {
+          path.replaceWith(t.identifier('int'));
           return;
         }
 

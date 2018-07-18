@@ -42,7 +42,14 @@ test(
   }
 );
 
-const illegalTypes = ['array', 'number', 'object', 'oneOfType'];
+test(
+  'Replaces "number" with "int" by default',
+  template,
+  'C.propTypes={a:pt.number};',
+  'C.propTypes={a:int};'
+);
+
+const illegalTypes = ['array', 'object', 'oneOfType'];
 
 illegalTypes.forEach(type => {
   test(`Throws on '${type}'`, t => {
