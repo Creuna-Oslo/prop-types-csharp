@@ -85,8 +85,8 @@ Supported values for props in `propTypesMeta` are
 - `"int"`
 - `"float"`
 - `"exclude"`
-- React component name
-- Array(<React component name>)
+- React component
+- Array(<React component>)
 
 Functional component:
 
