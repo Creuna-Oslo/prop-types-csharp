@@ -96,13 +96,15 @@ const Component = () => <div />;
 Component.propTypes = {
   someProp: PropTypes.number,
   anotherProp: PropTypes.string,
+  someComponent: PropTypes.object,
   items: PropTypes.array
 };
 
 Component.propTypesMeta = {
   someProp: "int",
   anotherProp: "exclude",
-  items: Array(SomeComponent)
+  someComponent: SomeComponent,
+  items: Array(AnotherComponent)
 };
 ```
 
@@ -113,13 +115,15 @@ class Component extends React.Component {
   static propTypes = {
     someProp: PropTypes.number,
     anotherProp: PropTypes.string,
+    someComponent: PropTypes.object,
     items: PropTypes.array
   };
 
   static propTypesMeta = {
     someProp: "float",
     anotherProp: "exclude",
-    items: Array(SomeComponent)
+    someComponent: SomeComponent,
+    items: Array(AnotherComponent)
   };
 }
 ```
