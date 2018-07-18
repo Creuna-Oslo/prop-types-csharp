@@ -70,7 +70,7 @@ Props of type `number`, `object` and `array` are ambiguous and cannot be include
 
 `number` should have a `propTypesMeta` definition (see below).
 
-`object` should have a meta type or be replaced by a `shape` containing an object literal or another component's propTypes.
+`object` should have a `propTypesMeta` definition or be replaced by a `shape` containing an object literal or another component's propTypes.
 
 `array` should be replaced by an `arrayOf` or have a `propTypesMeta` definition.
 
