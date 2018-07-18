@@ -1,6 +1,6 @@
 {
   "name": "@creuna/prop-types-csharp-webpack-plugin",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Webpack plugin for generating C# classes from React component propTypes",
   "author": "Asbjørn Hegdahl <asbjorn.hegdahl@creuna.no>",
   "main": "index.js",
@@ -36,6 +36,7 @@
     "prettier": "^1.13.7",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
+    "tempy": "^0.2.1",
     "webpack": "^4.14.0",
     "webpack-cli": "^3.0.8"
   }
