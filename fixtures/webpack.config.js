@@ -4,7 +4,7 @@ const PropTypesCSharpPlugin = require('../index');
 
 module.exports = function(env = {}, options = {}) {
   return {
-    entry: './fixtures/app.js',
+    entry: env.entry || './fixtures/app.js',
     output: {
       path: env.path || path.resolve(__dirname, '..', 'dist'),
       filename: '[name].js'
@@ -19,7 +19,9 @@ module.exports = function(env = {}, options = {}) {
             {
               loader: 'babel-loader',
               options: {
-                plugins: env.babelPlugin ? ['../babel-plugin'] : []
+                plugins: env.babelPlugin
+                  ? [path.join(__dirname, '../babel-plugin')]
+                  : []
               }
             },
             'eslint-loader'

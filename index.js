@@ -20,19 +20,29 @@ function PropTypesCSharpPlugin(options) {
 PropTypesCSharpPlugin.prototype.apply = function(compiler) {
   const production = compiler.options.mode === 'production';
 
+  const logError = error => {
+    const errorMessage = `C# class generator plugin\n${error}`;
+
+    if (production) {
+      this.compilation.errors.push(errorMessage);
+      return;
+    }
+
+    // Since class generation is running in parallel in dev mode, pushing warnings to the compilation does not output anything to the shell (it does show in the browser though). Double logging fixes this.
+    this.compilation.warnings.push(errorMessage);
+    process.stdout.write(`\nWARNING in ${errorMessage}\n`);
+  };
+
   // Writes errors/warnings and status messages (if enabled)
-  const log = ({ classes, duration }) => {
+  const log = ({ classes, duration, error }) => {
+    if (error) {
+      logError(error);
+    }
+
     const numberOfClasses = classes
       .map(({ error, code, componentName }) => {
-        if (error && production) {
-          this.compilation.errors.push(error);
-          return false;
-        }
-
         if (error) {
-          // Since class generation is running in parallel in dev mode, pushing warnings to the compilation does not output anything to the shell (it does show in the browser though). Double logging fixes this.
-          this.compilation.warnings.push(error);
-          process.stdout.write(`\nWARNING in ${error}\n`);
+          logError(error);
           return false;
         }
 
@@ -75,16 +85,20 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
 
     if (production) {
       const outputPath = path.normalize(this.options.path);
-      const { classes, duration } = generateClasses(modulePaths);
-      classes.forEach(({ code, componentName }) => {
-        if (code && componentName) {
-          compilation.assets[path.join(outputPath, `${componentName}.cs`)] = {
-            source: () => code,
-            size: () => code.length
-          };
-        }
-      });
-      log({ classes, duration });
+      const { classes, duration, error } = generateClasses(modulePaths);
+
+      if (!error) {
+        classes.forEach(({ code, componentName }) => {
+          if (code && componentName) {
+            compilation.assets[path.join(outputPath, `${componentName}.cs`)] = {
+              source: () => code,
+              size: () => code.length
+            };
+          }
+        });
+      }
+
+      log({ classes, duration, error });
     } else {
       // Run class generation in parallel
       generateClassesParallel.send({ modulePaths });
