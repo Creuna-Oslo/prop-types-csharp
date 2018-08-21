@@ -1,9 +1,11 @@
 const t = require('babel-types');
 
 const capitalize = require('./capitalize');
-const generateCSharpType = require('../utils/generate-csharp-type');
+const generateCSharpType = require('./generate-csharp-type');
+const isEnumRequired = require('./is-enum-required');
 const unknownToPascal = require('./unknown-to-pascal');
 
+// Expects syntax tree consisting of only assignment expression nodes in the program.body node
 module.exports = function({ syntaxTree }) {
   const assignmentExpressions = syntaxTree.program.body.map(
     expressionStatement => expressionStatement.expression
@@ -16,6 +18,10 @@ module.exports = function({ syntaxTree }) {
       const isArrayExpression = t.isArrayExpression(assignmentNode.right);
 
       if (isArrayExpression) {
+        const isNullable =
+          !assignmentNode.right.elements.find(p => p.value === 0) &&
+          !isEnumRequired(assignmentExpressions, className);
+
         return (
           accum +
           `public enum ${className} \n{\n` +
@@ -25,10 +31,15 @@ module.exports = function({ syntaxTree }) {
               const isNumber = typeof value === 'number';
               const prefix = isNumber ? className : '';
               const isLast = index === array.length - 1;
+              const adjustedIndex = index + (isNullable ? 1 : 0);
+
+              if (index === 0 && isNullable) {
+                accum += '  None = 0,\n';
+              }
 
               accum += isNumber ? '' : `  [StringValue("${value}")]\n`;
               accum += `  ${unknownToPascal(prefix + value)} = ${
-                isNumber ? value : index
+                isNumber ? value : adjustedIndex
               },\n`;
               accum += isLast ? '}\n\n' : '';
               return accum;

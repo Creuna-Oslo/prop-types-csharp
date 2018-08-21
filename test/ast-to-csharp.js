@@ -3,7 +3,7 @@ const test = require('ava');
 
 const ASTToCsharp = require('../source/utils/ast-to-csharp');
 
-test('Valid tree', t => {
+test('Basic tree', t => {
   t.snapshot(
     ASTToCsharp({
       syntaxTree: parse(`
@@ -11,8 +11,7 @@ test('Valid tree', t => {
           text: string.isRequired,
           texts: arrayOf(string),
           singleObject: SingleObject,
-          objects: arrayOf(ObjectsItem).isRequired,
-          enumArray: EnumArray,
+          objects: arrayOf(ObjectsItem).isRequired
         };
         SingleObject = {
           propertyA: string.isRequired
@@ -20,13 +19,38 @@ test('Valid tree', t => {
         ObjectsItem = {
           propertyB: string
         };
-        EnumArray = ['value-1', 'value-2'];
       `)
     })
   );
 });
 
-// Only valid function call is 'arrayOf'
+test('Optional enum', t => {
+  t.snapshot(
+    ASTToCsharp({
+      syntaxTree: parse(`
+      Component = {
+        enum: Enum
+      };
+      Enum = ['value-1', 'value-2'];
+    `)
+    })
+  );
+});
+
+test('Required enum', t => {
+  t.snapshot(
+    ASTToCsharp({
+      syntaxTree: parse(`
+        Component = {
+          enum: Enum.isRequired
+        };
+        Enum = ['value-1', 'value-2'];
+      `)
+    })
+  );
+});
+
+// Only valid function call when generating string is 'arrayOf'
 test('Throws on invalid function call', t => {
   t.throws(() => {
     ASTToCsharp({
