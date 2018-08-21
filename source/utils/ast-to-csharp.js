@@ -6,11 +6,11 @@ const isEnumRequired = require('./is-enum-required');
 const unknownToPascal = require('./unknown-to-pascal');
 
 // Expects syntax tree consisting of only assignment expression nodes in the program.body node
-module.exports = function({ numberOfSpaces = 2, namespace, syntaxTree }) {
+module.exports = function({ indent = 2, namespace, syntaxTree }) {
   const assignmentExpressions = syntaxTree.program.body.map(
     expressionStatement => expressionStatement.expression
   );
-  const baseIndent = namespace ? ' '.repeat(numberOfSpaces) : '';
+  const baseIndent = namespace ? ' '.repeat(indent) : '';
 
   // The closing '}' for the namespace is added at the bottom of this file!
   const namespaceDeclaration = namespace ? `namespace ${namespace}\n{\n` : '';
@@ -22,7 +22,9 @@ module.exports = function({ numberOfSpaces = 2, namespace, syntaxTree }) {
     assignmentExpressions.reduce((accum, assignmentNode) => {
       const className = capitalize(assignmentNode.left.name);
       const isArrayExpression = t.isArrayExpression(assignmentNode.right);
-      const indent = baseIndent + ' '.repeat(numberOfSpaces);
+
+      // I realize this name is a little weird but I didn't want to have a long variable name inside the string templates.
+      const _indent = baseIndent + ' '.repeat(indent);
 
       if (isArrayExpression) {
         const isNullable =
@@ -42,10 +44,10 @@ module.exports = function({ numberOfSpaces = 2, namespace, syntaxTree }) {
               const adjustedIndex = index + (isNullable ? 1 : 0);
 
               if (index === 0 && isNullable) {
-                accum += `${indent}None = 0,\n`;
+                accum += `${_indent}None = 0,\n`;
               }
 
-              accum += isNumber ? '' : `${indent}[StringValue("${value}")]\n`;
+              accum += isNumber ? '' : `${_indent}[StringValue("${value}")]\n`;
               accum += `  ${unknownToPascal(prefix + value)} = ${
                 isNumber ? value : adjustedIndex
               },\n`;
@@ -73,8 +75,8 @@ module.exports = function({ numberOfSpaces = 2, namespace, syntaxTree }) {
 
               const type = generateCSharpType(typeNode, node.key.name);
 
-              accum += isRequired ? `${indent}[Required]\n` : '';
-              accum += `${indent}public ${type} ${propName} { get; set; }\n`;
+              accum += isRequired ? `${_indent}[Required]\n` : '';
+              accum += `${_indent}public ${type} ${propName} { get; set; }\n`;
               accum += isLast ? `${baseIndent}}\n\n` : '';
               return accum;
             },

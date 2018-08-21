@@ -76,7 +76,7 @@ module.exports = function({ indent, namespace, sourceCode }) {
   // EnumArray = ['value-1', 'value-2'];
 
   // Stringify!
-  const code = ASTToCsharp({ numberOfSpaces: indent, namespace, syntaxTree });
+  const code = ASTToCsharp({ indent, namespace, syntaxTree });
 
   return { componentName, code };
 };

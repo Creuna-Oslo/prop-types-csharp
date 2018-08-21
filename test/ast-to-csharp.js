@@ -39,7 +39,7 @@ test('With different indentation', t => {
   t.snapshot(
     ASTToCsharp({
       syntaxTree: basicTree,
-      numberOfSpaces: 6
+      indent: 6
     })
   );
 });
