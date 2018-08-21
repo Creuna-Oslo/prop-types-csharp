@@ -12,7 +12,8 @@ module.exports = function({ syntaxTree }) {
   );
 
   return (
-    'using System.Collections.Generic;\n\n' +
+    'using System.Collections.Generic;\n' +
+    'using System.ComponentModel.DataAnnotations;\n\n' +
     assignmentExpressions.reduce((accum, assignmentNode) => {
       const className = capitalize(assignmentNode.left.name);
       const isArrayExpression = t.isArrayExpression(assignmentNode.right);
