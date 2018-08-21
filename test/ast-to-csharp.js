@@ -50,6 +50,19 @@ test('Required enum', t => {
   );
 });
 
+test('Enum with name starting with non-letter', t => {
+  t.snapshot(
+    ASTToCsharp({
+      syntaxTree: parse(`
+        Component = {
+          enum: Enum
+        };
+        Enum = ['-value-1', '.value-2', '#value-3'];
+      `)
+    })
+  );
+});
+
 // Only valid function call when generating string is 'arrayOf'
 test('Throws on invalid function call', t => {
   t.throws(() => {
