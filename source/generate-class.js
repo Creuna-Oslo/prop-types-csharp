@@ -12,7 +12,7 @@ const getPropTypes = require('./utils/get-prop-types');
 const getPropTypesIdentifierName = require('./utils/get-prop-types-identifier-name');
 const transformPropTypes = require('./transforms/transform-prop-types');
 
-module.exports = function({ sourceCode }) {
+module.exports = function({ indent, namespace, sourceCode }) {
   const syntaxTree = parse(sourceCode, {
     plugins: ['jsx', 'classProperties'],
     sourceType: 'module'
@@ -76,7 +76,7 @@ module.exports = function({ sourceCode }) {
   // EnumArray = ['value-1', 'value-2'];
 
   // Stringify!
-  const code = ASTToCsharp({ syntaxTree });
+  const code = ASTToCsharp({ numberOfSpaces: indent, namespace, syntaxTree });
 
   return { componentName, code };
 };

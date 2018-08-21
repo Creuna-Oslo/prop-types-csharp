@@ -32,6 +32,12 @@ module.exports = function(env = {}, options = {}) {
     resolve: {
       extensions: ['.js', '.jsx']
     },
-    plugins: [new PropTypesCSharpPlugin({ path: 'classes' })]
+    plugins: [
+      new PropTypesCSharpPlugin({
+        path: 'classes',
+        namespace: env.namespace,
+        indent: env.indent
+      })
+    ]
   };
 };

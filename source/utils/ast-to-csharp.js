@@ -6,17 +6,23 @@ const isEnumRequired = require('./is-enum-required');
 const unknownToPascal = require('./unknown-to-pascal');
 
 // Expects syntax tree consisting of only assignment expression nodes in the program.body node
-module.exports = function({ syntaxTree }) {
+module.exports = function({ numberOfSpaces = 2, namespace, syntaxTree }) {
   const assignmentExpressions = syntaxTree.program.body.map(
     expressionStatement => expressionStatement.expression
   );
+  const baseIndent = namespace ? ' '.repeat(numberOfSpaces) : '';
+
+  // The closing '}' for the namespace is added at the bottom of this file!
+  const namespaceDeclaration = namespace ? `namespace ${namespace}\n{\n` : '';
 
   return (
     'using System.Collections.Generic;\n' +
     'using System.ComponentModel.DataAnnotations;\n\n' +
+    namespaceDeclaration +
     assignmentExpressions.reduce((accum, assignmentNode) => {
       const className = capitalize(assignmentNode.left.name);
       const isArrayExpression = t.isArrayExpression(assignmentNode.right);
+      const indent = baseIndent + ' '.repeat(numberOfSpaces);
 
       if (isArrayExpression) {
         const isNullable =
@@ -25,7 +31,8 @@ module.exports = function({ syntaxTree }) {
 
         return (
           accum +
-          `public enum ${className} \n{\n` +
+          `${baseIndent}public enum ${className} \n` +
+          `${baseIndent}{\n` +
           assignmentNode.right.elements.reduce(
             (accum, enumProperty, index, array) => {
               const value = enumProperty.value;
@@ -35,14 +42,14 @@ module.exports = function({ syntaxTree }) {
               const adjustedIndex = index + (isNullable ? 1 : 0);
 
               if (index === 0 && isNullable) {
-                accum += '  None = 0,\n';
+                accum += `${indent}None = 0,\n`;
               }
 
-              accum += isNumber ? '' : `  [StringValue("${value}")]\n`;
+              accum += isNumber ? '' : `${indent}[StringValue("${value}")]\n`;
               accum += `  ${unknownToPascal(prefix + value)} = ${
                 isNumber ? value : adjustedIndex
               },\n`;
-              accum += isLast ? '}\n\n' : '';
+              accum += isLast ? `${baseIndent}}\n\n` : '';
               return accum;
             },
             ''
@@ -51,7 +58,8 @@ module.exports = function({ syntaxTree }) {
       } else {
         return (
           accum +
-          `public class ${className} \n{\n` +
+          `${baseIndent}public class ${className} \n` +
+          `${baseIndent}{\n` +
           assignmentNode.right.properties.reduce(
             (accum, node, index, array) => {
               // 'node' is an ObjectProperty node
@@ -65,15 +73,16 @@ module.exports = function({ syntaxTree }) {
 
               const type = generateCSharpType(typeNode, node.key.name);
 
-              accum += isRequired ? `  [Required]\n` : '';
-              accum += `  public ${type} ${propName} { get; set; }\n`;
-              accum += isLast ? '}\n\n' : '';
+              accum += isRequired ? `${indent}[Required]\n` : '';
+              accum += `${indent}public ${type} ${propName} { get; set; }\n`;
+              accum += isLast ? `${baseIndent}}\n\n` : '';
               return accum;
             },
             ''
           )
         );
       }
-    }, '')
+    }, '') +
+    (namespace ? '}' : '')
   );
 };

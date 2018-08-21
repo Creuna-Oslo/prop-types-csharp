@@ -41,6 +41,10 @@ module.exports = function(env, options = {}) {
 
 Use this to exclude paths or files from class generation. Default is replaced when setting this.
 
+**indent**: `Number` = `2`
+
+Number of spaces of indentation in generated classes.
+
 **log**: `Boolean` = `false`
 
 If set to true, will output some information about the plugin to the shell.
@@ -48,6 +52,10 @@ If set to true, will output some information about the plugin to the shell.
 **match**: `Array` of `String | RegExp` = `[/\.jsx$/]`
 
 Use this to choose what files to include when generating classes. Default is replaced when setting this.
+
+**namespace**: `String`
+
+If supplied, all generated classes will be wrapped in this namespace.
 
 **path**: `String`
 

@@ -10,7 +10,10 @@ test.cb('Writes C# files to disk', t => {
   t.plan(5);
 
   webpack(
-    webpackConfig({ path: tempy.directory() }, { mode: 'production' }),
+    webpackConfig(
+      { path: tempy.directory(), indent: 4, namespace: 'Some.Namespace' },
+      { mode: 'production' }
+    ),
     (error, stats) => {
       if (error) {
         throw error;

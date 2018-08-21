@@ -3,23 +3,43 @@ const test = require('ava');
 
 const ASTToCsharp = require('../source/utils/ast-to-csharp');
 
+const basicTree = parse(`
+  Component = {
+    text: string.isRequired,
+    texts: arrayOf(string),
+    singleObject: SingleObject,
+    objects: arrayOf(ObjectsItem).isRequired
+  };
+  SingleObject = {
+    propertyA: string.isRequired
+  };
+  ObjectsItem = {
+    propertyB: string
+  };
+`);
+
 test('Basic tree', t => {
   t.snapshot(
     ASTToCsharp({
-      syntaxTree: parse(`
-        Component = {
-          text: string.isRequired,
-          texts: arrayOf(string),
-          singleObject: SingleObject,
-          objects: arrayOf(ObjectsItem).isRequired
-        };
-        SingleObject = {
-          propertyA: string.isRequired
-        };
-        ObjectsItem = {
-          propertyB: string
-        };
-      `)
+      syntaxTree: basicTree
+    })
+  );
+});
+
+test('With namespace', t => {
+  t.snapshot(
+    ASTToCsharp({
+      namespace: 'Something.SomethingElse',
+      syntaxTree: basicTree
+    })
+  );
+});
+
+test('With different indentation', t => {
+  t.snapshot(
+    ASTToCsharp({
+      syntaxTree: basicTree,
+      numberOfSpaces: 6
     })
   );
 });

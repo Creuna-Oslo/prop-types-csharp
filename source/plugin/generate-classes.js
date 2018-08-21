@@ -2,10 +2,12 @@ const fs = require('fs');
 
 const generateClass = require('../generate-class');
 
-const attemptGenerateClass = modulePath => {
+const attemptGenerateClass = ({ modulePath, namespace, indent }) => {
   try {
     const sourceCode = fs.readFileSync(modulePath, 'utf-8');
     const { code, componentName } = generateClass({
+      indent,
+      namespace,
       sourceCode
     });
 
@@ -17,10 +19,10 @@ const attemptGenerateClass = modulePath => {
   }
 };
 
-const generateClasses = modulePaths => {
+const generateClasses = ({ indent, modulePaths, namespace }) => {
   const startTime = new Date().getTime();
   const classes = modulePaths.map(modulePath =>
-    attemptGenerateClass(modulePath)
+    attemptGenerateClass({ indent, modulePath, namespace })
   );
   const duplicates = classes.reduce((accum, { componentName }, index) => {
     if (componentName) {
@@ -52,9 +54,9 @@ const generateClasses = modulePaths => {
 };
 
 // Hook for running in parallel with child_process
-process.on('message', ({ modulePaths }) => {
+process.on('message', ({ indent, modulePaths, namespace }) => {
   if (modulePaths) {
-    process.send(generateClasses(modulePaths));
+    process.send(generateClasses({ indent, modulePaths, namespace }));
   }
 });
 

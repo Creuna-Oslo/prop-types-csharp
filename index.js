@@ -7,8 +7,10 @@ function PropTypesCSharpPlugin(options) {
   this.options = Object.assign(
     {
       exclude: ['node_modules'],
+      indent: 2,
       log: false,
       match: [/\.jsx$/],
+      namespace: '',
       path: ''
     },
     options
@@ -52,7 +54,7 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
 
     if (this.options.log) {
       process.stdout.write(
-        `｢C# plugin｣: Generated ${numberOfClasses} classes in ${duration}ms\n`
+        `[C# plugin]: Generated ${numberOfClasses} classes in ${duration}ms\n`
       );
     }
   };
@@ -68,7 +70,7 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
     this.compilation = compilation;
 
     if (this.options.log) {
-      process.stdout.write('｢C# plugin｣: Generating classes...\n');
+      process.stdout.write('[C# plugin]: Generating classes...\n');
     }
 
     // Filter modules according to options. 'module.resource' is the path to the source file of a compiled module
@@ -85,7 +87,11 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
 
     if (production) {
       const outputPath = path.normalize(this.options.path);
-      const { classes, duration, error } = generateClasses(modulePaths);
+      const { classes, duration, error } = generateClasses({
+        indent: this.options.indent,
+        modulePaths,
+        namespace: this.options.namespace
+      });
 
       if (!error) {
         classes.forEach(({ code, componentName }) => {
@@ -101,7 +107,11 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
       log({ classes, duration, error });
     } else {
       // Run class generation in parallel
-      generateClassesParallel.send({ modulePaths });
+      generateClassesParallel.send({
+        indent: this.options.indent,
+        modulePaths,
+        namespace: this.options.namespace
+      });
     }
   };
 
