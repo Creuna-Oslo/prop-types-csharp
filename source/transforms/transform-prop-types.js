@@ -23,6 +23,13 @@ module.exports = function({
   propTypesMeta,
   syntaxTree
 }) {
+  const shouldExclude = (propName, typeName) => {
+    return (
+      typesToStrip.includes(typeName) ||
+      t.isIdentifier(propTypesMeta[propName], { name: 'exclude' })
+    );
+  };
+
   traverse(syntaxTree, {
     MemberExpression(path) {
       if (path.get('object').isIdentifier({ name: propTypesIdentifierName })) {
@@ -32,10 +39,7 @@ module.exports = function({
         const meta = propTypesMeta[propName];
 
         // Strip if type matches typesToStrip or has 'exclude' meta type
-        if (
-          typesToStrip.includes(typeName) ||
-          t.isIdentifier(meta, { name: 'exclude' })
-        ) {
+        if (shouldExclude(propName, typeName)) {
           return parent.remove();
         }
 
@@ -65,7 +69,6 @@ module.exports = function({
     }
   });
 
-  // Throw when there's a reference to 'Component.propTypes' inside an 'arrayOf'
   traverse(syntaxTree, {
     CallExpression(path) {
       const parent = path.findParent(parent => parent.isObjectProperty());
@@ -73,6 +76,12 @@ module.exports = function({
       const callee = path.get('callee');
       const argument = path.node.arguments[0];
 
+      // Strip if type has 'exclude' meta type
+      if (shouldExclude(propName)) {
+        return parent.remove();
+      }
+
+      // Throw when there's a reference to 'Component.propTypes' inside an 'arrayOf' without use of 'shape'
       if (
         t.isMemberExpression(argument) &&
         argument.property.name === 'propTypes' &&

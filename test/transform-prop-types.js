@@ -32,6 +32,14 @@ test(
 );
 
 test(
+  'Removes excluded prop with illegal function call',
+  template,
+  'C.propTypes={a: someFunc()};',
+  'C.propTypes={};',
+  { a: bt.identifier('exclude') }
+);
+
+test(
   'Applies meta types',
   template,
   'C.propTypes={a:pt.number,b:pt.number};',
