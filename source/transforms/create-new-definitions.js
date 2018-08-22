@@ -43,15 +43,13 @@ module.exports = function({ componentName, syntaxTree }) {
 
       const propName = prop.node.key.name;
 
-      // Prepend the component name for object literals inside 'shape' to avoid name collisions. Append 'Item' for definitions inside 'arrayOf'
+      // Prepend the component name to avoid name collisions. Append 'Item' for definitions inside 'arrayOf'
       const propDefinitionName =
-        (isShape ? componentName : '') +
-        capitalize(propName) +
-        (isArrayOf ? 'Item' : '');
+        componentName + capitalize(propName) + (isArrayOf ? 'Item' : '');
       const program = path.findParent(parent => t.isProgram(parent));
 
       // Create new nodes from oneOf and shape
-      if (!isComponentReference || isOneOf) {
+      if (!isComponentReference) {
         program.pushContainer(
           'body',
           t.expressionStatement(
