@@ -45,7 +45,7 @@ module.exports = function({
 
         // Replace type with meta type if a meta type exists
         if (meta) {
-          path.replaceWith(propTypesMeta[propName]);
+          parent.get('value').replaceWith(propTypesMeta[propName]);
           return;
         }
 

@@ -27,6 +27,7 @@ class ClassComponent extends React.Component {
         propertyB: pt.string
       })
     ).isRequired,
+    objectArray: pt.arrayOf(pt.object),
     nestedList: pt.arrayOf(pt.arrayOf(pt.arrayOf(pt.string))),
     link: pt.shape(Link.propTypes),
     linkList: pt.arrayOf(pt.shape(Link.propTypes)),
@@ -48,6 +49,7 @@ class ClassComponent extends React.Component {
     intNumber: 'int',
     floatNumber: 'float',
     excludeMe: 'exclude',
+    objectArray: Array(Link),
     linkMeta: Link,
     linkListMeta: Array(Link)
   };
