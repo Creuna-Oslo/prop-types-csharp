@@ -16,7 +16,7 @@ test(
   template,
   'Component',
   'Component = { a: shape({ b: string }) };',
-  'Component={a:ComponentA};ComponentA={b:string};'
+  'Component={a:Component_A};Component_A={b:string};'
 );
 
 test(
@@ -24,7 +24,7 @@ test(
   template,
   'Component',
   'Component = { a: shape({ b: shape({ c: string }) }) };',
-  'Component={a:ComponentA};ComponentA={b:ComponentB};ComponentB={c:string};'
+  'Component={a:Component_A};Component_A={b:Component_B};Component_B={c:string};'
 );
 
 test(
@@ -40,7 +40,7 @@ test(
   template,
   'Component',
   'Component = { a: arrayOf(shape({ b: string })) };',
-  'Component={a:arrayOf(ComponentAItem)};ComponentAItem={b:string};'
+  'Component={a:arrayOf(Component_AItem)};Component_AItem={b:string};'
 );
 
 test(
@@ -48,7 +48,7 @@ test(
   template,
   'Component',
   'Component = { a: shape({ b: string }).isRequired };',
-  'Component={a:ComponentA.isRequired};ComponentA={b:string};'
+  'Component={a:Component_A.isRequired};Component_A={b:string};'
 );
 
 test(
@@ -56,5 +56,5 @@ test(
   template,
   'Component',
   'Component = { a: arrayOf(shape({ b: string })).isRequired };',
-  'Component={a:arrayOf(ComponentAItem).isRequired};ComponentAItem={b:string};'
+  'Component={a:arrayOf(Component_AItem).isRequired};Component_AItem={b:string};'
 );
