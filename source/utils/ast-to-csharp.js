@@ -47,8 +47,10 @@ module.exports = function({ indent = 2, namespace, syntaxTree }) {
                 accum += `${_indent}None = 0,\n`;
               }
 
-              accum += isNumber ? '' : `${_indent}[StringValue("${value}")]\n`;
-              accum += `  ${unknownToPascal(prefix + value)} = ${
+              accum += isNumber
+                ? ''
+                : `${_indent}[Display(Name = "${value}")]\n`;
+              accum += `${_indent}${unknownToPascal(prefix + value)} = ${
                 isNumber ? value : adjustedIndex
               },\n`;
               accum += isLast ? `${baseIndent}}\n\n` : '';
@@ -62,26 +64,22 @@ module.exports = function({ indent = 2, namespace, syntaxTree }) {
           accum +
           `${baseIndent}public class ${className} \n` +
           `${baseIndent}{\n` +
-          assignmentNode.right.properties.reduce(
-            (accum, node, index, array) => {
-              // 'node' is an ObjectProperty node
-              const typeNode = node.value;
-              const propName = capitalize(node.key.name);
-              const isLast = index === array.length - 1;
-              const isObject = t.isMemberExpression(typeNode);
-              const isRequired =
-                isObject &&
-                t.isIdentifier(typeNode.property, { name: 'isRequired' });
+          assignmentNode.right.properties.reduce((accum, node) => {
+            // 'node' is an ObjectProperty node
+            const typeNode = node.value;
+            const propName = capitalize(node.key.name);
+            const isObject = t.isMemberExpression(typeNode);
+            const isRequired =
+              isObject &&
+              t.isIdentifier(typeNode.property, { name: 'isRequired' });
 
-              const type = generateCSharpType(typeNode, node.key.name);
+            const type = generateCSharpType(typeNode, node.key.name);
 
-              accum += isRequired ? `${_indent}[Required]\n` : '';
-              accum += `${_indent}public ${type} ${propName} { get; set; }\n`;
-              accum += isLast ? `${baseIndent}}\n\n` : '';
-              return accum;
-            },
-            ''
-          )
+            accum += isRequired ? `${_indent}[Required]\n` : '';
+            accum += `${_indent}public ${type} ${propName} { get; set; }\n`;
+            return accum;
+          }, '') +
+          `${baseIndent}}\n\n`
         );
       }
     }, '') +

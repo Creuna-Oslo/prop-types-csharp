@@ -83,6 +83,19 @@ test('Enum with name starting with non-letter', t => {
   );
 });
 
+test('With empty definition', t => {
+  t.snapshot(
+    ASTToCsharp({
+      syntaxTree: parse(`
+        Component = {
+          property: Property
+        };
+        Property = {};
+      `)
+    })
+  );
+});
+
 // Only valid function call when generating string is 'arrayOf'
 test('Throws on invalid function call', t => {
   t.throws(() => {
