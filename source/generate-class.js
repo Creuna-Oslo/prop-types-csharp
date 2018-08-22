@@ -56,7 +56,7 @@ module.exports = function({ indent, namespace, sourceCode }) {
   });
 
   // Create new nodes in the Program node for props of type 'shape' and 'oneOf'. These will be used to create new classes in the same .cs-file as the component class.
-  createNewDefinitions({ syntaxTree });
+  createNewDefinitions({ componentName, syntaxTree });
 
   // At this point, the syntax tree has been transformed into something that would look like this:
 

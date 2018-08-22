@@ -21,7 +21,7 @@ const capitalize = require('../utils/capitalize');
 //       PropB = {
 //         a: string
 //       };
-module.exports = function({ syntaxTree }) {
+module.exports = function({ componentName, syntaxTree }) {
   traverse(syntaxTree, {
     CallExpression(path) {
       const argument = path.node.arguments[0];
@@ -42,8 +42,12 @@ module.exports = function({ syntaxTree }) {
       }
 
       const propName = prop.node.key.name;
+
+      // Prepend the component name for object literals inside 'shape' to avoid name collisions. Append 'Item' for definitions inside 'arrayOf'
       const propDefinitionName =
-        capitalize(propName) + (isArrayOf ? 'Item' : '');
+        (isShape ? componentName : '') +
+        capitalize(propName) +
+        (isArrayOf ? 'Item' : '');
       const program = path.findParent(parent => t.isProgram(parent));
 
       // Create new nodes from oneOf and shape
