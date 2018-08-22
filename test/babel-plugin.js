@@ -6,12 +6,12 @@ const webpack = require('webpack');
 
 const webpackConfig = require('../fixtures/webpack.config');
 
-test.cb('Removes propTypesMeta', t => {
+const template = (t, useBabelPlugin) => {
   t.plan(1);
 
   webpack(
     webpackConfig(
-      { babelPlugin: true, path: tempy.directory() },
+      { babelPlugin: useBabelPlugin, path: tempy.directory() },
       { mode: 'production' }
     ),
     (error, stats) => {
@@ -28,9 +28,14 @@ test.cb('Removes propTypesMeta', t => {
         'utf-8'
       );
 
-      t.is(mainJsContent.includes('propTypesMeta'), false);
+      t.is(mainJsContent.includes('propTypesMeta'), !useBabelPlugin);
 
       t.end();
     }
   );
-});
+};
+
+// Check for 'propTypesMeta' in built code to avoid a false positive for the other test
+test.cb('propTypesMeta exists', template, true);
+
+test.cb('Removes propTypesMeta', template, true);

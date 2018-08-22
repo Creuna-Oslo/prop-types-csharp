@@ -11,8 +11,7 @@ module.exports = function({ types: t }) {
           path.stop();
         }
 
-        // In some cases there might be deeply nested assignments, like in a complex functional component. This plugin is only interested in the outermost scope, so traversal of nested assignments are skipped
-        path.skip();
+        // Can't do path.skip() for this one for some strange reason. See https://github.com/Creuna-Oslo/prop-types-csharp-webpack-plugin/issues/21
       },
       ClassProperty(path) {
         const key = path.get('key');
