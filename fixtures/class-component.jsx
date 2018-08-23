@@ -24,10 +24,10 @@ class ClassComponent extends React.Component {
     }),
     objects: pt.arrayOf(
       pt.shape({
-        propertyB: pt.string
+        propertyB: pt.string.isRequired
       })
     ).isRequired,
-    objectArray: pt.arrayOf(pt.object),
+    objectArray: pt.arrayOf(pt.object).isRequired,
     nestedList: pt.arrayOf(pt.arrayOf(pt.arrayOf(pt.string))),
     link: pt.shape(Link.propTypes),
     linkList: pt.arrayOf(pt.shape(Link.propTypes)),

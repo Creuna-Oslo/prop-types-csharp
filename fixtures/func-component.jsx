@@ -17,17 +17,17 @@ FunctionalComponent.propTypes = {
   isSomething: pt.bool,
   number: pt.number,
   intNumber: pt.number,
-  floatNumber: pt.number,
+  floatNumber: pt.number.isRequired,
   texts: pt.arrayOf(pt.string),
   singleObject: pt.shape({
     propertyA: pt.string.isRequired
   }),
   objects: pt.arrayOf(
     pt.shape({
-      propertyB: pt.string
+      propertyB: pt.string.isRequired
     })
   ).isRequired,
-  objectArray: pt.arrayOf(pt.object),
+  objectArray: pt.arrayOf(pt.object).isRequired,
   nestedList: pt.arrayOf(pt.arrayOf(pt.arrayOf(pt.string))),
   link: pt.shape(Link.propTypes),
   linkList: pt.arrayOf(pt.shape(Link.propTypes)),

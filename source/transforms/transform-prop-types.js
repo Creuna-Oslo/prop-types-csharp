@@ -18,6 +18,26 @@ const illegalTypes = {
 
 // This is a lot of different things in a single function, but it is necessary in order to avoid excessive traversal of the syntax tree.
 
+const isPropRequired = (objectPropertyPath, callback) => {
+  let isRequired = false;
+
+  objectPropertyPath.traverse({
+    MemberExpression(path) {
+      const parent = path.findParent(parent => t.isObjectProperty(parent));
+
+      if (
+        path.get('property').isIdentifier({ name: 'isRequired' }) &&
+        parent === objectPropertyPath
+      ) {
+        isRequired = true;
+        path.stop();
+      }
+    }
+  });
+
+  callback(isRequired);
+};
+
 module.exports = function({
   propTypesIdentifierName,
   propTypesMeta,
@@ -45,7 +65,16 @@ module.exports = function({
 
         // Replace type with meta type if a meta type exists
         if (meta) {
-          parent.get('value').replaceWith(propTypesMeta[propName]);
+          isPropRequired(parent, isRequired => {
+            parent
+              .get('value')
+              .replaceWith(
+                isRequired
+                  ? t.memberExpression(meta, t.identifier('isRequired'))
+                  : meta
+              );
+          });
+
           return;
         }
 
