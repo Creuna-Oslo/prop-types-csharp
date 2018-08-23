@@ -1,8 +1,9 @@
 const t = require('babel-types');
 
 const illegalTypes = {
+  array: 'Unsupported type "array". Replace with "arrayOf" or add meta type',
   object: 'Unsupported type "object". Replace with "shape" or add meta type.',
-  array: 'Unsupported type "array". Replace with "arrayOf" or add meta type'
+  oneOfType: 'Unsupported type "oneOfType".'
 };
 
 const allowedStringTypes = ['exclude', 'float', 'int'];
@@ -20,14 +21,17 @@ const getPropNames = objectExpression => {
 };
 
 const getInvalidPropTypes = objectExpression => {
-  return objectExpression.properties.reduce((accum, property) => {
-    const key = property.key.name;
-    const prop = property.value;
+  return objectExpression.properties.reduce((accum, objectProperty) => {
+    const key = objectProperty.key.name;
 
-    if (t.isMemberExpression(prop) && illegalTypes[prop.property.name]) {
+    // propTypeNode might be a CallExpression node (like in 'arrayOf()'), in which case the propType node will be accessible in obectProperty.value.callee. If not, the node is a MemberExpression, and the node is accessible in objectProperty.value.
+    const propTypeNode = objectProperty.value.callee || objectProperty.value;
+    const propTypeName = propTypeNode.property.name;
+
+    if (t.isMemberExpression(propTypeNode) && illegalTypes[propTypeName]) {
       accum[key] = {
-        node: prop.property,
-        message: illegalTypes[prop.property.name]
+        node: propTypeNode.property,
+        message: illegalTypes[propTypeName]
       };
     }
 
@@ -76,7 +80,7 @@ module.exports = {
 
             Object.entries(potentialProblems)
               .filter(([key]) => !metaTypes[key])
-              .forEach(([key, problem]) => {
+              .forEach(([_key, problem]) => {
                 context.report(problem);
               });
 
