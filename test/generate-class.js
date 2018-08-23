@@ -18,7 +18,6 @@ const classComponentSource = fs.readFileSync(classComponentPath, 'utf-8');
 
 test('Functional component', t => {
   const transformedSource = generateClass({
-    filePath: funcComponentPath,
     sourceCode: funcComponentSource
   });
   t.snapshot(transformedSource.code);
@@ -26,8 +25,18 @@ test('Functional component', t => {
 
 test('Class component', t => {
   const transformedSource = generateClass({
-    filePath: classComponentPath,
     sourceCode: classComponentSource
   });
   t.snapshot(transformedSource.code);
+});
+
+test('Throws on name collisions', t => {
+  const sourceCode = `
+  import PropTypes from 'prop-types';
+  const Component = ({ component }) => <div>{component}</div>;
+  Component.propTypes = { component: PropTypes.string };
+  export default Component;`;
+  t.throws(() => {
+    generateClass({ sourceCode });
+  });
 });

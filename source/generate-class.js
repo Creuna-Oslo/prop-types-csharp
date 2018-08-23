@@ -11,6 +11,7 @@ const getMeta = require('./utils/get-meta');
 const getPropTypes = require('./utils/get-prop-types');
 const getPropTypesIdentifierName = require('./utils/get-prop-types-identifier-name');
 const transformPropTypes = require('./transforms/transform-prop-types');
+const validateProps = require('./utils/validate-props');
 
 module.exports = function({ indent, namespace, sourceCode }) {
   const syntaxTree = parse(sourceCode, {
@@ -46,6 +47,8 @@ module.exports = function({ indent, namespace, sourceCode }) {
   if (!t.isObjectExpression(propTypesAST.expression.right)) {
     return {};
   }
+
+  validateProps({ propTypesAST });
 
   // Replace Syntax tree representing the component with a tree only representing the propTypes. Sadly, I found no way of doing this without mutating the exising tree because generating a new program node will require a parentPath and a scope and who knows what they are.
   traverse(syntaxTree, {
