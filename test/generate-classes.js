@@ -1,7 +1,7 @@
 const test = require('ava');
 const path = require('path');
 
-const generateClasses = require('../source/plugin/generate-classes');
+const generateClasses = require('../webpack-plugin/generate-classes');
 
 test('Generates classes', t => {
   t.plan(2);

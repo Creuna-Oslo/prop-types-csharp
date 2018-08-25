@@ -3,7 +3,7 @@ const { parse } = require('@babel/parser');
 const bt = require('babel-types');
 const test = require('ava');
 
-const transformPropTypes = require('../source/transforms/transform-prop-types');
+const transformPropTypes = require('../lib/transforms/transform-prop-types');
 
 const template = (t, input, expected, propTypesMeta = {}) => {
   const syntaxTree = parse(input);

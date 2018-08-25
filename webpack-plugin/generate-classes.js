@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const generateClass = require('../generate-class');
+const generateClass = require('../lib');
 
 const attemptGenerateClass = ({ modulePath, namespace, indent }) => {
   try {

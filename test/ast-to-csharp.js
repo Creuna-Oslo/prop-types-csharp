@@ -1,7 +1,7 @@
 const { parse } = require('@babel/parser');
 const test = require('ava');
 
-const ASTToCsharp = require('../source/utils/ast-to-csharp');
+const ASTToCsharp = require('../lib/utils/ast-to-csharp');
 
 const basicTree = parse(`
   Component = {

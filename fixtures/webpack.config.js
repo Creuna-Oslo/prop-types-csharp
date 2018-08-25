@@ -1,6 +1,6 @@
 const path = require('path');
 
-const PropTypesCSharpPlugin = require('../index');
+const PropTypesCSharpPlugin = require('../webpack-plugin');
 
 module.exports = function(env = {}, options = {}) {
   return {
