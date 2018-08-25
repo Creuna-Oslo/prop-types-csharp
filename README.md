@@ -1,72 +1,19 @@
-# PropTypes C# Webpack Plugin
+# PropTypes to C# class generator
 
 [![Travis status](https://travis-ci.org/Creuna-Oslo/prop-types-csharp-webpack-plugin.svg?branch=master)](https://travis-ci.org/Creuna-Oslo/prop-types-csharp-webpack-plugin)
 
-A Webpack plugin that generates C# classes from React component propTypes
+This package generates C# classes from React components using propTypes. It includes several parts:
 
-This is a work in progress!
+- A [Node.js API](#node)
+- A [Webpack plugin](#webpack)
+- A [Babel plugin](#babel)
+- An [eslint plugin](#eslint)
 
 ```
-yarn add @creuna/prop-types-csharp-webpack-plugin
+yarn add @creuna/prop-types-csharp
 ```
 
-## Usage
-
-The plugin will extract PropType definitions from `.jsx` files and convert them into C# class files.
-
-### Config example
-
-```js
-const PropTypesCSharpPlugin = require('@creuna/prop-types-csharp-plugin');
-
-module.exports = function(env, options = {}) {
-  const production = options.mode === 'production';
-
-  return {
-    entry: { ... },
-    output: { ... },
-    module: { ... },
-    plugins: production ? [new PropTypesCSharpPlugin({
-      path: 'classes',
-      match: [/\.jsx$/, 'source/components'],
-      exclude: ['node_modules', 'some/path']
-    })] : []
-  };
-};
-```
-
-### Options: `Object`
-
-**exclude**: `Array` of `String | RegExp` = `['node-modules']`
-
-Use this to exclude paths or files from class generation. Default is replaced when setting this.
-
-**indent**: `Number` = `2`
-
-Number of spaces of indentation in generated classes.
-
-**log**: `Boolean` = `false`
-
-If set to true, will output some information about the plugin to the shell.
-
-**match**: `Array` of `String | RegExp` = `[/\.jsx$/]`
-
-Use this to choose what files to include when generating classes. Default is replaced when setting this.
-
-**namespace**: `String`
-
-If supplied, all generated classes will be wrapped in this namespace.
-
-**path**: `String`
-
-Path relative to `output.path` to put `.cs` files.
-
-### Webpack modes
-
-Depending on `webpack.options.mode`, the plugin will do one of the following:
-
-- `production`: Writes `.cs` files to disk, Webpack build is aborted on errors.
-- `development`: Does not write files, runs in parallel, warns instead of throwing errors.
+## General concepts
 
 ### Ignored props
 
@@ -92,7 +39,7 @@ Supported values for props in `propTypesMeta` are
 - `"float"`
 - `"exclude"`
 - React component
-- Array(<React component>)
+- Array(< React component >)
 
 `"int"` and `"float"` replace `PropTypes.number` if supplied. By default, `PropTypes.number` will result in `int` in C# classes.
 
@@ -136,7 +83,102 @@ class Component extends React.Component {
 }
 ```
 
-### Babel plugin
+## <a id="node"></a>Node.js API
+
+The Node API exports one function that takes an option object.
+
+### Returns
+
+Returns an `object` containing:
+
+**componentName**: `String`
+Name of React component (derived from export declaration).
+
+**code**: `String`
+Source code for new C# class.
+
+### Options
+
+**indent**: `Number` = `2`
+Number of spaces of indentation in generated C# file
+
+**namespace**: `String`
+Optional namespace to wrap around generated C# class
+
+**sourceCode**: `String`
+Source code of a React component as string.
+
+### Example
+
+```js
+const generateCSharp = require("@creuna/prop-types-csharp");
+
+const { componentName, code } = generateCSharp({
+  indent: 4,
+  namespace: "Some.Awesome.Namespace",
+  sourceCode: "" // Insert actual React component source code
+});
+```
+
+## <a id="webpack"></a>Webpack plugin
+
+The plugin will extract PropType definitions from `.jsx` files and convert them into C# class files.
+
+### Config example
+
+```js
+const PropTypesCSharpPlugin = require('@creuna/prop-types-csharp-plugin');
+
+module.exports = function(env, options = {}) {
+  return {
+    entry: { ... },
+    output: { ... },
+    module: { ... },
+    plugins: [
+      new PropTypesCSharpPlugin({
+        path: 'classes',
+        match: [/\.jsx$/, 'source/components'],
+        exclude: ['node_modules', 'some/path']
+      })
+    ]
+  };
+};
+```
+
+### Options: `Object`
+
+**exclude**: `Array` of `String | RegExp` = `['node-modules']`
+
+Use this to exclude paths or files from class generation. Default is replaced when setting this.
+
+**indent**: `Number` = `2`
+
+Number of spaces of indentation in generated classes.
+
+**log**: `Boolean` = `false`
+
+If set to true, will output some information about the plugin to the shell.
+
+**match**: `Array` of `String | RegExp` = `[/\.jsx$/]`
+
+Use this to choose what files to include when generating classes. Default is replaced when setting this.
+
+**namespace**: `String`
+
+If supplied, all generated classes will be wrapped in this namespace.
+
+**path**: `String`
+
+Path relative to `output.path` to put `.cs` files.
+
+### Webpack modes
+
+Depending on `webpack.options.mode`, the plugin will do one of the following:
+
+- `production`: Writes `.cs` files to disk, Webpack build is aborted on errors.
+- `development`: Does not write files, runs in parallel, warns instead of throwing errors.
+
+## <a id="babel"></a>Babel plugin
 
 Having a bunch of `propTypesMeta` scattered all around your production code might not be what you want. To solve this issue, a Babel plugin is included which, if enabled, will strip all instances of `ComponentName.propTypesMeta` or `static propTypesMeta` when building with Webpack.
 
@@ -144,6 +186,27 @@ Having a bunch of `propTypesMeta` scattered all around your production code migh
 
 ```json
 {
-  "plugins": ["@creuna/prop-types-csharp-webpack-plugin/babel-plugin"]
+  "plugins": ["@creuna/prop-types-csharp/babel-plugin"]
+}
+```
+
+## <a id="eslint"></a>Eslint plugin
+
+This package includes an `eslint` plugin. Because `eslint` requires all plugins to be published separately to `npm` with a name startig with `eslint-plugin-`, we've published the proxy package [@creuna/eslint-plugin-prop-types-csharp](https://www.npmjs.com/package/@creuna/eslint-plugin-prop-types-csharp). The proxy package imports the actual plugin code from this package so that it can be used with `eslint`.
+
+```
+yarn add @creuna/eslint-plugin-prop-types-csharp
+```
+
+Even though the plugin checks many different things in your source code, the plugin only has one rule: `all`. The reason for this is that it wouldn't really make sense to have control over individual rules, because breaking any of them would also make the class generation fail, so you'll want to have all checks enabled.
+
+.eslintrc.json:
+
+```json
+{
+  "plugins": ["prettier", "react", "prop-types-csharp"],
+  "rules": {
+    "prop-types-csharp/all": 2
+  }
 }
 ```
