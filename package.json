@@ -1,7 +1,7 @@
 {
   "name": "@creuna/prop-types-csharp",
   "version": "0.1.7",
-  "description": "Webpack plugin for generating C# classes from React component propTypes",
+  "description": "Tools for generating C# classes from React component propTypes",
   "author": "Asbjørn Hegdahl <asbjorn.hegdahl@creuna.no>",
   "main": "index.js",
   "files": [

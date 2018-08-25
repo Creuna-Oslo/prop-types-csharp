@@ -204,9 +204,9 @@ Even though the plugin checks many different things in your source code, the plu
 
 ```json
 {
-  "plugins": ["prettier", "react", "prop-types-csharp"],
+  "plugins": ["@creuna/eslint-plugin-prop-types-csharp"],
   "rules": {
-    "prop-types-csharp/all": 2
+    "@creuna/prop-types-csharp/all": 2
   }
 }
 ```

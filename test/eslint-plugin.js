@@ -1,6 +1,15 @@
 const test = require('ava');
 const RuleTester = require('eslint-ava-rule-tester');
+const path = require('path');
+
 const plugin = require('../eslint-plugin');
+
+test('Compatibility with proxy plugin path', t => {
+  t.notThrows(() => {
+    // Be very careful when changing this! Moving the eslint plugin from '/eslint-plugin' will break compatibility with the proxy plugin
+    require(path.join(__dirname, '..', 'eslint-plugin'));
+  });
+});
 
 const ruleTester = new RuleTester(test, {
   parserOptions: {
