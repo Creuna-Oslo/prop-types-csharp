@@ -6,8 +6,10 @@
   "main": "index.js",
   "files": [
     "index.js",
-    "babel-plugin.js",
-    "source",
+    "babel-plugin",
+    "eslint-plugin",
+    "lib",
+    "webpack-plugin",
     "LICENSE",
     "README.md"
   ],

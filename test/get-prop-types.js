@@ -2,7 +2,7 @@ const bt = require('babel-types');
 const { parse } = require('@babel/parser');
 const test = require('ava');
 
-const getPropTypes = require('../source/utils/get-prop-types');
+const getPropTypes = require('../lib/utils/get-prop-types');
 
 test('Functional component', t => {
   t.plan(3);
