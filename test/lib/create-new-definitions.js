@@ -2,7 +2,7 @@ const generate = require('@babel/generator').default;
 const { parse } = require('@babel/parser');
 const test = require('ava');
 
-const createNewDefinitions = require('../lib/transforms/create-new-definitions');
+const createNewDefinitions = require('../../lib/transforms/create-new-definitions');
 
 const template = (t, componentName, input, expected) => {
   const syntaxTree = parse(input);

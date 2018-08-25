@@ -4,7 +4,7 @@ const tempy = require('tempy');
 const test = require('ava');
 const webpack = require('webpack');
 
-const webpackConfig = require('../fixtures/webpack.config');
+const webpackConfig = require('../../fixtures/webpack.config');
 
 test.cb('Writes C# files to disk', t => {
   t.plan(5);

@@ -2,7 +2,7 @@ const generate = require('@babel/generator').default;
 const { parse } = require('@babel/parser');
 const test = require('ava');
 
-const expandReferencess = require('../lib/transforms/expand-references');
+const expandReferencess = require('../../lib/transforms/expand-references');
 
 const template = (t, input, expected) => {
   const syntaxTree = parse(input, { plugins: ['classProperties'] });

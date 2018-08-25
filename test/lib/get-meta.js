@@ -2,7 +2,7 @@ const bt = require('babel-types');
 const { parse } = require('@babel/parser');
 const test = require('ava');
 
-const getMeta = require('../lib/utils/get-meta');
+const getMeta = require('../../lib/utils/get-meta');
 
 const template = (t, input, expected) => {
   const syntaxTree = parse(input, { plugins: ['classProperties', 'jsx'] });

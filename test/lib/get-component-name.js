@@ -1,7 +1,7 @@
 const { parse } = require('@babel/parser');
 const test = require('ava');
 
-const getComponentName = require('../lib/utils/get-component-name');
+const getComponentName = require('../../lib/utils/get-component-name');
 
 const template = (t, input, expected) => {
   const syntaxTree = parse(input, { sourceType: 'module' });

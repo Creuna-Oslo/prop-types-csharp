@@ -1,16 +1,16 @@
 const test = require('ava');
 const path = require('path');
 
-const generateClasses = require('../webpack-plugin/generate-classes');
+const generateClasses = require('../../webpack-plugin/generate-classes');
 
 test('Generates classes', t => {
   t.plan(2);
 
   const { classes, error } = generateClasses({
     modulePaths: [
-      path.join(__dirname, '../fixtures/link.jsx'),
-      path.join(__dirname, '../fixtures/class-component.jsx'),
-      path.join(__dirname, '../fixtures/func-component.jsx')
+      path.join(__dirname, '../../fixtures/link.jsx'),
+      path.join(__dirname, '../../fixtures/class-component.jsx'),
+      path.join(__dirname, '../../fixtures/func-component.jsx')
     ]
   });
 
@@ -21,8 +21,8 @@ test('Generates classes', t => {
 test('Returns error on duplicate component names', t => {
   const { error } = generateClasses({
     modulePaths: [
-      path.join(__dirname, '../fixtures/link.jsx'),
-      path.join(__dirname, '../fixtures/nested-component/link.jsx')
+      path.join(__dirname, '../../fixtures/link.jsx'),
+      path.join(__dirname, '../../fixtures/nested-component/link.jsx')
     ]
   });
 

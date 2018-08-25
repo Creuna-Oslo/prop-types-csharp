@@ -2,17 +2,17 @@ const fs = require('fs');
 const path = require('path');
 const test = require('ava');
 
-const generateClass = require('../lib');
+const generateClass = require('../../lib');
 
 const funcComponentPath = path.join(
   __dirname,
-  '../fixtures/func-component.jsx'
+  '../../fixtures/func-component.jsx'
 );
 const funcComponentSource = fs.readFileSync(funcComponentPath, 'utf-8');
 
 const classComponentPath = path.join(
   __dirname,
-  '../fixtures/class-component.jsx'
+  '../../fixtures/class-component.jsx'
 );
 const classComponentSource = fs.readFileSync(classComponentPath, 'utf-8');
 
