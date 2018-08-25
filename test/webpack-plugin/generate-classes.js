@@ -8,21 +8,20 @@ test('Generates classes', t => {
 
   const { classes, error } = generateClasses({
     modulePaths: [
-      path.join(__dirname, '../../fixtures/link.jsx'),
       path.join(__dirname, '../../fixtures/class-component.jsx'),
       path.join(__dirname, '../../fixtures/func-component.jsx')
     ]
   });
 
   t.is(error, null);
-  t.is(classes.filter(({ error }) => !error).length, 3);
+  t.is(classes.filter(({ error }) => !error).length, 2);
 });
 
 test('Returns error on duplicate component names', t => {
   const { error } = generateClasses({
     modulePaths: [
-      path.join(__dirname, '../../fixtures/link.jsx'),
-      path.join(__dirname, '../../fixtures/nested-component/link.jsx')
+      path.join(__dirname, '../../fixtures/func-component.jsx'),
+      path.join(__dirname, '../../fixtures/nested-component/func-component.jsx')
     ]
   });
 

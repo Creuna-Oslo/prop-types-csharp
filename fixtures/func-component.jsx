@@ -2,7 +2,7 @@
 import React from 'react';
 import pt from 'prop-types';
 
-import Link from './link';
+const Link = () => {};
 
 const enumArray = ['value-1', 'value-2'];
 const enumObject = {
@@ -27,7 +27,7 @@ FunctionalComponent.propTypes = {
       propertyB: pt.string.isRequired
     })
   ).isRequired,
-  shapeMeta: pt.shape({
+  shapeExclude: pt.shape({
     object: pt.object
   }),
   objectArray: pt.arrayOf(pt.object).isRequired,
@@ -52,9 +52,7 @@ FunctionalComponent.propTypesMeta = {
   intNumber: 'int',
   floatNumber: 'float',
   excludeMe: 'exclude',
-  shapeMeta: {
-    object: Link
-  },
+  shapeExclude: 'exclude',
   objectArray: Array(Link),
   linkMeta: Link,
   linkListMeta: Array(Link)

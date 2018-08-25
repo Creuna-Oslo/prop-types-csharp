@@ -1,11 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import Component from './func-component';
-import ClassComponent from './class-component';
-
 // Both the following components have the same name in their default export statements.
-import Link from './link';
-import AnotherLink from './nested-component/link';
+import Component from './func-component';
+import DuplicateComponent from './nested-component/func-component';
 
 ReactDOM.render(<Component />, document.getElementById('mount-point'));
