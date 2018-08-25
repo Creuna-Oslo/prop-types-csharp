@@ -1,6 +1,6 @@
 {
   "name": "@creuna/prop-types-csharp-webpack-plugin",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Webpack plugin for generating C# classes from React component propTypes",
   "author": "Asbjørn Hegdahl <asbjorn.hegdahl@creuna.no>",
   "main": "index.js",
@@ -34,6 +34,7 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "eslint": "^5.0.1",
+    "eslint-ava-rule-tester": "^2.0.2",
     "eslint-config-prettier": "^2.9.0",
     "eslint-loader": "^2.0.0",
     "eslint-plugin-prettier": "^2.6.0",
