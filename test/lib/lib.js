@@ -1,33 +1,22 @@
-const fs = require('fs');
-const path = require('path');
 const test = require('ava');
 
 const generateClass = require('../../lib');
+const normalize = require('../utils/_normalize-string');
 
-const funcComponentPath = path.join(
-  __dirname,
-  '../../fixtures/func-component.jsx'
-);
-const funcComponentSource = fs.readFileSync(funcComponentPath, 'utf-8');
-
-const classComponentPath = path.join(
-  __dirname,
-  '../../fixtures/class-component.jsx'
-);
-const classComponentSource = fs.readFileSync(classComponentPath, 'utf-8');
+const { classes, components } = require('../../fixtures/source-code');
 
 test('Functional component', t => {
   const transformedSource = generateClass({
-    sourceCode: funcComponentSource
+    sourceCode: components.funcComponent
   });
-  t.snapshot(transformedSource.code);
+  t.is(normalize(transformedSource.code), normalize(classes.funcComponent));
 });
 
 test('Class component', t => {
   const transformedSource = generateClass({
-    sourceCode: classComponentSource
+    sourceCode: components.classComponent
   });
-  t.snapshot(transformedSource.code);
+  t.is(normalize(transformedSource.code), normalize(classes.classComponent));
 });
 
 test('Throws on name collisions', t => {
