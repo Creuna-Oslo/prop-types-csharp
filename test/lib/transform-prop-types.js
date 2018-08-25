@@ -57,6 +57,18 @@ test(
   'C.propTypes={a:int};'
 );
 
+test(
+  'Replaces nested meta types',
+  template,
+  'C.propTypes={a:pt.object};',
+  'C.propTypes={a:shape({b:string})};',
+  {
+    a: bt.objectExpression([
+      bt.objectProperty(bt.identifier('b'), bt.identifier('string'))
+    ])
+  }
+);
+
 const illegalTypes = ['array', 'object', 'oneOfType'];
 
 illegalTypes.forEach(type => {

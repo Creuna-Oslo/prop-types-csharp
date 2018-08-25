@@ -75,7 +75,7 @@ test(
   'C.propTypesMeta = { a: Object.keys(obj) };'
 );
 
-const unsupportedTypes = ['null', 'false', 'true', '{}', '[]'];
+const unsupportedTypes = ['null', 'false', 'true', '[]'];
 
 test('Throws on unsupported meta types', t => {
   t.plan(unsupportedTypes.length);

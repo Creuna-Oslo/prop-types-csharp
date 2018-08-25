@@ -1,4 +1,4 @@
-# Snapshot report for `test/ast-to-csharp.js`
+# Snapshot report for `test/lib/ast-to-csharp.js`
 
 The actual snapshot is saved in `ast-to-csharp.js.snap`.
 
