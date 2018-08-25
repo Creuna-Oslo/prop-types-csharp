@@ -32,6 +32,16 @@ test(
 );
 
 test(
+  'Removes excluded props with nesting',
+  template,
+  'C.propTypes={a:pt.shape({ b: pt.object })};',
+  'C.propTypes={};',
+  {
+    a: bt.identifier('exclude')
+  }
+);
+
+test(
   'Removes excluded prop with illegal function call',
   template,
   'C.propTypes={a: someFunc()};',
@@ -61,7 +71,7 @@ test(
   'Replaces nested meta types',
   template,
   'C.propTypes={a:pt.object};',
-  'C.propTypes={a:shape({b:string})};',
+  'C.propTypes={a:{b:string}};',
   {
     a: bt.objectExpression([
       bt.objectProperty(bt.identifier('b'), bt.identifier('string'))

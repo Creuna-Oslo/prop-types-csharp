@@ -9,14 +9,14 @@ test('Functional component', t => {
   const transformedSource = generateClass({
     sourceCode: components.funcComponent
   });
-  t.is(normalize(transformedSource.code), normalize(classes.funcComponent));
+  t.is(normalize(classes.funcComponent), normalize(transformedSource.code));
 });
 
 test('Class component', t => {
   const transformedSource = generateClass({
     sourceCode: components.classComponent
   });
-  t.is(normalize(transformedSource.code), normalize(classes.classComponent));
+  t.is(normalize(classes.classComponent), normalize(transformedSource.code));
 });
 
 test('Throws on name collisions', t => {

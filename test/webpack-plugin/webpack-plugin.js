@@ -4,16 +4,15 @@ const tempy = require('tempy');
 const test = require('ava');
 const webpack = require('webpack');
 
+const { classes } = require('../../fixtures/source-code');
+const normalize = require('../utils/_normalize-string');
 const webpackConfig = require('../../fixtures/webpack.config');
 
 test.cb('Writes C# files to disk', t => {
-  t.plan(5);
+  t.plan(4);
 
   webpack(
-    webpackConfig(
-      { path: tempy.directory(), indent: 4, namespace: 'Some.Namespace' },
-      { mode: 'production' }
-    ),
+    webpackConfig({ path: tempy.directory() }, { mode: 'production' }),
     (error, stats) => {
       if (error) {
         throw error;
@@ -28,16 +27,24 @@ test.cb('Writes C# files to disk', t => {
         .filter(asset => asset.name.match(/\.cs$/))
         .map(file => file.name);
 
-      t.is(CSharpFilePaths.length, 3);
+      t.is(CSharpFilePaths.length, 2);
 
-      CSharpFilePaths.forEach(filePath => {
-        const fileContent = fs.readFileSync(
-          path.join(outputPath, filePath),
-          'utf-8'
-        );
+      const CSharpFiles = CSharpFilePaths.reduce((accum, filePath) => {
+        const fileName = path.basename(filePath, '.cs');
+        return Object.assign(accum, {
+          [fileName]: fs.readFileSync(path.join(outputPath, filePath), 'utf-8')
+        });
+      }, {});
 
-        t.snapshot(fileContent);
-      });
+      t.is(
+        normalize(classes.classComponent),
+        normalize(CSharpFiles.ClassComponent)
+      );
+
+      t.is(
+        normalize(classes.funcComponent),
+        normalize(CSharpFiles.FunctionalComponent)
+      );
 
       t.end();
     }

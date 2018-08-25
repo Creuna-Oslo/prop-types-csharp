@@ -13,7 +13,6 @@ public class ClassComponent
   public ClassComponent_SingleObject SingleObject { get; set; }
   [Required]
   public IList<ClassComponent_ObjectsItem> Objects { get; set; }
-  public ClassComponent_ShapeMeta ShapeMeta { get; set; }
   [Required]
   public IList<Link> ObjectArray { get; set; }
   public IList<IList<IList<string>>> NestedList { get; set; }
@@ -37,11 +36,6 @@ public class ClassComponent_ObjectsItem
 {
   [Required]
   public string PropertyB { get; set; }
-}
-
-public class ClassComponent_ShapeMeta 
-{
-  public Link Object { get; set; }
 }
 
 public enum ClassComponent_EnumArray 

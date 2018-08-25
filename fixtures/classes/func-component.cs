@@ -14,7 +14,6 @@ public class FunctionalComponent
   public FunctionalComponent_SingleObject SingleObject { get; set; }
   [Required]
   public IList<FunctionalComponent_ObjectsItem> Objects { get; set; }
-  public FunctionalComponent_ShapeMeta ShapeMeta { get; set; }
   [Required]
   public IList<Link> ObjectArray { get; set; }
   public IList<IList<IList<string>>> NestedList { get; set; }
@@ -38,11 +37,6 @@ public class FunctionalComponent_ObjectsItem
 {
   [Required]
   public string PropertyB { get; set; }
-}
-
-public class FunctionalComponent_ShapeMeta 
-{
-  public Link Object { get; set; }
 }
 
 public enum FunctionalComponent_EnumArray 
