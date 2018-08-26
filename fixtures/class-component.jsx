@@ -30,6 +30,9 @@ class ClassComponent extends React.Component {
     shapeExclude: pt.shape({
       object: pt.object
     }),
+    shapeMeta: pt.shape({
+      object: pt.object
+    }),
     objectArray: pt.arrayOf(pt.object).isRequired,
     nestedList: pt.arrayOf(pt.arrayOf(pt.arrayOf(pt.string))),
     link: pt.shape(Link.propTypes),
@@ -53,6 +56,9 @@ class ClassComponent extends React.Component {
     floatNumber: 'float',
     excludeMe: 'exclude',
     shapeExclude: 'exclude',
+    shapeMeta: {
+      object: Link
+    },
     objectArray: Array(Link),
     linkMeta: Link,
     linkListMeta: Array(Link)

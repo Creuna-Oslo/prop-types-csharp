@@ -79,6 +79,13 @@ test(
   }
 );
 
+test(
+  'Deep nesting',
+  template,
+  'C.propTypes={a:pt.arrayOf(pt.arrayOf(pt.arrayOf(pt.string)))};',
+  'C.propTypes={a:[[[string]]]};'
+);
+
 const illegalTypes = ['array', 'object', 'oneOfType'];
 
 illegalTypes.forEach(type => {
@@ -97,6 +104,20 @@ illegalTypes.forEach(type => {
 test(
   'Removes propTypes "prefix"',
   template,
-  'C.propTypes={a:pt.arrayOf(pt.string)};',
-  'C.propTypes={a:arrayOf(string)};'
+  'C.propTypes={a:pt.arrayOf(pt.string),b:pt.shape({c:pt.string})};',
+  'C.propTypes={a:[string],b:{c:string}};'
+);
+
+test(
+  'Component reference',
+  template,
+  'C.propTypes={a:pt.arrayOf(pt.shape(Link.propTypes))};',
+  'C.propTypes={a:[Link]};'
+);
+
+test(
+  'Component with nesting',
+  template,
+  'C.propTypes={a:pt.arrayOf(pt.shape({ b: Link.propTypes }))};',
+  'C.propTypes={a:[{b:Link}]};'
 );

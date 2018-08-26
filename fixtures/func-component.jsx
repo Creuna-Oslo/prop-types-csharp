@@ -30,6 +30,9 @@ FunctionalComponent.propTypes = {
   shapeExclude: pt.shape({
     object: pt.object
   }),
+  shapeMeta: pt.shape({
+    object: pt.object
+  }),
   objectArray: pt.arrayOf(pt.object).isRequired,
   nestedList: pt.arrayOf(pt.arrayOf(pt.arrayOf(pt.string))),
   link: pt.shape(Link.propTypes),
@@ -39,8 +42,6 @@ FunctionalComponent.propTypes = {
   enumArray: pt.oneOf(enumArray).isRequired,
   enumInline: pt.oneOf([1, 2]),
   enumObject: pt.oneOf(Object.keys(enumObject)),
-
-  // These should be excluded
   instance: pt.instanceOf(Link),
   excludeMe: pt.number,
   node: pt.node,
@@ -53,6 +54,9 @@ FunctionalComponent.propTypesMeta = {
   floatNumber: 'float',
   excludeMe: 'exclude',
   shapeExclude: 'exclude',
+  shapeMeta: {
+    object: Link
+  },
   objectArray: Array(Link),
   linkMeta: Link,
   linkListMeta: Array(Link)

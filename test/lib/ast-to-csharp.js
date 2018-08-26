@@ -7,9 +7,9 @@ const normalize = require('../utils/_normalize-string');
 const basicTree = parse(`
   Component = {
     text: string.isRequired,
-    texts: arrayOf(string),
+    texts: [[[string]]],
     singleObject: Component_SingleObject,
-    objects: arrayOf(Component_ObjectsItem).isRequired
+    objects: [Component_ObjectsItem].isRequired
   };
   Component_SingleObject = {
     propertyA: string.isRequired
@@ -27,7 +27,7 @@ public class Component
 {
   [Required]
   public string Text { get; set; }
-  public IList<string> Texts { get; set; }
+  public IList<IList<IList<string>>> Texts { get; set; }
   public Component_SingleObject SingleObject { get; set; }
   [Required]
   public IList<Component_ObjectsItem> Objects { get; set; }

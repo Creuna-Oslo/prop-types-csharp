@@ -12,24 +12,31 @@ const template = (t, input, expected) => {
 };
 
 test(
+  'Func component: inline literal',
+  template,
+  'Component.propTypes={prop:oneOf([1,2])};',
+  'Component.propTypes={prop:[1,2]};'
+);
+
+test(
   'Func component: array literal',
   template,
   'const array=[1,2];Component.propTypes={prop:oneOf(array)};',
-  'const array=[1,2];Component.propTypes={prop:oneOf([1,2])};'
+  'const array=[1,2];Component.propTypes={prop:[1,2]};'
 );
 
 test(
   'Func component: object keys',
   template,
   'const object={a:1,b:2};Component.propTypes={prop:oneOf(Object.keys(object))}',
-  'const object={a:1,b:2};Component.propTypes={prop:oneOf(["a","b"])};'
+  'const object={a:1,b:2};Component.propTypes={prop:["a","b"]};'
 );
 
 test(
   'Func component: object values',
   template,
   'const object={a:1,b:2};Component.propTypes={prop:oneOf(Object.values(object))}',
-  'const object={a:1,b:2};Component.propTypes={prop:oneOf([1,2])};'
+  'const object={a:1,b:2};Component.propTypes={prop:[1,2]};'
 );
 
 test('Func component: missing literal', t => {
@@ -43,24 +50,31 @@ test('Func component: missing literal', t => {
 });
 
 test(
+  'Func component: inline literal',
+  template,
+  'class Component{static propTypes={prop:oneOf([1,2])};}',
+  'class Component{static propTypes={prop:[1,2]}}'
+);
+
+test(
   'Class component: array literal',
   template,
   'const array=[1,2];class Component{static propTypes={prop:oneOf(array)};}',
-  'const array=[1,2];class Component{static propTypes={prop:oneOf([1,2])}}'
+  'const array=[1,2];class Component{static propTypes={prop:[1,2]}}'
 );
 
 test(
   'Class component: object keys',
   template,
   'const object={a:1,b:2};class Component{static propTypes={prop:oneOf(Object.keys(object))};}',
-  'const object={a:1,b:2};class Component{static propTypes={prop:oneOf(["a","b"])}}'
+  'const object={a:1,b:2};class Component{static propTypes={prop:["a","b"]}}'
 );
 
 test(
   'Func component: object values',
   template,
   'const object={a:1,b:2};class Component{static propTypes={prop:oneOf(Object.values(object))}}',
-  'const object={a:1,b:2};class Component{static propTypes={prop:oneOf([1,2])}}'
+  'const object={a:1,b:2};class Component{static propTypes={prop:[1,2]}}'
 );
 
 test('Class component: missing literal', t => {
