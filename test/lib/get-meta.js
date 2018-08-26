@@ -50,16 +50,16 @@ test(
 );
 
 test('Transforms Array', t => {
-  t.plan(4);
+  t.plan(3);
 
   const syntaxTree = parse('C.propTypesMeta = { a: Array(SomeComponent) };');
   const { propTypesMeta } = getMeta({ syntaxTree });
 
-  t.true(bt.isCallExpression(propTypesMeta.a));
-  t.is(propTypesMeta.a.callee.name, 'arrayOf');
-  t.is(propTypesMeta.a.arguments.length, 1);
-  t.true(
-    bt.isIdentifier(propTypesMeta.a.arguments[0], { name: 'SomeComponent' })
+  t.is(true, bt.isArrayExpression(propTypesMeta.a));
+  t.is(propTypesMeta.a.elements.length, 1);
+  t.is(
+    true,
+    bt.isIdentifier(propTypesMeta.a.elements[0], { name: 'SomeComponent' })
   );
 });
 

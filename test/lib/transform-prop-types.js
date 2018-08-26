@@ -13,29 +13,25 @@ const template = (t, input, expected, propTypesMeta = {}) => {
     syntaxTree
   });
 
-  t.is(generate(syntaxTree, { minified: true }).code, expected);
+  t.is(expected, generate(syntaxTree, { minified: true }).code);
 };
 
 test(
   'Removes client-only props',
   template,
-  'C.propTypes={a:pt.element,b:pt.func,c:pt.instanceOf,d:pt.node}',
-  'C.propTypes={};'
+  'C.propTypes={a:element,b:func,c:instanceOf,d:node}',
+  'C={};'
 );
 
-test(
-  'Removes excluded props',
-  template,
-  'C.propTypes={a:pt.array};',
-  'C.propTypes={};',
-  { a: bt.identifier('exclude') }
-);
+test('Removes excluded props', template, 'C.propTypes={a:array};', 'C={};', {
+  a: bt.identifier('exclude')
+});
 
 test(
   'Removes excluded props with nesting',
   template,
-  'C.propTypes={a:pt.shape({ b: pt.object })};',
-  'C.propTypes={};',
+  'C.propTypes={a:shape({ b: object })};',
+  'C={};',
   {
     a: bt.identifier('exclude')
   }
@@ -45,15 +41,15 @@ test(
   'Removes excluded prop with illegal function call',
   template,
   'C.propTypes={a: someFunc()};',
-  'C.propTypes={};',
+  'C={};',
   { a: bt.identifier('exclude') }
 );
 
 test(
   'Applies meta types',
   template,
-  'C.propTypes={a:pt.number,b:pt.number};',
-  'C.propTypes={a:int,b:float};',
+  'C.propTypes={a:number,b:number};',
+  'C={a:int,b:float};',
   {
     a: bt.identifier('int'),
     b: bt.identifier('float')
@@ -63,15 +59,15 @@ test(
 test(
   'Replaces "number" with "int" by default',
   template,
-  'C.propTypes={a:pt.number};',
-  'C.propTypes={a:int};'
+  'C.propTypes={a:number};',
+  'C={a:int};'
 );
 
 test(
   'Replaces nested meta types',
   template,
-  'C.propTypes={a:pt.object};',
-  'C.propTypes={a:{b:string}};',
+  'C.propTypes={a:object};',
+  'C={a:{b:string}};',
   {
     a: bt.objectExpression([
       bt.objectProperty(bt.identifier('b'), bt.identifier('string'))
@@ -82,15 +78,15 @@ test(
 test(
   'Deep nesting',
   template,
-  'C.propTypes={a:pt.arrayOf(pt.arrayOf(pt.arrayOf(pt.string)))};',
-  'C.propTypes={a:[[[string]]]};'
+  'C.propTypes={a:arrayOf(arrayOf(arrayOf(string)))};',
+  'C={a:[[[string]]]};'
 );
 
 const illegalTypes = ['array', 'object', 'oneOfType'];
 
 illegalTypes.forEach(type => {
   test(`Throws on '${type}'`, t => {
-    const syntaxTree = parse(`C.propTypes={a:pt.${type}};`);
+    const syntaxTree = parse(`C.propTypes={a:${type}};`);
     t.throws(() => {
       transformPropTypes({
         propTypesIdentifierName: 'pt',
@@ -104,20 +100,28 @@ illegalTypes.forEach(type => {
 test(
   'Removes propTypes "prefix"',
   template,
-  'C.propTypes={a:pt.arrayOf(pt.string),b:pt.shape({c:pt.string})};',
-  'C.propTypes={a:[string],b:{c:string}};'
+  'C.propTypes={a:arrayOf(string),b:shape({c:string})};',
+  'C={a:[string],b:{c:string}};'
 );
 
 test(
   'Component reference',
   template,
-  'C.propTypes={a:pt.arrayOf(pt.shape(Link.propTypes))};',
-  'C.propTypes={a:[Link]};'
+  'C.propTypes={a:arrayOf(shape(Link.propTypes))};',
+  'C={a:[Link]};'
+);
+
+// Doing this will result in PropTypes-validation failing, but we can generate a class anyway
+test(
+  'Component reference without shape',
+  template,
+  'C.propTypes={a:arrayOf(Link.propTypes)};',
+  'C={a:[Link]};'
 );
 
 test(
   'Component with nesting',
   template,
-  'C.propTypes={a:pt.arrayOf(pt.shape({ b: Link.propTypes }))};',
-  'C.propTypes={a:[{b:Link}]};'
+  'C.propTypes={a:arrayOf(shape({ b: Link.propTypes }))};',
+  'C={a:[{b:Link}]};'
 );

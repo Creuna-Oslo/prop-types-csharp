@@ -16,7 +16,8 @@
   "license": "MIT",
   "scripts": {
     "build": "webpack --config=fixtures/webpack.config --mode=production",
-    "test": "ava --verbose"
+    "test": "ava --verbose",
+    "test:lib": "ava --verbose ./test/lib"
   },
   "repository": {
     "type": "git",
