@@ -222,25 +222,12 @@ test('With empty definition', t => {
   );
 });
 
-// Only valid function call when generating string is 'arrayOf'
-test('Throws on invalid function call', t => {
+test('Throws on function call', t => {
   t.throws(() => {
     ASTToCsharp({
       syntaxTree: parse(`
         Component = {
-          prop: shape(string)
-        }
-      `)
-    });
-  });
-});
-
-test('Throws on bad component reference in arrayOf', t => {
-  t.throws(() => {
-    ASTToCsharp({
-      syntaxTree: parse(`
-        Component = {
-          prop: arrayOf(AnotherComponent.propTypes)
+          prop: arrayOf()
         }
       `)
     });
