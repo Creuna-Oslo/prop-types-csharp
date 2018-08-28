@@ -24,28 +24,20 @@ module.exports = objectExpression => {
     const propTypeNode = objectProperty.value.callee || objectProperty.value;
 
     if (t.isMemberExpression(propTypeNode)) {
-      const propTypeName = propTypeNode.property.name;
+      const isRequired =
+        t.isMemberExpression(propTypeNode.object) &&
+        t.isIdentifier(propTypeNode.property, { name: 'isRequired' });
+
+      // If .isRequired is used, 'propTypeNode.object' will be another MemberExpression. The type name will be accessible in the 'property' property of 'propTypeNode.object'.
+      const propTypeName = isRequired
+        ? propTypeNode.object.property.name
+        : propTypeNode.property.name;
 
       if (illegalTypes[propTypeName]) {
         accum[key] = {
           node: propTypeNode.property,
           message: illegalTypes[propTypeName]
         };
-      }
-
-      // If .isRequired is used, 'propTypeNode.object' will be another MemberExpression. The type name will be accessible in the 'property' property of 'propTypeNode.object'.
-      if (
-        t.isMemberExpression(propTypeNode.object) &&
-        t.isIdentifier(propTypeNode.property, { name: 'isRequired' })
-      ) {
-        const propTypeName = propTypeNode.object.property.name;
-
-        if (illegalTypes[propTypeName]) {
-          accum[key] = {
-            node: propTypeNode.property,
-            message: illegalTypes[propTypeName]
-          };
-        }
       }
     }
 
