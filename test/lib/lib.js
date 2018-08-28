@@ -29,3 +29,35 @@ test('Throws on name collisions', t => {
     generateClass({ sourceCode });
   });
 });
+
+test('Respects meta with illegal types', t => {
+  const sourceCode = `
+  import PropTypes from 'prop-types';
+  import something from './something';
+  const Component = ({ a, b, c }) => <div></div>;
+  Component.propTypes = {
+    a: someFunc(),
+    b: PropTypes.oneOf(Object.keys(something)),
+    c: PropTypes.object,
+    d: PropTypes.array
+  };
+  Component.propTypesMeta = {
+    a: 'exclude',
+    b: 'exclude',
+    c: 'exclude',
+    d: 'exclude',
+  };
+  export default Component;`;
+
+  const expected = `
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
+public class Component
+{
+}
+  `;
+
+  const transformedSource = generateClass({ sourceCode });
+  t.is(normalize(expected), normalize(transformedSource.code));
+});

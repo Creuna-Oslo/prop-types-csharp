@@ -4,9 +4,9 @@ const test = require('ava');
 
 const expandReferencess = require('../../lib/transforms/expand-references');
 
-const template = (t, input, expected) => {
+const template = (t, input, expected, propTypesMeta = {}) => {
   const syntaxTree = parse(input, { plugins: ['classProperties'] });
-  expandReferencess({ syntaxTree, componentName: 'Component' });
+  expandReferencess({ syntaxTree, propTypesMeta, componentName: 'Component' });
 
   t.is(generate(syntaxTree, { minified: true }).code, expected);
 };
