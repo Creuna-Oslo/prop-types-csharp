@@ -51,7 +51,10 @@ module.exports = {
             );
           },
           ClassProperty: node => {
-            if (t.isIdentifier(node.key, { name: 'propTypes' })) {
+            if (
+              t.isIdentifier(node.key, { name: 'propTypes' }) &&
+              t.isObjectExpression(node.value)
+            ) {
               Object.assign(invalidPropTypes, getInvalidPropTypes(node.value));
               propNames = propNames.concat(getPropNames(node.value));
             }
@@ -63,7 +66,8 @@ module.exports = {
           AssignmentExpression: node => {
             if (
               t.isMemberExpression(node.left) &&
-              node.left.property.name === 'propTypes'
+              node.left.property.name === 'propTypes' &&
+              t.isObjectExpression(node.right)
             ) {
               Object.assign(invalidPropTypes, getInvalidPropTypes(node.right));
               propNames = propNames.concat(getPropNames(node.right));

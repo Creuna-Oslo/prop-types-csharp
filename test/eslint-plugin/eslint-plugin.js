@@ -30,6 +30,9 @@ const validCases = [
   // Only export statement
   '',
 
+  // No object literal in propTypes
+  'A.propTypes = B.propTypes;',
+
   // Invalid 'object' with meta type
   'A.propTypes = { b: PropTypes.object }; A.propTypesMeta = { b: "exclude" };',
 
@@ -38,6 +41,9 @@ const validCases = [
 
   // Invalid 'oneOfType' with meta type
   'A.propTypes = { b: PropTypes.oneOfType() }; A.propTypesMeta = { b: "exclude" };',
+
+  // Invalid function call with meta type
+  ['A.propTypes = { b: someFunc() }; A.propTypesMeta = { b: "exclude" };'],
 
   // Valid meta type Array()
   'A.propTypesMeta = { b: Array(B) };',
