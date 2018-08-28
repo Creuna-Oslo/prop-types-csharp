@@ -20,7 +20,8 @@ const basicTree = parse(`
 `);
 
 const imports = `using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;`;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;`;
 
 const basicClass = `
 public class Component
@@ -115,9 +116,9 @@ test('Optional enum', t => {
       public enum Enum
       {
         None = 0,
-        [Display(Name = "value-1")]
+        [EnumMember(Value = "value-1")]
         Value1 = 1,
-        [Display(Name = "value-2")]
+        [EnumMember(Value = "value-2")]
         Value2 = 2,
       }
     `
@@ -149,9 +150,9 @@ test('Required enum', t => {
       }
       public enum Enum
       {
-        [Display(Name = "value-1")]
+        [EnumMember(Value = "value-1")]
         Value1 = 0,
-        [Display(Name = "value-2")]
+        [EnumMember(Value = "value-2")]
         Value2 = 1,
       }
     `
@@ -183,11 +184,11 @@ test('Enum with name starting with non-letter', t => {
       public enum Enum
       {
         None = 0,
-        [Display(Name = "-value-1")]
+        [EnumMember(Value = "-value-1")]
         Value1 = 1,
-        [Display(Name = ".value-2")]
+        [EnumMember(Value = ".value-2")]
         Value2 = 2,
-        [Display(Name = "#value-3")]
+        [EnumMember(Value = "#value-3")]
         Value3 = 3,
       }
     `

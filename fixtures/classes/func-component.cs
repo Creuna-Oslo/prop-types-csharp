@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
 
 public class FunctionalComponent 
 {
@@ -47,9 +48,9 @@ public class FunctionalComponent_ShapeMeta
 
 public enum FunctionalComponent_EnumArray 
 {
-  [Display(Name = "value-1")]
+  [EnumMember(Value = "value-1")]
   Value1 = 0,
-  [Display(Name = "value-2")]
+  [EnumMember(Value = "value-2")]
   Value2 = 1,
 }
 
@@ -63,8 +64,8 @@ public enum FunctionalComponent_EnumInline
 public enum FunctionalComponent_EnumObject 
 {
   None = 0,
-  [Display(Name = "valueA")]
+  [EnumMember(Value = "valueA")]
   ValueA = 1,
-  [Display(Name = "valueB")]
+  [EnumMember(Value = "valueB")]
   ValueB = 2,
 }
