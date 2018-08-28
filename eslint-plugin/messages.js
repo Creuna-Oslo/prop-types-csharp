@@ -8,6 +8,7 @@ module.exports = {
   badStringLiteral: `Expected one of [${Object.keys(
     allowedMetaTypes.strings
   )}] but got '{{value}}'.`,
+  illegalFunctionCall: `Illegal function call`,
   noExport: `No export statement. Couldn't get component name.`,
   object: 'Unsupported type "object". Replace with "shape" or add meta type.',
   oneOfType: 'Unsupported type "oneOfType".',

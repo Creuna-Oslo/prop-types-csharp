@@ -1,6 +1,6 @@
 {
   "name": "@creuna/prop-types-csharp",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "Tools for generating C# classes from React component propTypes",
   "author": "Asbjørn Hegdahl <asbjorn.hegdahl@creuna.no>",
   "main": "index.js",
@@ -17,6 +17,8 @@
   "scripts": {
     "build": "webpack --config=fixtures/webpack.config --mode=production",
     "test": "ava --verbose",
+    "test:babel": "ava --verbose ./test/babel-plugin",
+    "test:eslint": "ava --verbose ./test/eslint-plugin",
     "test:lib": "ava --verbose ./test/lib"
   },
   "repository": {
