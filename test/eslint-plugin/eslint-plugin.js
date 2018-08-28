@@ -99,7 +99,10 @@ const validCases = [
   'const obj = { c: "d" }; A.propTypes = { c: PropTypes.oneOf(Object.keys(obj)) };',
 
   // Reference to object literal in Object.values
-  'const obj = { c: "d" }; A.propTypes = { c: PropTypes.oneOf(Object.values(obj)) };'
+  'const obj = { c: "d" }; A.propTypes = { c: PropTypes.oneOf(Object.values(obj)) };',
+
+  // Reference to array literal in oneOf
+  'const arr = [1,2]; A.propTypes = { c: PropTypes.oneOf(arr) };'
 ].map(code => code + footer);
 
 // These all have 'footer' appended further down
@@ -168,6 +171,12 @@ const invalidCases = [
   [
     'import obj from "./obj"; A.propTypes = { c: PropTypes.oneOf(Object.values(obj)) };',
     errors.importedObjectReference
+  ],
+
+  // Imported arrays in oneOf
+  [
+    'import arr from "./arr"; A.propTypes = { c: PropTypes.oneOf(arr) };',
+    errors.importedArrayReference
   ]
 ]
   .map(([code, ...errors]) => [code + footer, ...errors])

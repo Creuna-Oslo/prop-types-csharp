@@ -46,27 +46,47 @@ module.exports = (objectExpression, scope) => {
         };
       }
 
-      if (t.isCallExpression(value) && propTypeName === 'oneOf') {
+      // Check for references inside PropTypes.oneOf. Run checks only if there are defined variables in scope. Undefined variables are caught by 'no-undef', which every sane person should be using.
+      if (
+        t.isCallExpression(value) &&
+        propTypeName === 'oneOf' &&
+        variablesInScope.length
+      ) {
         const [argument] = value.arguments;
 
-        // Run check only if there are defined variables. Undefined variables are caught by 'no-undef', which every sane person should be using.
+        // Check references to arrays
+        if (t.isIdentifier(argument)) {
+          const hasLiteral = variablesInScope.some(
+            variable =>
+              variable.name === argument.name &&
+              t.isArrayExpression(variable.references[0].writeExpr)
+          );
+
+          if (!hasLiteral) {
+            accum[key] = {
+              node: argument,
+              message: messages.importedArrayReference
+            };
+          }
+        }
+
+        // Check references to objects in Object.keys and Object.values
         if (
-          variablesInScope.length &&
           t.isCallExpression(argument) &&
           t.isMemberExpression(argument.callee) &&
           argument.callee.object.name === 'Object' &&
           ['keys', 'values'].includes(argument.callee.property.name)
         ) {
-          const [variable] = argument.arguments;
+          const [objectMethodArgument] = argument.arguments;
           const hasLiteral = variablesInScope.some(
-            scopeVariable =>
-              scopeVariable.name === variable.name &&
-              t.isObjectExpression(scopeVariable.references[0].writeExpr)
+            variable =>
+              variable.name === objectMethodArgument.name &&
+              t.isObjectExpression(variable.references[0].writeExpr)
           );
 
           if (!hasLiteral) {
             accum[key] = {
-              node: variable,
+              node: objectMethodArgument,
               message: messages.importedObjectReference
             };
           }
