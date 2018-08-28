@@ -1,6 +1,5 @@
 const t = require('babel-types');
 
-const getInvalidPropTypes = require('./get-invalid-prop-types');
 const messages = require('./messages');
 const validate = require('./validate');
 
@@ -23,7 +22,7 @@ module.exports = {
       create: function(context) {
         let exportDeclarations = [];
         const metaTypes = {};
-        const invalidPropTypes = {};
+        let propTypes;
         let propNames = [];
 
         if (!context.getFilename().includes('.jsx')) {
@@ -38,8 +37,8 @@ module.exports = {
               context,
               exportDeclarations,
               metaTypes,
-              propNames,
-              invalidPropTypes
+              propTypes,
+              propNames
             });
           },
           ExportDefaultDeclaration: node => {
@@ -55,7 +54,7 @@ module.exports = {
               t.isIdentifier(node.key, { name: 'propTypes' }) &&
               t.isObjectExpression(node.value)
             ) {
-              Object.assign(invalidPropTypes, getInvalidPropTypes(node.value));
+              propTypes = node.value;
               propNames = propNames.concat(getPropNames(node.value));
             }
 
@@ -69,7 +68,7 @@ module.exports = {
               node.left.property.name === 'propTypes' &&
               t.isObjectExpression(node.right)
             ) {
-              Object.assign(invalidPropTypes, getInvalidPropTypes(node.right));
+              propTypes = node.right;
               propNames = propNames.concat(getPropNames(node.right));
             }
 

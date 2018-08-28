@@ -1,6 +1,7 @@
 const t = require('babel-types');
 
 const allowedMetaTypes = require('./allowed-meta-types');
+const getInvalidPropTypes = require('./get-invalid-prop-types');
 const messages = require('./messages');
 
 module.exports = ({
@@ -8,8 +9,8 @@ module.exports = ({
   context,
   exportDeclarations,
   metaTypes,
-  propNames,
-  invalidPropTypes
+  propTypes,
+  propNames
 }) => {
   if (exportDeclarations.length > 1) {
     exportDeclarations.forEach(declaration => {
@@ -35,11 +36,15 @@ module.exports = ({
     });
   }
 
-  Object.entries(invalidPropTypes)
-    .filter(([key]) => !metaTypes[key])
-    .forEach(([_key, { node, message }]) => {
-      context.report({ node, message });
-    });
+  if (propTypes) {
+    const invalidPropTypes = getInvalidPropTypes(propTypes);
+
+    Object.entries(invalidPropTypes)
+      .filter(([key]) => !metaTypes[key])
+      .forEach(([_key, { node, message }]) => {
+        context.report({ node, message });
+      });
+  }
 
   Object.values(metaTypes).forEach(node => {
     if (t.isLiteral(node) && !allowedMetaTypes.strings[node.value]) {
