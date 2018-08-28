@@ -2,18 +2,22 @@
 
 [![Travis status](https://travis-ci.org/Creuna-Oslo/prop-types-csharp-webpack-plugin.svg?branch=master)](https://travis-ci.org/Creuna-Oslo/prop-types-csharp-webpack-plugin)
 
-This package generates C# classes from React components using propTypes. It includes several parts:
+This package has tools for generating C# classes from React components using propTypes.
 
-- A [Node.js API](#node)
-- A [Webpack plugin](#webpack)
-- A [Babel plugin](#babel)
-- An [eslint plugin](#eslint)
+## Table of contents
+
+- [General concepts](#general)
+- [About generated classes](#classes)
+- [Node.js API](#node)
+- [Webpack plugin](#webpack)
+- [Babel plugin](#babel)
+- [eslint plugin](#eslint)
 
 ```
 yarn add @creuna/prop-types-csharp
 ```
 
-## General concepts
+## <a id="general"></a> General concepts
 
 ### Ignored props
 
@@ -81,6 +85,32 @@ class Component extends React.Component {
     items: Array(AnotherComponent)
   };
 }
+```
+
+## <a id="classes"></a> About generated classes
+
+### Enums
+
+Generated enums look like this:
+
+```cs
+public enum Theme
+{
+  [EnumMember(Value = "theme-blue")]
+  ThemeBlue = 0
+}
+```
+
+This allows for the passing of magic strings from C# to React. To get this working with serialization, set the following in the Application_Start:
+
+```cs
+using Newtonsoft.Json.Converters;
+
+ReactSiteConfiguration.Configuration
+  .SetJsonSerializerSettings(new JsonSerializerSettings
+  {
+      Converters = new List<JsonConverter> { new StringEnumConverter() }
+  });
 ```
 
 ## <a id="node"></a>Node.js API
