@@ -8,7 +8,13 @@ const illegalTypes = {
   oneOfType: messages.oneOfType
 };
 
-module.exports = objectExpression => {
+module.exports = (objectExpression, scope) => {
+  // console.log(scope.childScopes[0].variables[0].references[0]);
+  const variablesInScope =
+    scope.childScopes.length &&
+    scope.childScopes[0].type === 'module' &&
+    scope.childScopes[0].variables;
+
   return objectExpression.properties.reduce((accum, objectProperty) => {
     const key = objectProperty.key.name;
     const value = objectProperty.value;
@@ -38,6 +44,33 @@ module.exports = objectExpression => {
           node: propTypeNode.property,
           message: illegalTypes[propTypeName]
         };
+      }
+
+      if (t.isCallExpression(value) && propTypeName === 'oneOf') {
+        const [argument] = value.arguments;
+
+        // Run check only if there are defined variables. Undefined variables are caught by 'no-undef', which every sane person should be using.
+        if (
+          variablesInScope.length &&
+          t.isCallExpression(argument) &&
+          t.isMemberExpression(argument.callee) &&
+          argument.callee.object.name === 'Object' &&
+          ['keys', 'values'].includes(argument.callee.property.name)
+        ) {
+          const [variable] = argument.arguments;
+          const hasLiteral = variablesInScope.some(
+            scopeVariable =>
+              scopeVariable.name === variable.name &&
+              t.isObjectExpression(scopeVariable.references[0].writeExpr)
+          );
+
+          if (!hasLiteral) {
+            accum[key] = {
+              node: variable,
+              message: messages.importedObjectReference
+            };
+          }
+        }
       }
     }
 

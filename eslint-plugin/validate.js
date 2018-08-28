@@ -37,7 +37,7 @@ module.exports = ({
   }
 
   if (propTypes) {
-    const invalidPropTypes = getInvalidPropTypes(propTypes);
+    const invalidPropTypes = getInvalidPropTypes(propTypes, context.getScope());
 
     Object.entries(invalidPropTypes)
       .filter(([key]) => !metaTypes[key])

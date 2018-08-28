@@ -27,6 +27,7 @@ const errors = Object.keys(messages).reduce((accum, key) =>
 
 const footer = 'export default A;';
 
+// These all have 'footer' appended further down
 const validCases = [
   // Only export statement
   '',
@@ -89,85 +90,102 @@ const validCases = [
   'A.propTypesMeta = { b: "float" };',
 
   // Valid meta type 'float' (class component)
-  'class A { static propTypesMeta = { b: "float" }; }'
+  'class A { static propTypesMeta = { b: "float" }; }',
+
+  // Nested with meta
+  'A.propTypes = { b: PropTypes.object }; A.propTypesMeta = { b: { c: Link } };',
+
+  // Reference to object literal in Object.keys
+  'const obj = { c: "d" }; A.propTypes = { c: PropTypes.oneOf(Object.keys(obj)) };',
+
+  // Reference to object literal in Object.values
+  'const obj = { c: "d" }; A.propTypes = { c: PropTypes.oneOf(Object.values(obj)) };'
 ].map(code => code + footer);
 
+// These all have 'footer' appended further down
 const invalidCases = [
   // PropTypes.object
-  ['A.propTypes = { b: PropTypes.object };' + footer, errors.object],
+  ['A.propTypes = { b: PropTypes.object };', errors.object],
 
   // PropTypes.object (class component)
-  [
-    'class A { static propTypes = { b: PropTypes.object };}' + footer,
-    errors.object
-  ],
+  ['class A { static propTypes = { b: PropTypes.object };}', errors.object],
 
   // PropTypes.array
-  ['A.propTypes = { b: PropTypes.array };' + footer, errors.array],
+  ['A.propTypes = { b: PropTypes.array };', errors.array],
 
   // PropTypes.array (class component)
-  [
-    'class A { static propTypes = { b: PropTypes.array }; }' + footer,
-    errors.array
-  ],
+  ['class A { static propTypes = { b: PropTypes.array }; }', errors.array],
 
   // PropTypes.object.isRequired
-  ['A.propTypes = { b: PropTypes.object.isRequired };' + footer, errors.object],
+  ['A.propTypes = { b: PropTypes.object.isRequired };', errors.object],
 
   // PropTypes.object.isRequired (class component)
   [
-    'class A { static propTypes = { b: PropTypes.object.isRequired }; }' +
-      footer,
+    'class A { static propTypes = { b: PropTypes.object.isRequired }; }',
     errors.object
   ],
 
   // PropTypes.oneOfType
-  ['A.propTypes = { b: PropTypes.oneOfType() };' + footer, errors.oneOfType],
+  ['A.propTypes = { b: PropTypes.oneOfType() };', errors.oneOfType],
 
   // PropTypes.oneOfType (class component)
   [
-    'class A { static propTypes = { b: PropTypes.oneOfType() }; }' + footer,
+    'class A { static propTypes = { b: PropTypes.oneOfType() }; }',
     errors.oneOfType
   ],
 
   // Name collision
-  ['A.propTypes = { a: PropTypes.string };' + footer, errors.propNameCollision],
+  ['A.propTypes = { a: PropTypes.string };', errors.propNameCollision],
 
   // Name collision (class component)
   [
-    'class A { static propTypes = { a: PropTypes.string }; }' + footer,
+    'class A { static propTypes = { a: PropTypes.string }; }',
     errors.propNameCollision
   ],
 
   // Invalid function call
-  ['A.propTypes = { b: someFunc() };' + footer, errors.illegalFunctionCall],
+  ['A.propTypes = { b: someFunc() };', errors.illegalFunctionCall],
 
   // Invalid function call (class component)
   [
-    'class A { static propTypes = { b: someFunc() }; }' + footer,
+    'class A { static propTypes = { b: someFunc() }; }',
     errors.illegalFunctionCall
   ],
 
-  // Missing export
-  ['const A = () => {};', errors.noExport],
-
-  // Too many exports
-  ['export { A, B };', errors.tooManyExports, errors.tooManyExports],
-
-  // Too many exports
-  [
-    'export default A; export { B, C };',
-    errors.tooManyExports,
-    errors.tooManyExports,
-    errors.tooManyExports
-  ],
-
   // Typos in string literals
-  ['A.propTypesMeta = { b: "exclud" };' + footer, errors.badStringLiteral],
+  ['A.propTypesMeta = { b: "exclud" };', errors.badStringLiteral],
 
   // Bad function call
-  ['A.propTypesMeta = { b: Arr(B) };' + footer, errors.badFunctionCall]
-];
+  ['A.propTypesMeta = { b: Arr(B) };', errors.badFunctionCall],
+
+  // Imported object in Object.keys
+  [
+    'import obj from "./obj"; A.propTypes = { c: PropTypes.oneOf(Object.keys(obj)) };',
+    errors.importedObjectReference
+  ],
+
+  // Imported object in Object.values
+  [
+    'import obj from "./obj"; A.propTypes = { c: PropTypes.oneOf(Object.values(obj)) };',
+    errors.importedObjectReference
+  ]
+]
+  .map(([code, ...errors]) => [code + footer, ...errors])
+  .concat([
+    // Missing export
+    ['const A = () => {};', errors.noExport],
+
+    // Too many exports
+    ['export { A, B };', errors.tooManyExports, errors.tooManyExports],
+
+    // Too many exports
+    [
+      'export default A; export { B, C };',
+      errors.tooManyExports,
+      errors.tooManyExports,
+      errors.tooManyExports
+    ]
+  ]);
 
 // The eslint plugin will only run for .jsx files, so a filename is added for all tests
 ruleTester.run('all', plugin.rules.all, {
