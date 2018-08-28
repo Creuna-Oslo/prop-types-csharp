@@ -64,14 +64,37 @@ test(
 );
 
 test(
+  'Replaces "number" with "int" by default with isRequired',
+  template,
+  'C.propTypes={a:{b:number.isRequired}};',
+  'C={a:{b:int.isRequired}};'
+);
+
+test(
   'Replaces nested meta types',
   template,
-  'C.propTypes={a:object};',
-  'C={a:{b:string}};',
+  'C.propTypes={a:shape({b:object})};',
+  'C={a:{b:Link}};',
   {
-    a: bt.objectExpression([
-      bt.objectProperty(bt.identifier('b'), bt.identifier('string'))
-    ])
+    a: {
+      b: bt.identifier('Link')
+    }
+  }
+);
+
+test('Array meta', template, 'C.propTypes={a:array};', 'C={a:[Link]};', {
+  a: bt.arrayExpression([bt.identifier('Link')])
+});
+
+test(
+  'Removes excluded nested prop',
+  template,
+  'C.propTypes={a:shape({ b: object })};',
+  'C={a:{}};',
+  {
+    a: {
+      b: bt.identifier('exclude')
+    }
   }
 );
 
@@ -87,6 +110,19 @@ const illegalTypes = ['array', 'object', 'oneOfType'];
 illegalTypes.forEach(type => {
   test(`Throws on '${type}'`, t => {
     const syntaxTree = parse(`C.propTypes={a:${type}};`);
+    t.throws(() => {
+      transformPropTypes({
+        propTypesIdentifierName: 'pt',
+        propTypesMeta: {},
+        syntaxTree
+      });
+    });
+  });
+});
+
+illegalTypes.forEach(type => {
+  test(`Throws on '${type}' with isRequired`, t => {
+    const syntaxTree = parse(`C.propTypes={a:${type}.isRequired};`);
     t.throws(() => {
       transformPropTypes({
         propTypesIdentifierName: 'pt',

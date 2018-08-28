@@ -36,6 +36,9 @@ const validCases = [
   // Invalid 'object' with meta type
   'A.propTypes = { b: PropTypes.object }; A.propTypesMeta = { b: "exclude" };',
 
+  // Invalid required 'object' with meta type
+  'A.propTypes = { b: PropTypes.object.isRequired }; A.propTypesMeta = { b: "exclude" };',
+
   // Invalid 'array' with meta type
   'A.propTypes = { b: PropTypes.array }; A.propTypesMeta = { b: "exclude" };',
 

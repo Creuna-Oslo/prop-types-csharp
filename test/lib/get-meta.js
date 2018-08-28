@@ -29,6 +29,10 @@ test(
   }
 );
 
+test('Nested', template, 'C.propTypesMeta = { a: { b: "exclude" } };', {
+  a: { b: bt.identifier('exclude') }
+});
+
 test('No meta', template, 'const C = () => <div />;', {});
 
 const allowedStringTypes = ['exclude', 'float', 'int'];
