@@ -68,6 +68,9 @@ const invalidCases = [
   // PropTypes.array
   ['A.propTypes = { b: PropTypes.array };' + footer, errors.array],
 
+  // PropTypes.object.isRequired
+  ['A.propTypes = { b: PropTypes.object.isRequired };' + footer, errors.object],
+
   // PropTypes.oneOfType
   ['A.propTypes = { b: PropTypes.oneOfType() };' + footer, errors.oneOfType],
 

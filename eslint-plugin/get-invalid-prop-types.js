@@ -22,13 +22,31 @@ module.exports = objectExpression => {
 
     // propTypeNode might be a CallExpression node (like in 'PropTypes.arrayOf()'), in which case the propType node will be accessible in obectProperty.value.callee. If not, the node is a MemberExpression, and the node is accessible in objectProperty.value.
     const propTypeNode = objectProperty.value.callee || objectProperty.value;
-    const propTypeName = propTypeNode.property.name;
 
-    if (t.isMemberExpression(propTypeNode) && illegalTypes[propTypeName]) {
-      accum[key] = {
-        node: propTypeNode.property,
-        message: illegalTypes[propTypeName]
-      };
+    if (t.isMemberExpression(propTypeNode)) {
+      const propTypeName = propTypeNode.property.name;
+
+      if (illegalTypes[propTypeName]) {
+        accum[key] = {
+          node: propTypeNode.property,
+          message: illegalTypes[propTypeName]
+        };
+      }
+
+      // If .isRequired is used, 'propTypeNode.object' will be another MemberExpression. The type name will be accessible in the 'property' property of 'propTypeNode.object'.
+      if (
+        t.isMemberExpression(propTypeNode.object) &&
+        t.isIdentifier(propTypeNode.property, { name: 'isRequired' })
+      ) {
+        const propTypeName = propTypeNode.object.property.name;
+
+        if (illegalTypes[propTypeName]) {
+          accum[key] = {
+            node: propTypeNode.property,
+            message: illegalTypes[propTypeName]
+          };
+        }
+      }
     }
 
     return accum;
