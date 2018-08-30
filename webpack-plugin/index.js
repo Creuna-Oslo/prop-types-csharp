@@ -6,6 +6,7 @@ const generateClasses = require('./generate-classes');
 function PropTypesCSharpPlugin(options) {
   this.options = Object.assign(
     {
+      baseClass: '',
       exclude: ['node_modules'],
       indent: 2,
       log: false,
@@ -88,6 +89,7 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
     if (production) {
       const outputPath = path.normalize(this.options.path);
       const { classes, duration, error } = generateClasses({
+        baseClass: this.options.baseClass,
         indent: this.options.indent,
         modulePaths,
         namespace: this.options.namespace
@@ -108,6 +110,7 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
     } else {
       // Run class generation in parallel
       generateClassesParallel.send({
+        baseClass: this.options.baseClass,
         indent: this.options.indent,
         modulePaths,
         namespace: this.options.namespace

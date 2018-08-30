@@ -61,3 +61,26 @@ public class Component
   const transformedSource = generateClass({ sourceCode });
   t.is(normalize(expected), normalize(transformedSource.code));
 });
+
+test('Adds baseclass', t => {
+  const sourceCode = `
+  import PropTypes from 'prop-types';
+  const Component = ({ a }) => <div></div>;
+  Component.propTypes = {};
+  export default Component;`;
+
+  const expected = `
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
+public class Component : BaseClass
+{
+}
+  `;
+
+  const transformedSource = generateClass({
+    sourceCode,
+    baseClass: 'BaseClass'
+  });
+  t.is(normalize(expected), normalize(transformedSource.code));
+});

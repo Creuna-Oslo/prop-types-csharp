@@ -65,6 +65,27 @@ test('With namespace', t => {
   );
 });
 
+test('With base class', t => {
+  t.is(
+    normalize(
+      ASTToCsharp({
+        baseClass: 'BaseClass',
+        syntaxTree: parse(`
+        Component = {};
+        `)
+      })
+    ),
+    normalize(
+      `${imports}\n` +
+        `
+public class Component : BaseClass
+{
+}
+      `
+    )
+  );
+});
+
 test('With different indentation', t => {
   const ast = parse(`
     Component = {
