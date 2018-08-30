@@ -86,6 +86,27 @@ public class Component : BaseClass
   );
 });
 
+test('With name collision between class name and base class', t => {
+  t.is(
+    normalize(
+      ASTToCsharp({
+        baseClass: 'Component',
+        syntaxTree: parse(`
+        Component = {};
+        `)
+      })
+    ),
+    normalize(
+      `${imports}\n` +
+        `
+public class Component
+{
+}
+      `
+    )
+  );
+});
+
 test('With different indentation', t => {
   const ast = parse(`
     Component = {
