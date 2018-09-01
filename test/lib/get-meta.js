@@ -3,6 +3,7 @@ const { parse } = require('@babel/parser');
 const test = require('ava');
 
 const getMeta = require('../../lib/utils/get-meta');
+const metaTypes = require('../../lib/meta-types');
 
 const template = (t, input, expected) => {
   const syntaxTree = parse(input, { plugins: ['classProperties', 'jsx'] });
@@ -35,9 +36,7 @@ test('Nested', template, 'C.propTypesMeta = { a: { b: "exclude" } };', {
 
 test('No meta', template, 'const C = () => <div />;', {});
 
-const allowedStringTypes = ['exclude', 'float', 'int'];
-
-allowedStringTypes.forEach(stringType => {
+Object.values(metaTypes.strings).forEach(stringType => {
   test(
     `Extracts '${stringType}'`,
     template,

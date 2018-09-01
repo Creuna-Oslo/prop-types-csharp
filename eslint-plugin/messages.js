@@ -1,12 +1,12 @@
-const allowedMetaTypes = require('./allowed-meta-types');
+const metaTypes = require('../lib/meta-types');
 
 module.exports = {
   array: 'Unsupported type "array". Replace with "arrayOf" or add meta type',
-  badFunctionCall: `Expected one of [${Object.keys(
-    allowedMetaTypes.functions
+  badFunctionCall: `Expected one of [${Object.values(
+    metaTypes.functions
   )}] but got '{{value}}'.`,
-  badStringLiteral: `Expected one of [${Object.keys(
-    allowedMetaTypes.strings
+  badStringLiteral: `Expected one of [${Object.values(
+    metaTypes.strings
   )}] but got '{{value}}'.`,
   illegalFunctionCall: `Illegal function call`,
   importedArrayReference: `Imported arrays are not supported.`,

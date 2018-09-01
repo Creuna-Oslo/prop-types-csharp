@@ -1,6 +1,6 @@
 const t = require('babel-types');
 
-const allowedMetaTypes = require('./allowed-meta-types');
+const allowedMetaTypes = require('../lib/meta-types');
 const getInvalidPropTypes = require('./get-invalid-prop-types');
 const messages = require('./messages');
 
