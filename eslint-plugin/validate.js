@@ -39,11 +39,21 @@ module.exports = ({
   if (propTypes) {
     const invalidPropTypes = getInvalidPropTypes(propTypes, context.getScope());
 
-    Object.entries(invalidPropTypes)
-      .filter(([key]) => !metaTypes[key])
-      .forEach(([_key, { node, message }]) => {
-        context.report({ node, message });
-      });
+    const recursiveValidatePropTypes = (propTypes, metaTypes = {}) => {
+      Object.entries(propTypes)
+        .filter(([key]) => !metaTypes[key])
+        .forEach(([key, { node, message }]) => {
+          // If the object doesn't have a node or a message, the object is an object literal from PropTypes.shape. Validate propTypes for this object literal:
+          if (!node || !message) {
+            recursiveValidatePropTypes(propTypes[key], metaTypes[key]);
+            return;
+          }
+
+          context.report({ node, message });
+        });
+    };
+
+    recursiveValidatePropTypes(invalidPropTypes, metaTypes);
   }
 
   Object.values(metaTypes).forEach(node => {

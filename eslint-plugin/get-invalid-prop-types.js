@@ -8,7 +8,7 @@ const illegalTypes = {
   oneOfType: messages.oneOfType
 };
 
-module.exports = (objectExpression, scope) => {
+const getInvalidPropTypes = (objectExpression, scope) => {
   const variablesInScope =
     scope.childScopes.length &&
     scope.childScopes[0].type === 'module' &&
@@ -51,6 +51,15 @@ module.exports = (objectExpression, scope) => {
           node: propTypeNode.property,
           message: illegalTypes[propTypeName]
         };
+      }
+
+      // Recursively check object literals inside PropTypes.shape
+      if (t.isCallExpression(value) && propTypeName === 'shape') {
+        const [argument] = value.arguments;
+
+        return Object.assign(accum, {
+          [key]: getInvalidPropTypes(argument, scope)
+        });
       }
 
       // Check for references inside PropTypes.oneOf. Run checks only if there are defined variables in scope. Undefined variables are caught by 'no-undef', which every sane person should be using.
@@ -104,3 +113,5 @@ module.exports = (objectExpression, scope) => {
     return accum;
   }, {});
 };
+
+module.exports = getInvalidPropTypes;

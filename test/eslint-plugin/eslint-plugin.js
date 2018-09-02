@@ -92,8 +92,11 @@ const validCases = [
   // Valid meta type 'float' (class component)
   'class A { static propTypesMeta = { b: "float" }; }',
 
-  // Nested with meta
+  // Object with nested meta
   'A.propTypes = { b: PropTypes.object }; A.propTypesMeta = { b: { c: Link } };',
+
+  // Nested shape with bad prop and nested meta
+  'A.propTypes = { b: PropTypes.shape({ c: PropTypes.object }) }; A.propTypesMeta = { b: { c: Link } };',
 
   // Reference to object literal in Object.keys
   'const obj = { c: "d" }; A.propTypes = { c: PropTypes.oneOf(Object.keys(obj)) };',
@@ -153,6 +156,12 @@ const invalidCases = [
   [
     'class A { static propTypes = { b: someFunc() }; }',
     errors.illegalFunctionCall
+  ],
+
+  // Nested without meta
+  [
+    'A.propTypes = { b: PropTypes.shape({ c: PropTypes.object }) };',
+    errors.object
   ],
 
   // Typos in string literals
