@@ -54,10 +54,10 @@ const generateClasses = ({ baseClass, indent, modulePaths, namespace }) => {
   };
 };
 
-// Hook for running in parallel with child_process
-process.on('message', ({ indent, modulePaths, namespace }) => {
-  if (modulePaths) {
-    process.send(generateClasses({ indent, modulePaths, namespace }));
+// Hook for running in parallel with child_process. Expects the same options object as 'generateClasses' above.
+process.on('message', options => {
+  if (options.modulePaths) {
+    process.send(generateClasses(options));
   }
 });
 

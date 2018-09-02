@@ -1,7 +1,9 @@
 const { fork } = require('child_process');
+const fs = require('fs');
 const path = require('path');
 
 const generateClasses = require('./generate-classes');
+const log = require('./log');
 
 function PropTypesCSharpPlugin(options) {
   this.options = Object.assign(
@@ -21,47 +23,11 @@ function PropTypesCSharpPlugin(options) {
 // This function defines a lot of things before actually calling them.
 // Reading this from the bottom is probably the easiest.
 PropTypesCSharpPlugin.prototype.apply = function(compiler) {
-  const production = compiler.options.mode === 'production';
-
-  const logError = error => {
-    const errorMessage = `C# class generator plugin\n${error}`;
-
-    if (production) {
-      this.compilation.errors.push(errorMessage);
-      return;
-    }
-
-    // Since class generation is running in parallel in dev mode, pushing warnings to the compilation does not output anything to the shell (it does show in the browser though). Double logging fixes this.
-    this.compilation.warnings.push(errorMessage);
-    process.stdout.write(`\nWARNING in ${errorMessage}\n`);
-  };
-
-  // Writes errors/warnings and status messages (if enabled)
-  const log = ({ classes, duration, error }) => {
-    if (error) {
-      logError(error);
-    }
-
-    const numberOfClasses = classes
-      .map(({ error, code, componentName }) => {
-        if (error) {
-          logError(error);
-          return false;
-        }
-
-        return !!code && !!componentName;
-      })
-      .reduce((accum, didGenerate) => accum + (didGenerate ? 1 : 0), 0);
-
-    if (this.options.log) {
-      process.stdout.write(
-        `[C# plugin]: Generated ${numberOfClasses} classes in ${duration}ms\n`
-      );
-    }
-  };
+  const hasDevServer = Boolean(compiler.options.devServer);
+  const runSync = compiler.options.mode === 'production' || !hasDevServer;
 
   // In 'development' mode the class generation runs in parallel (using child_process.fork) in order to not degrade developer experience.
-  const generateClassesParallel = production
+  const generateClassesAsync = runSync
     ? null
     : fork(path.join(__dirname, './generate-classes'));
 
@@ -69,6 +35,12 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
   const emit = compilation => {
     // Add to 'this' to be able to reference in log function when running in parallel
     this.compilation = compilation;
+    this.outputPath = path.normalize(this.options.path);
+
+    // Don't attempt class generation if compilation has errors
+    if (compilation.errors.length) {
+      return;
+    }
 
     if (this.options.log) {
       process.stdout.write('[C# plugin]: Generating classes...\n');
@@ -86,19 +58,23 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
         );
       });
 
-    if (production) {
-      const outputPath = path.normalize(this.options.path);
-      const { classes, duration, error } = generateClasses({
-        baseClass: this.options.baseClass,
-        indent: this.options.indent,
-        modulePaths,
-        namespace: this.options.namespace
-      });
+    const generateClassesOptions = {
+      baseClass: this.options.baseClass,
+      indent: this.options.indent,
+      modulePaths,
+      namespace: this.options.namespace
+    };
+
+    if (runSync) {
+      const result = generateClasses(generateClassesOptions);
+      const { classes, error } = result;
 
       if (!error) {
         classes.forEach(({ code, componentName }) => {
           if (code && componentName) {
-            compilation.assets[path.join(outputPath, `${componentName}.cs`)] = {
+            compilation.assets[
+              path.join(this.outputPath, `${componentName}.cs`)
+            ] = {
               source: () => code,
               size: () => code.length
             };
@@ -106,24 +82,37 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
         });
       }
 
-      log({ classes, duration, error });
+      log(this.options, runSync, compilation, result);
     } else {
       // Run class generation in parallel
-      generateClassesParallel.send({
-        baseClass: this.options.baseClass,
-        indent: this.options.indent,
-        modulePaths,
-        namespace: this.options.namespace
-      });
+      generateClassesAsync.send(generateClassesOptions);
     }
   };
 
-  // Attach logging for development version
-  if (!production) {
-    generateClassesParallel.on('message', log);
+  // Attach parallel class generation for development build
+  if (!runSync) {
+    generateClassesAsync.on('message', result => {
+      const { classes, error } = result;
+
+      if (!this.compilation) {
+        return;
+      }
+
+      // Since webpack dev server doesn't write files to disk, this is done manually here.
+      if (!error) {
+        classes.forEach(({ code, componentName }) => {
+          if (code && componentName) {
+            const basePath = path.join(compiler.outputPath, this.outputPath);
+            fs.writeFileSync(path.join(basePath, `${componentName}.cs`), code);
+          }
+        });
+      }
+
+      log(this.options, runSync, this.compilation, result);
+    });
   }
 
-  // Attach to compiler 'emit' hook
+  // Attach to compiler 'emit' hook. Supports both Webpack > 4 syntax (compiler.hooks) and old syntax.
   if (compiler.hooks) {
     compiler.hooks.emit.tap({ name: 'PropTypesCSharpPlugin' }, emit);
   } else {

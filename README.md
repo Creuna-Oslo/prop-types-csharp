@@ -152,7 +152,7 @@ const { componentName, code } = generateCSharp({
 
 ## <a id="webpack"></a>Webpack plugin
 
-The plugin will extract PropType definitions from `.jsx` files and convert them into C# class files.
+The plugin will extract PropType definitions from `.jsx` files and convert them into C# class files. If the build already has errors when this plugin runs, it aborts immediately.
 
 ### Config example
 
@@ -201,12 +201,11 @@ If supplied, all generated classes will be wrapped in this namespace.
 
 Path relative to `output.path` to put `.cs` files.
 
-### Webpack modes
+### Webpack dev server
 
-Depending on `webpack.options.mode`, the plugin will do one of the following:
+If your `webpack.config` has the `devServer` property set and `mode == 'development'`, class generation will run async which means that Webpack dev server can reload the browser before classes are generated.
 
-- `production`: Writes `.cs` files to disk, Webpack build is aborted on errors.
-- `development`: Does not write files, runs in parallel, warns instead of throwing errors.
+When running Webpack in production mode, class generation is always sync, and the build will fail on any encountered errors.
 
 ## <a id="babel"></a>Babel plugin
 
