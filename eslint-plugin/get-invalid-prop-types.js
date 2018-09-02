@@ -9,13 +9,20 @@ const illegalTypes = {
 };
 
 module.exports = (objectExpression, scope) => {
-  // console.log(scope.childScopes[0].variables[0].references[0]);
   const variablesInScope =
     scope.childScopes.length &&
     scope.childScopes[0].type === 'module' &&
     scope.childScopes[0].variables;
 
+  if (!objectExpression || !objectExpression.properties) {
+    return {};
+  }
+
   return objectExpression.properties.reduce((accum, objectProperty) => {
+    if (!objectProperty) {
+      return accum;
+    }
+
     const key = objectProperty.key.name;
     const value = objectProperty.value;
 

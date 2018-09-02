@@ -4,6 +4,10 @@ const messages = require('./messages');
 const validate = require('./validate');
 
 const getPropTypesMeta = objectExpression => {
+  if (!objectExpression || !objectExpression.properties) {
+    return {};
+  }
+
   return objectExpression.properties.reduce(
     (accum, property) =>
       Object.assign(accum, { [property.key.name]: property.value }),
