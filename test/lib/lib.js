@@ -19,6 +19,21 @@ test('Class component', t => {
   t.is(normalize(classes.classComponent), normalize(transformedSource.code));
 });
 
+test('Empty component', t => {
+  const expected = `
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;
+
+public class Component
+{
+}
+`;
+  const sourceCode = `const Component = () => {}; Component.propTypes = {}; export default Component;`;
+  const transformedSource = generateClass({ sourceCode });
+  t.is(normalize(expected), normalize(transformedSource.code));
+});
+
 test('Throws on name collisions', t => {
   const sourceCode = `
   import PropTypes from 'prop-types';
