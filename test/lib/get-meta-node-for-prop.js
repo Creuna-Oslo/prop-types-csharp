@@ -1,5 +1,5 @@
 const { parse } = require('@babel/parser');
-const bt = require('babel-types');
+const bt = require('@babel/types');
 const test = require('ava');
 const traverse = require('@babel/traverse').default;
 

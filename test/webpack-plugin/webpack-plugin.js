@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const fs = require('fs');
 const path = require('path');
 const tempy = require('tempy');
@@ -9,7 +10,7 @@ const normalize = require('../utils/_normalize-string');
 const webpackConfig = require('../../fixtures/webpack.config');
 
 test.cb('Writes C# files to disk', t => {
-  t.plan(4);
+  t.plan(3);
 
   webpack(
     webpackConfig({ path: tempy.directory() }, { mode: 'production' }),
@@ -18,9 +19,13 @@ test.cb('Writes C# files to disk', t => {
         throw error;
       }
 
-      t.false(stats.hasErrors());
-
       const compilation = stats.toJson();
+
+      if (stats.hasErrors()) {
+        t.fail(compilation.errors);
+        return;
+      }
+
       const { outputPath } = compilation;
 
       const CSharpFilePaths = compilation.assets
@@ -52,7 +57,7 @@ test.cb('Writes C# files to disk', t => {
 });
 
 test.cb('Adds base class', t => {
-  t.plan(2);
+  t.plan(1);
 
   webpack(
     webpackConfig(
@@ -68,9 +73,13 @@ test.cb('Adds base class', t => {
         throw error;
       }
 
-      t.false(stats.hasErrors());
-
       const compilation = stats.toJson();
+
+      if (stats.hasErrors()) {
+        t.fail(compilation.errors);
+        return;
+      }
+
       const { outputPath } = compilation;
 
       const CSharpFilePaths = compilation.assets
@@ -95,7 +104,7 @@ test.cb('Adds base class', t => {
 });
 
 test.cb('Aborts when duplicate names exist', t => {
-  t.plan(2);
+  t.plan(1);
 
   webpack(
     webpackConfig(
@@ -110,7 +119,10 @@ test.cb('Aborts when duplicate names exist', t => {
         throw error;
       }
 
-      t.true(stats.hasErrors());
+      if (!stats.hasErrors()) {
+        // Custom fail of test to avoid humongous webpack output
+        t.fail("Didn't throw");
+      }
 
       const compilation = stats.toJson();
 

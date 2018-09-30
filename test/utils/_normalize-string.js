@@ -2,7 +2,7 @@
 // - Removes empty lines
 // - Removes whitespace at the end of lines
 // - Removes whitespace at the start of lines
-module.exports = (string, removeIndentation = true) =>
+module.exports = (string = '', removeIndentation = true) =>
   string
     .replace(/[\n\r]/g, '\n')
     .replace(/\s+$/gm, '')

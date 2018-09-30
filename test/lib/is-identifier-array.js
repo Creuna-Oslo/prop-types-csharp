@@ -1,4 +1,4 @@
-const bt = require('babel-types');
+const bt = require('@babel/types');
 const test = require('ava');
 
 const isIdentifierArray = require('../../lib/utils/is-identifier-array');

@@ -1,4 +1,4 @@
-const t = require('babel-types');
+const t = require('@babel/types');
 
 const allowedMetaTypes = require('../lib/meta-types');
 const getInvalidPropTypes = require('./get-invalid-prop-types');

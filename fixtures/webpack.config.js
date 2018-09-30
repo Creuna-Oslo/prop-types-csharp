@@ -19,9 +19,12 @@ module.exports = function(env = {}, options = {}) {
             {
               loader: 'babel-loader',
               options: {
-                plugins: env.babelPlugin
-                  ? [path.join(__dirname, '../babel-plugin')]
-                  : []
+                plugins: [].concat(
+                  env.babelPlugin
+                    ? [path.join(__dirname, '../babel-plugin')]
+                    : [],
+                  '@babel/proposal-class-properties'
+                )
               }
             },
             'eslint-loader'

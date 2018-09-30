@@ -20,6 +20,12 @@ const template = (t, useBabelPlugin) => {
       }
 
       const compilation = stats.toJson();
+
+      if (stats.hasErrors()) {
+        t.fail(compilation.errors);
+        return;
+      }
+
       const { outputPath } = compilation;
       const mainJs = compilation.assets.find(asset => asset.name === 'main.js');
 
@@ -36,6 +42,6 @@ const template = (t, useBabelPlugin) => {
 };
 
 // Check for 'propTypesMeta' in built code to avoid a false positive for the other test
-test.cb('propTypesMeta exists', template, true);
+test.cb('propTypesMeta exists', template, false);
 
 test.cb('Removes propTypesMeta', template, true);

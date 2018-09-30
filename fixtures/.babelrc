@@ -1,18 +1,15 @@
 {
-  "plugins": [
-    "babel-plugin-transform-class-properties"
-  ],
   "presets": [
     [
-      "env",
+      "@babel/env",
       {
         "debug": false,
         "targets": {
           "browsers": ["last 2 versions"]
         },
-        "useBuiltIns": true
+        "useBuiltIns": false
       }
     ],
-    "react"
+    "@babel/react"
   ]
 }

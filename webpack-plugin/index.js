@@ -47,16 +47,16 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
     }
 
     // Filter modules according to options. 'module.resource' is the path to the source file of a compiled module
-    const modulePaths = compilation.modules
-      .map(module => module.resource)
-      .filter(modulePath => {
+    const modulePaths = Array.from(compilation.fileDependencies).filter(
+      modulePath => {
         const { exclude, match } = this.options;
         return (
           modulePath &&
           match.some(pattern => modulePath.match(pattern)) &&
           exclude.every(pattern => !modulePath.match(pattern))
         );
-      });
+      }
+    );
 
     const generateClassesOptions = {
       baseClass: this.options.baseClass,

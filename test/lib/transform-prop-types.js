@@ -1,6 +1,6 @@
 const generate = require('@babel/generator').default;
 const { parse } = require('@babel/parser');
-const bt = require('babel-types');
+const bt = require('@babel/types');
 const test = require('ava');
 
 const transformPropTypes = require('../../lib/transforms/transform-prop-types');
