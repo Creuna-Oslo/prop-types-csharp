@@ -5,34 +5,41 @@ const normalize = require('../utils/_normalize-string');
 
 const { classes, components } = require('../../fixtures/source-code');
 
-test('Functional component', t => {
-  const transformedSource = generateClass({
-    sourceCode: components.funcComponent
-  });
-  t.is(normalize(classes.funcComponent), normalize(transformedSource.code));
-});
-
-test('Class component', t => {
-  const transformedSource = generateClass({
-    sourceCode: components.classComponent
-  });
-  t.is(normalize(classes.classComponent), normalize(transformedSource.code));
-});
-
-test('Empty component', t => {
-  const expected = `
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
-
-public class Component
-{
-}
-`;
-  const sourceCode = `const Component = () => {}; Component.propTypes = {}; export default Component;`;
-  const transformedSource = generateClass({ sourceCode });
+const template = (t, input, expected, options) => {
+  const transformedSource = generateClass(
+    Object.assign({}, options, { sourceCode: input })
+  );
   t.is(normalize(expected), normalize(transformedSource.code));
-});
+};
+
+test(
+  'Functional component',
+  template,
+  components.funcComponent,
+  classes.funcComponent
+);
+
+test(
+  'Class component',
+  template,
+  components.classComponent,
+  classes.classComponent
+);
+
+test(
+  'Empty component',
+  template,
+  `const Component = () => {}; Component.propTypes = {}; export default Component;`,
+
+  `using System.Collections.Generic;
+  using System.ComponentModel.DataAnnotations;
+  using System.Runtime.Serialization;
+
+  public class Component
+  {
+  }
+`
+);
 
 test('Throws on name collisions', t => {
   const sourceCode = `
@@ -45,8 +52,10 @@ test('Throws on name collisions', t => {
   });
 });
 
-test('Respects meta with illegal types', t => {
-  const sourceCode = `
+test(
+  'Respects meta with illegal types',
+  template,
+  `
   import PropTypes from 'prop-types';
   import something from './something';
   const Component = ({ a, b, c }) => <div></div>;
@@ -62,40 +71,31 @@ test('Respects meta with illegal types', t => {
     c: 'exclude',
     d: 'exclude',
   };
-  export default Component;`;
+  export default Component;`,
 
-  const expected = `
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
-public class Component
-{
-}
-  `;
+  `using System.Collections.Generic;
+  using System.ComponentModel.DataAnnotations;
+  using System.Runtime.Serialization;
+  public class Component
+  {
+  }`
+);
 
-  const transformedSource = generateClass({ sourceCode });
-  t.is(normalize(expected), normalize(transformedSource.code));
-});
-
-test('Adds baseclass', t => {
-  const sourceCode = `
-  import PropTypes from 'prop-types';
+test(
+  'Adds baseclass',
+  template,
+  `import PropTypes from 'prop-types';
   const Component = ({ a }) => <div></div>;
   Component.propTypes = {};
-  export default Component;`;
+  export default Component;`,
 
-  const expected = `
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
-public class Component : BaseClass
-{
-}
-  `;
-
-  const transformedSource = generateClass({
-    sourceCode,
+  `using System.Collections.Generic;
+  using System.ComponentModel.DataAnnotations;
+  using System.Runtime.Serialization;
+  public class Component : BaseClass
+  {
+  }`,
+  {
     baseClass: 'BaseClass'
-  });
-  t.is(normalize(expected), normalize(transformedSource.code));
-});
+  }
+);
