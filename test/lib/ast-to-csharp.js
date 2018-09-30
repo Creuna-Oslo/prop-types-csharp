@@ -72,7 +72,22 @@ test(
     `public class Component : BaseClass
   {
   }`,
-  { baseClass: 'BaseClass' }
+  { baseClass: 'BaseClass', componentName: 'Component' }
+);
+
+// Base class should only be applied to the class matching 'componentName'
+test(
+  'Nested properties with base class',
+  template,
+  'Component = {}; ComponentProperty = {};',
+  imports +
+    `public class Component : BaseClass
+    {
+    }
+    public class ComponentProperty
+    {
+    }`,
+  { baseClass: 'BaseClass', componentName: 'Component' }
 );
 
 test(
