@@ -99,3 +99,36 @@ test(
     baseClass: 'BaseClass'
   }
 );
+
+test(
+  'Extends when inheriting propTypes',
+  template,
+  `const Component = () => <div />;
+  Component.propTypes = AnotherComponent.propTypes;
+  export default Component;`,
+
+  `using System.Collections.Generic;
+  using System.ComponentModel.DataAnnotations;
+  using System.Runtime.Serialization;
+  public class Component : AnotherComponent
+  {
+  }`
+);
+
+test(
+  'Extending overrides base class',
+  template,
+  `const Component = () => <div />;
+  Component.propTypes = AnotherComponent.propTypes;
+  export default Component;`,
+
+  `using System.Collections.Generic;
+  using System.ComponentModel.DataAnnotations;
+  using System.Runtime.Serialization;
+  public class Component : AnotherComponent
+  {
+  }`,
+  {
+    baseClass: 'BaseClass'
+  }
+);
