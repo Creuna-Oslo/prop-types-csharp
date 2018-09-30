@@ -176,7 +176,7 @@ test(
 );
 
 test(
-  'With empty definition',
+  'Empty definition',
   template,
   `Component = {
     property: Property
@@ -188,6 +188,16 @@ test(
       public Property Property { get; set; }
     }
     public class Property
+    {
+    }`
+);
+
+test(
+  'Component reference',
+  template,
+  'Component = AnotherComponent;',
+  imports +
+    `public class Component : AnotherComponent
     {
     }`
 );
