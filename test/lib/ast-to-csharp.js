@@ -4,7 +4,7 @@ const test = require('ava');
 const ASTToCsharp = require('../../lib/utils/ast-to-csharp');
 const normalize = require('../utils/_normalize-string');
 
-const basicTree = parse(`
+const basicTree = `
   Component = {
     text: string.isRequired,
     texts: [[[string]]],
@@ -17,11 +17,11 @@ const basicTree = parse(`
   Component_ObjectsItem = {
     propertyB: string
   };
-`);
+`;
 
 const imports = `using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;`;
+using System.Runtime.Serialization;\n`;
 
 const basicClass = `
 public class Component
@@ -44,148 +44,97 @@ public class Component_ObjectsItem
 }
 `;
 
-test('Basic tree', t => {
-  t.is(
-    normalize(ASTToCsharp({ syntaxTree: basicTree })),
-    normalize(imports + basicClass)
-  );
-});
-
-test('With namespace', t => {
+const template = (t, input, expected, options, removeIndentation) => {
   t.is(
     normalize(
-      ASTToCsharp({
-        namespace: 'Something.SomethingElse',
-        syntaxTree: basicTree
-      })
+      ASTToCsharp(Object.assign({}, options, { syntaxTree: parse(input) })),
+      removeIndentation
     ),
-    normalize(
-      `${imports}\n` + `namespace Something.SomethingElse\n{\n${basicClass}\n}`
-    )
+    normalize(expected, removeIndentation)
   );
-});
+};
 
-test('With base class', t => {
-  t.is(
-    normalize(
-      ASTToCsharp({
-        baseClass: 'BaseClass',
-        syntaxTree: parse(`
-        Component = {};
-        `)
-      })
-    ),
-    normalize(
-      `${imports}\n` +
-        `
-public class Component : BaseClass
-{
-}
-      `
-    )
-  );
-});
+test('Basic tree', template, basicTree, imports + basicClass);
 
-test('With name collision between class name and base class', t => {
-  t.is(
-    normalize(
-      ASTToCsharp({
-        baseClass: 'Component',
-        syntaxTree: parse(`
-        Component = {};
-        `)
-      })
-    ),
-    normalize(
-      `${imports}\n` +
-        `
-public class Component
-{
-}
-      `
-    )
-  );
-});
+test(
+  'With namespace',
+  template,
+  basicTree,
+  `${imports}\n` + `namespace Something.SomethingElse\n{\n${basicClass}\n}`,
+  { namespace: 'Something.SomethingElse' }
+);
 
-test('With different indentation', t => {
-  const ast = parse(`
-    Component = {
-      a: string
-    };
-  `);
-  const classString =
-    imports +
+test(
+  'With base class',
+  template,
+  `Component = {};`,
+  imports +
+    `public class Component : BaseClass
+  {
+  }`,
+  { baseClass: 'BaseClass' }
+);
+
+test(
+  'With name collision between class name and base class',
+  template,
+  `Component = {};`,
+  imports +
+    `public class Component
+  {
+  }`,
+  { baseClass: 'Component' }
+);
+
+test(
+  'With different indentation',
+  template,
+  `Component = { a: string };`,
+  imports +
     `
 public class Component
 {
       public string A { get; set; }
 }
-  `;
+  `,
+  { indent: 6 },
+  false
+);
 
-  t.is(
-    normalize(
-      ASTToCsharp({
-        indent: 6,
-        syntaxTree: ast
-      }),
-      false
-    ),
-    normalize(classString, false)
-  );
-});
+test(
+  'Optional enum',
+  template,
+  `Component = {
+    enum: Enum
+  };
+  Enum = ['value-1', 'value-2'];
+  `,
 
-test('Optional enum', t => {
-  const code = `
-    Component = {
-      enum: Enum
-    };
-    Enum = ['value-1', 'value-2'];
-  `;
+  imports +
+    `public class Component
+    {
+      public Enum Enum { get; set; }
+    }
+    public enum Enum
+    {
+      None = 0,
+      [EnumMember(Value = "value-1")]
+      Value1 = 1,
+      [EnumMember(Value = "value-2")]
+      Value2 = 2,
+    }`
+);
 
-  t.is(
-    normalize(
-      ASTToCsharp({
-        syntaxTree: parse(code)
-      })
-    ),
-    normalize(
-      imports +
-        `
-      public class Component
-      {
-        public Enum Enum { get; set; }
-      }
-      public enum Enum
-      {
-        None = 0,
-        [EnumMember(Value = "value-1")]
-        Value1 = 1,
-        [EnumMember(Value = "value-2")]
-        Value2 = 2,
-      }
-    `
-    )
-  );
-});
-
-test('Required enum', t => {
-  const code = `
-    Component = {
+test(
+  'Required enum',
+  template,
+  `Component = {
       enum: Enum.isRequired
     };
     Enum = ['value-1', 'value-2'];
-  `;
-
-  t.is(
-    normalize(
-      ASTToCsharp({
-        syntaxTree: parse(code)
-      })
-    ),
-    normalize(
-      imports +
-        `
-      public class Component
+  `,
+  imports +
+    `public class Component
       {
         [Required]
         public Enum Enum { get; set; }
@@ -198,28 +147,18 @@ test('Required enum', t => {
         Value2 = 1,
       }
     `
-    )
-  );
-});
+);
 
-test('Enum with name starting with non-letter', t => {
-  const code = `
-    Component = {
+test(
+  'Enum with name starting with non-letter',
+  template,
+  `Component = {
       enum: Enum
     };
     Enum = ['-value-1', '.value-2', '#value-3'];
-  `;
-
-  t.is(
-    normalize(
-      ASTToCsharp({
-        syntaxTree: parse(code)
-      })
-    ),
-    normalize(
-      imports +
-        `
-      public class Component
+  `,
+  imports +
+    `public class Component
       {
         public Enum Enum { get; set; }
       }
@@ -234,36 +173,24 @@ test('Enum with name starting with non-letter', t => {
         Value3 = 3,
       }
     `
-    )
-  );
-});
+);
 
-test('With empty definition', t => {
-  t.is(
-    normalize(
-      ASTToCsharp({
-        syntaxTree: parse(`
-        Component = {
-          property: Property
-        };
-        Property = {};
-      `)
-      })
-    ),
-    normalize(
-      imports +
-        `
-        public class Component
-        {
-          public Property Property { get; set; }
-        }
-        public class Property
-        {
-        }
-      `
-    )
-  );
-});
+test(
+  'With empty definition',
+  template,
+  `Component = {
+    property: Property
+  };
+  Property = {};`,
+  imports +
+    `public class Component
+    {
+      public Property Property { get; set; }
+    }
+    public class Property
+    {
+    }`
+);
 
 test('Throws on function call', t => {
   t.throws(() => {
