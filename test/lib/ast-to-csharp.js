@@ -212,9 +212,27 @@ test(
   template,
   'Component = AnotherComponent;',
   imports +
-    `public class Component : AnotherComponent
-    {
-    }`
+    `
+public class Component : AnotherComponent
+{
+}`,
+  false
+);
+
+test(
+  'Component reference with namespace',
+  template,
+  'Component = AnotherComponent;',
+  imports +
+    `
+namespace Namespace
+{
+  public class Component : AnotherComponent
+  {
+  }
+}`,
+  { namespace: 'Namespace' },
+  false
 );
 
 test('Throws on function call', t => {
