@@ -132,6 +132,7 @@ test(
     }
     public enum Enum
     {
+      [EnumMember(Value = "")]
       None = 0,
       [EnumMember(Value = "value-1")]
       Value1 = 1,
@@ -179,6 +180,7 @@ test(
       }
       public enum Enum
       {
+        [EnumMember(Value = "")]
         None = 0,
         [EnumMember(Value = "-value-1")]
         Value1 = 1,

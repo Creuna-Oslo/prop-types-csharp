@@ -62,6 +62,7 @@ public enum ClassComponent_EnumInline
 
 public enum ClassComponent_EnumObject 
 {
+  [EnumMember(Value = "")]
   None = 0,
   [EnumMember(Value = "valueA")]
   ValueA = 1,

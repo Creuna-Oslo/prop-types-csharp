@@ -63,6 +63,7 @@ public enum FunctionalComponent_EnumInline
 
 public enum FunctionalComponent_EnumObject 
 {
+  [EnumMember(Value = "")]
   None = 0,
   [EnumMember(Value = "valueA")]
   ValueA = 1,
