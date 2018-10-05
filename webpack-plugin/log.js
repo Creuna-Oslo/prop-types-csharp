@@ -15,9 +15,9 @@ const logError = (isSync, compilation, error) => {
 const log = (options, isSync, compilation, { classes, duration, error }) => {
   const errorLogger = logError.bind(null, isSync, compilation);
 
-  if (error) {
-    errorLogger(error);
-  }
+  if (error) errorLogger(error);
+
+  if (!classes || !duration) return;
 
   const numberOfClasses = classes
     .map(({ error, code, componentName }) => {

@@ -2,6 +2,7 @@ const { fork } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
+const filterPaths = require('./filter-paths');
 const generateClasses = require('./generate-classes');
 const log = require('./log');
 
@@ -42,20 +43,28 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
       return;
     }
 
+    if (!Array.isArray(this.options.exclude)) {
+      log(this.options, runSync, compilation, {
+        error: 'Bad configuration: options.exclude is not an array'
+      });
+      return;
+    }
+
+    if (!Array.isArray(this.options.match)) {
+      log(this.options, runSync, compilation, {
+        error: 'Bad configuration: options.match is not an array'
+      });
+      return;
+    }
+
     if (this.options.log) {
       process.stdout.write('[C# plugin]: Generating classes...\n');
     }
 
-    // Filter modules according to options. 'module.resource' is the path to the source file of a compiled module
-    const modulePaths = Array.from(compilation.fileDependencies).filter(
-      modulePath => {
-        const { exclude, match } = this.options;
-        return (
-          modulePath &&
-          match.some(pattern => modulePath.match(pattern)) &&
-          exclude.every(pattern => !modulePath.match(pattern))
-        );
-      }
+    const modulePaths = filterPaths(
+      Array.from(compilation.fileDependencies),
+      this.options.match,
+      this.options.exclude
     );
 
     const generateClassesOptions = {
