@@ -182,6 +182,12 @@ const invalidCases = [
     errors.importedObjectReference
   ],
 
+  // Incomplete statement (should not make the plugin crash)
+  [
+    'const arr = [1,2]; A.propTypes = { c: PropTypes.oneOf(Object.values()) };',
+    errors.missingObjectReference
+  ],
+
   // Imported arrays in oneOf
   [
     'import arr from "./arr"; A.propTypes = { c: PropTypes.oneOf(arr) };',

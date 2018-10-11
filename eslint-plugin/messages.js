@@ -11,6 +11,7 @@ module.exports = {
   illegalFunctionCall: `Illegal function call`,
   importedArrayReference: `Imported arrays are not supported.`,
   importedObjectReference: `Imported objects are not supported.`,
+  missingObjectReference: 'Missing object value for prop.',
   noExport: `No export statement. Couldn't get component name.`,
   object: 'Unsupported type "object". Replace with "shape" or add meta type.',
   oneOfType: 'Unsupported type "oneOfType".',

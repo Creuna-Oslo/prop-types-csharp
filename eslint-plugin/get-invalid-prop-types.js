@@ -94,16 +94,24 @@ const getInvalidPropTypes = (objectExpression, scope) => {
           ['keys', 'values'].includes(argument.callee.property.name)
         ) {
           const [objectMethodArgument] = argument.arguments;
-          const hasLiteral = variablesInScope.some(
-            variable =>
-              variable.name === objectMethodArgument.name &&
-              t.isObjectExpression(variable.references[0].writeExpr)
-          );
 
-          if (!hasLiteral) {
+          if (objectMethodArgument) {
+            const hasLiteral = variablesInScope.some(
+              variable =>
+                variable.name === objectMethodArgument.name &&
+                t.isObjectExpression(variable.references[0].writeExpr)
+            );
+
+            if (!hasLiteral) {
+              accum[key] = {
+                node: objectMethodArgument,
+                message: messages.importedObjectReference
+              };
+            }
+          } else {
             accum[key] = {
-              node: objectMethodArgument,
-              message: messages.importedObjectReference
+              node: argument,
+              message: messages.missingObjectReference
             };
           }
         }
