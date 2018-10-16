@@ -10,6 +10,7 @@
     "eslint-plugin",
     "lib",
     "webpack-plugin",
+    "CHANGELOG.md",
     "LICENSE",
     "README.md"
   ],
