@@ -179,7 +179,10 @@ module.exports = function(env, options = {}) {
 
 **async**: `Boolean` = `false`
 
-If class generation runs slow, you can enable the async mode. In async mode, Webpack or Webpack dev server will not wait for class generation before completing the compilation. Async is only recommended for use with webpack dev server.
+It's recommended to set this to true when running with webpack dev server for these reasons:
+
+- The build can finish before class generation is complete, meaning faster hot reloading of the browser
+- Classes are written to disk by the plugin (Webpack dev server only writes to memory)
 
 **exclude**: `Array` of `String | RegExp` = `['node-modules']`
 
