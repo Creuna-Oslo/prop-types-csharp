@@ -177,6 +177,10 @@ module.exports = function(env, options = {}) {
 
 ### Options: `Object`
 
+**async**: `Boolean` = `false`
+
+If class generation runs slow, you can enable the async mode. In async mode, Webpack or Webpack dev server will not wait for class generation before completing the compilation. Async is only recommended for use with webpack dev server.
+
 **exclude**: `Array` of `String | RegExp` = `['node-modules']`
 
 Use this to exclude paths or files from class generation. Default is replaced when setting this.
@@ -200,12 +204,6 @@ If supplied, all generated classes will be wrapped in this namespace.
 **path**: `String`
 
 Path relative to `output.path` to put `.cs` files.
-
-### Webpack dev server
-
-If your `webpack.config` has the `devServer` property set and `mode == 'development'`, class generation will run async which means that Webpack dev server can reload the browser before classes are generated.
-
-When running Webpack in production mode, class generation is always sync, and the build will fail on any encountered errors.
 
 ## <a id="babel"></a>Babel plugin
 
