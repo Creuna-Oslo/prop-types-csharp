@@ -27,13 +27,37 @@ Props of type `func`, `element`, `node` and `instanceOf` are ignored when creati
 
 Props of type `object` and `array` are ambiguous and cannot be included in C# classes as-is.
 
-`object` should have a `propTypesMeta` definition or be replaced by a `shape` containing an object literal or another component's propTypes.
+**object**
+
+`object` should be replaced with `shape` or a `propTypesMeta` definition. Using the propTypes of another component is usually the best choice when passing props to child components:
+
+```jsx
+const Component = ({ link }) => <Link {...link} />;
+
+Compontent.propTypes = {
+  link: PropTypes.shape(Link.propTypes) // Reference to Link component
+};
+```
+
+The above example will result in a C# class that has a reference to the C# class for `Link`, which means the definition of `Link` is now re-used which is nice:
+
+```cs
+public class Component {
+  public Link Link { get; set; }
+}
+```
+
+**array**
 
 `array` should be replaced by an `arrayOf` or have a `propTypesMeta` definition.
+
+**oneOfType**
 
 `oneOfType` is currently also illegal until we figure out how to deal with it.
 
 ### propTypesMeta
+
+In general, it's recommended to define as much as possible in `propTypes`. In some cases however, that might be difficult, and in those cases `propTypesMeta` can be helpful.
 
 `propTypesMeta` can be used to exclude some props from C# classes or to provide type hints for ambiguous types.
 
@@ -60,7 +84,7 @@ Component.propTypes = {
 };
 
 Component.propTypesMeta = {
-  someProp: "int",
+  someProp: "float",
   anotherProp: "exclude",
   someComponent: SomeComponent,
   items: Array(AnotherComponent)
