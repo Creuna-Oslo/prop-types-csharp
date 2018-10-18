@@ -35,6 +35,9 @@ class ClassComponent extends React.Component {
     }),
     objectArray: pt.arrayOf(pt.object).isRequired,
     nestedList: pt.arrayOf(pt.arrayOf(pt.arrayOf(pt.string))),
+    nextedExclude: pt.shape({
+      a: pt.object
+    }),
     link: pt.shape(Link.propTypes),
     linkList: pt.arrayOf(pt.shape(Link.propTypes)),
     linkMeta: pt.object,
@@ -58,6 +61,9 @@ class ClassComponent extends React.Component {
     shapeExclude: 'exclude',
     shapeMeta: {
       object: Link
+    },
+    nestedExclude: {
+      a: 'exclude'
     },
     objectArray: Array(Link),
     linkMeta: Link,
