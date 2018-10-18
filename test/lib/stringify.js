@@ -1,7 +1,7 @@
 const { parse } = require('@babel/parser');
 const test = require('ava');
 
-const ASTToCsharp = require('../../lib/utils/ast-to-csharp');
+const stringify = require('../../lib/stringify');
 const normalize = require('../utils/_normalize-string');
 
 const basicTree = `
@@ -47,7 +47,7 @@ public class Component_ObjectsItem
 const template = (t, input, expected, options, removeIndentation) => {
   t.is(
     normalize(
-      ASTToCsharp(Object.assign({}, options, { syntaxTree: parse(input) })),
+      stringify(Object.assign({}, options, { syntaxTree: parse(input) })),
       removeIndentation
     ),
     normalize(expected, removeIndentation)
@@ -239,7 +239,7 @@ namespace Namespace
 
 test('Throws on function call', t => {
   t.throws(() => {
-    ASTToCsharp({
+    stringify({
       syntaxTree: parse(`
         Component = {
           prop: arrayOf()
