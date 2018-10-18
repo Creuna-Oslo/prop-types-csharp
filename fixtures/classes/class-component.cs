@@ -56,8 +56,8 @@ public enum ClassComponent_EnumArray
 public enum ClassComponent_EnumInline 
 {
   None = 0,
-  ClassComponentEnumInline1 = 1,
-  ClassComponentEnumInline2 = 2,
+  EnumInline1 = 1,
+  EnumInline2 = 2,
 }
 
 public enum ClassComponent_EnumObject 

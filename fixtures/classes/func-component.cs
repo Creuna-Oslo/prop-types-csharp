@@ -57,8 +57,8 @@ public enum FunctionalComponent_EnumArray
 public enum FunctionalComponent_EnumInline 
 {
   None = 0,
-  FunctionalComponentEnumInline1 = 1,
-  FunctionalComponentEnumInline2 = 2,
+  EnumInline1 = 1,
+  EnumInline2 = 2,
 }
 
 public enum FunctionalComponent_EnumObject 
