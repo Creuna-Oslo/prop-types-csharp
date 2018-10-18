@@ -7,7 +7,7 @@ const metaTypes = require('../../lib/meta-types');
 
 const template = (t, input, expected) => {
   const syntaxTree = parse(input, { plugins: ['classProperties', 'jsx'] });
-  t.deepEqual(getMeta({ syntaxTree }).propTypesMeta, expected);
+  t.deepEqual(expected, getMeta({ syntaxTree }).propTypesMeta);
 };
 
 const throwsTemplate = (t, input) => {
@@ -18,7 +18,7 @@ const throwsTemplate = (t, input) => {
 };
 
 test('Functional component', template, 'C.propTypesMeta = { a: "exclude" };', {
-  a: bt.identifier('exclude')
+  a: { type: 'exclude' }
 });
 
 test(
@@ -26,12 +26,12 @@ test(
   template,
   'class C { static propTypesMeta = { a: "exclude" }; };',
   {
-    a: bt.identifier('exclude')
+    a: { type: 'exclude' }
   }
 );
 
 test('Nested', template, 'C.propTypesMeta = { a: { b: "exclude" } };', {
-  a: { b: bt.identifier('exclude') }
+  a: { type: 'shape', argument: { b: { type: 'exclude' } } }
 });
 
 test('No meta', template, 'const C = () => <div />;', {});
@@ -41,7 +41,7 @@ Object.values(metaTypes.strings).forEach(stringType => {
     `Extracts '${stringType}'`,
     template,
     `C.propTypesMeta = { a: "${stringType}" };`,
-    { a: bt.identifier(stringType) }
+    { a: { type: stringType } }
   );
 });
 
@@ -49,22 +49,15 @@ test(
   'Extracts component reference',
   template,
   'C.propTypesMeta = { a: SomeComponent };',
-  { a: bt.identifier('SomeComponent') }
+  { a: { type: 'SomeComponent' } }
 );
 
-test('Transforms Array', t => {
-  t.plan(3);
-
-  const syntaxTree = parse('C.propTypesMeta = { a: Array(SomeComponent) };');
-  const { propTypesMeta } = getMeta({ syntaxTree });
-
-  t.is(true, bt.isArrayExpression(propTypesMeta.a));
-  t.is(propTypesMeta.a.elements.length, 1);
-  t.is(
-    true,
-    bt.isIdentifier(propTypesMeta.a.elements[0], { name: 'SomeComponent' })
-  );
-});
+test(
+  'Transforms Array',
+  template,
+  'C.propTypesMeta = { a: Array(SomeComponent) };',
+  { a: { type: 'arrayOf', argument: { type: 'SomeComponent' } } }
+);
 
 test(
   'Throws on misspelled string',
