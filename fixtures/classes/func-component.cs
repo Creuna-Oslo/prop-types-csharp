@@ -19,6 +19,7 @@ public class FunctionalComponent
   [Required]
   public IList<Link> ObjectArray { get; set; }
   public IList<IList<IList<string>>> NestedList { get; set; }
+  public FunctionalComponent_NestedExclude NestedExclude { get; set; }
   public Link Link { get; set; }
   public IList<Link> LinkList { get; set; }
   public Link LinkMeta { get; set; }
@@ -44,6 +45,10 @@ public class FunctionalComponent_ObjectsItem
 public class FunctionalComponent_ShapeMeta
 {
   public Link Object { get; set; }
+}
+
+public class FunctionalComponent_NestedExclude
+{
 }
 
 public enum FunctionalComponent_EnumArray 

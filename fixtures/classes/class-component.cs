@@ -18,6 +18,7 @@ public class ClassComponent
   [Required]
   public IList<Link> ObjectArray { get; set; }
   public IList<IList<IList<string>>> NestedList { get; set; }
+  public ClassComponent_NestedExclude NestedExclude { get; set; }
   public Link Link { get; set; }
   public IList<Link> LinkList { get; set; }
   public Link LinkMeta { get; set; }
@@ -43,6 +44,10 @@ public class ClassComponent_ObjectsItem
 public class ClassComponent_ShapeMeta
 {
   public Link Object { get; set; }
+}
+
+public class ClassComponent_NestedExclude
+{
 }
 
 public enum ClassComponent_EnumArray 

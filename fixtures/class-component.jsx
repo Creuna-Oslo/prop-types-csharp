@@ -35,7 +35,7 @@ class ClassComponent extends React.Component {
     }),
     objectArray: pt.arrayOf(pt.object).isRequired,
     nestedList: pt.arrayOf(pt.arrayOf(pt.arrayOf(pt.string))),
-    nextedExclude: pt.shape({
+    nestedExclude: pt.shape({
       a: pt.object
     }),
     link: pt.shape(Link.propTypes),
