@@ -14,6 +14,7 @@ public class ClassComponent
   public ClassComponent_SingleObject SingleObject { get; set; }
   [Required]
   public IList<ClassComponent_ObjectsItem> Objects { get; set; }
+  [Required]
   public ClassComponent_ShapeMeta ShapeMeta { get; set; }
   [Required]
   public IList<Link> ObjectArray { get; set; }

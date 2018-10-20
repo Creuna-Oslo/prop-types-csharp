@@ -18,9 +18,10 @@
     "build": "webpack --config=fixtures/webpack.config --mode=production",
     "test": "ava --verbose",
     "test:babel": "ava --verbose ./test/babel-plugin",
-    "test:eslint": "ava --verbose ./test/eslint-plugin",
-    "test:lib": "ava --verbose ./test/lib",
-    "test:webpack": "ava --verbose ./test/webpack-plugin"
+    "test:eslint": "ava ./test/eslint-plugin",
+    "test:lib": "ava ./test/lib",
+    "test:webpack": "ava --verbose ./test/webpack-plugin",
+    "test:e2e": "ava ./test/lib/lib.js"
   },
   "repository": {
     "type": "git",

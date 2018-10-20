@@ -15,6 +15,7 @@ public class FunctionalComponent
   public FunctionalComponent_SingleObject SingleObject { get; set; }
   [Required]
   public IList<FunctionalComponent_ObjectsItem> Objects { get; set; }
+  [Required]
   public FunctionalComponent_ShapeMeta ShapeMeta { get; set; }
   [Required]
   public IList<Link> ObjectArray { get; set; }

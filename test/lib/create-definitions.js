@@ -1,75 +1,297 @@
-const generate = require('@babel/generator').default;
-const { parse } = require('@babel/parser');
 const test = require('ava');
 
 const createNewDefinitions = require('../../lib/transforms/create-definitions');
 
 const template = (t, input, expected) => {
-  const syntaxTree = parse(input);
-  createNewDefinitions({ syntaxTree });
+  const definitions = createNewDefinitions(input, 'Component');
 
-  t.is(expected, generate(syntaxTree, { minified: true }).code);
+  t.deepEqual(expected, definitions);
 };
 
 test(
   'Shape simple',
   template,
-  'Component = { a: { b: string } };',
-  'Component={a:Component_A};Component_A={b:string};'
+  { a: { type: 'shape', argument: { b: { type: 'string' } } } },
+  [
+    {
+      name: 'Component',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        isComponentClass: true,
+        argument: { a: { type: 'a', hasClassDefinition: true } }
+      }
+    },
+    {
+      name: 'a',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        argument: { b: { type: 'string' } }
+      }
+    }
+  ]
 );
 
 test(
   'Shape nested',
   template,
-  'Component = { a: { b: { c: string } } };',
-  'Component={a:Component_A};Component_A={b:Component_A_B};Component_A_B={c:string};'
+  {
+    a: {
+      type: 'shape',
+      argument: { b: { type: 'shape', argument: { c: { type: 'string' } } } }
+    }
+  },
+  [
+    {
+      name: 'Component',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        isComponentClass: true,
+        argument: { a: { type: 'a', hasClassDefinition: true } }
+      }
+    },
+    {
+      name: 'a',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        argument: { b: { type: 'b' } }
+      }
+    },
+    {
+      name: 'b',
+      parent: { name: 'a', parent: { name: 'Component' } },
+      properties: {
+        type: 'shape',
+        argument: { c: { type: 'string' } }
+      }
+    }
+  ]
 );
 
 test(
   'Array simple',
   template,
-  'Component = { a: [string] };',
-  'Component={a:[string]};'
+  { a: { type: 'arrayOf', argument: { type: 'string' } } },
+  [
+    {
+      name: 'Component',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        isComponentClass: true,
+        argument: { a: { type: 'arrayOf', argument: { type: 'string' } } }
+      }
+    }
+  ]
 );
 
 test(
   'Array nested',
   template,
-  'Component = { a: [[[string]]] };',
-  'Component={a:[[[string]]]};'
+  {
+    a: {
+      type: 'arrayOf',
+      argument: {
+        type: 'arrayOf',
+        argument: { type: 'arrayOf', argument: { type: 'string' } }
+      }
+    }
+  },
+  [
+    {
+      name: 'Component',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        isComponentClass: true,
+        argument: {
+          a: {
+            type: 'arrayOf',
+            argument: {
+              type: 'arrayOf',
+              argument: { type: 'arrayOf', argument: { type: 'string' } }
+            }
+          }
+        }
+      }
+    }
+  ]
 );
 
 test(
   'Array of object',
   template,
-  'Component = { a: [{ b: string }] };',
-  'Component={a:[Component_AItem]};Component_AItem={b:string};'
+  {
+    a: {
+      type: 'arrayOf',
+      argument: { type: 'shape', argument: { b: { type: 'string' } } }
+    }
+  },
+  [
+    {
+      name: 'Component',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        isComponentClass: true,
+        argument: {
+          a: {
+            type: 'arrayOf',
+            argument: {
+              type: 'aItem',
+              hasClassDefinition: true
+            }
+          }
+        }
+      }
+    },
+    {
+      name: 'aItem',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        argument: { b: { type: 'string' } }
+      }
+    }
+  ]
 );
 
 test(
   'Shape isRequired',
   template,
-  'Component = { a: { b: string }.isRequired };',
-  'Component={a:Component_A.isRequired};Component_A={b:string};'
+  {
+    a: {
+      type: 'shape',
+      isRequired: true,
+      argument: { b: { type: 'string' } }
+    }
+  },
+  [
+    {
+      name: 'Component',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        isComponentClass: true,
+        argument: {
+          a: { type: 'a', hasClassDefinition: true, isRequired: true }
+        }
+      }
+    },
+    {
+      name: 'a',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        isRequired: true,
+        argument: { b: { type: 'string' } }
+      }
+    }
+  ]
 );
 
 test(
-  'Array of object isRequired',
+  'Array of shape isRequired',
   template,
-  'Component = { a: [{ b: string }].isRequired };',
-  'Component={a:[Component_AItem].isRequired};Component_AItem={b:string};'
+  {
+    a: {
+      type: 'arrayOf',
+      isRequired: true,
+      argument: {
+        type: 'shape',
+        argument: { b: { type: 'string' } }
+      }
+    }
+  },
+  [
+    {
+      name: 'Component',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        isComponentClass: true,
+        argument: {
+          a: {
+            type: 'arrayOf',
+            isRequired: true,
+            argument: {
+              type: 'aItem',
+              hasClassDefinition: true
+            }
+          }
+        }
+      }
+    },
+    {
+      name: 'aItem',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        argument: {
+          b: { type: 'string' }
+        }
+      }
+    }
+  ]
 );
 
 test(
   'Enum numbers',
   template,
-  'Component = { a: [1,2,3] };',
-  'Component={a:Component_A};Component_A=[1,2,3];'
+  {
+    a: { type: 'oneOf', argument: [1, 2, 3] }
+  },
+  [
+    {
+      name: 'Component',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        isComponentClass: true,
+        argument: {
+          a: { type: 'a', hasClassDefinition: true }
+        }
+      }
+    },
+    {
+      name: 'a',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'oneOf',
+        argument: [1, 2, 3]
+      }
+    }
+  ]
 );
 
 test(
   'Enum strings',
   template,
-  'Component = { a: ["value-1", "value-2"] };',
-  'Component={a:Component_A};Component_A=["value-1","value-2"];'
+  {
+    a: { type: 'oneOf', argument: ['value-1', 'value-2'] }
+  },
+  [
+    {
+      name: 'Component',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        isComponentClass: true,
+        argument: {
+          a: { type: 'a', hasClassDefinition: true }
+        }
+      }
+    },
+    {
+      name: 'a',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'oneOf',
+        argument: ['value-1', 'value-2']
+      }
+    }
+  ]
 );
