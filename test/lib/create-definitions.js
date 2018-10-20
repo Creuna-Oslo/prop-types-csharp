@@ -57,7 +57,7 @@ test(
       parent: { name: 'Component' },
       properties: {
         type: 'shape',
-        argument: { b: { type: 'b' } }
+        argument: { b: { type: 'b', hasClassDefinition: true } }
       }
     },
     {

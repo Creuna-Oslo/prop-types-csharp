@@ -38,6 +38,13 @@ class ClassComponent extends React.Component {
     nestedExclude: pt.shape({
       a: pt.object
     }),
+    nestedShape: pt.shape({
+      a: pt.shape({
+        b: pt.shape({
+          c: pt.string
+        })
+      })
+    }),
     link: pt.shape(Link.propTypes),
     linkList: pt.arrayOf(pt.shape(Link.propTypes)),
     linkMeta: pt.object,
