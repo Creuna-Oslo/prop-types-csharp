@@ -4,20 +4,50 @@ const test = require('ava');
 const stringify = require('../../lib/stringify');
 const normalize = require('../utils/_normalize-string');
 
-const basicTree = `
-  Component = {
-    text: string.isRequired,
-    texts: [[[string]]],
-    singleObject: Component_SingleObject,
-    objects: [Component_ObjectsItem].isRequired
-  };
-  Component_SingleObject = {
-    propertyA: string.isRequired
-  };
-  Component_ObjectsItem = {
-    propertyB: string
-  };
-`;
+const basicDefinitions = [
+  {
+    name: 'Component',
+    parent: { name: 'Component' },
+    properties: {
+      type: 'shape',
+      isComponentClass: true,
+      argument: {
+        text: { type: 'string', isRequired: true },
+        texts: {
+          type: 'arrayOf',
+          argument: {
+            type: 'arrayOf',
+            argument: { type: 'arrayOf', argument: { type: 'string' } }
+          }
+        },
+        singleObject: { type: 'singleObject', hasClassDefinition: true },
+        objects: {
+          type: 'arrayOf',
+          isRequired: true,
+          argument: { type: 'objectsItem', hasClassDefinition: true }
+        }
+      }
+    }
+  },
+  {
+    name: 'singleObject',
+    parent: { name: 'Component' },
+    properties: {
+      type: 'shape',
+      argument: {
+        propertyA: { type: 'string', isRequired: true }
+      }
+    }
+  },
+  {
+    name: 'objectsItem',
+    parent: { name: 'Component' },
+    properties: {
+      type: 'shape',
+      argument: { propertyB: { type: 'string' } }
+    }
+  }
+];
 
 const imports = `using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -46,20 +76,20 @@ public class Component_ObjectsItem
 
 const template = (t, input, expected, options, removeIndentation) => {
   t.is(
+    normalize(expected, removeIndentation),
     normalize(
-      stringify(Object.assign({}, options, { syntaxTree: parse(input) })),
+      stringify(Object.assign({}, options, { definitions: input })),
       removeIndentation
-    ),
-    normalize(expected, removeIndentation)
+    )
   );
 };
 
-test('Basic tree', template, basicTree, imports + basicClass);
+test('Basic propTypes', template, basicDefinitions, imports + basicClass);
 
 test(
   'With namespace',
   template,
-  basicTree,
+  basicDefinitions,
   `${imports}\n` + `namespace Something.SomethingElse\n{\n${basicClass}\n}`,
   { namespace: 'Something.SomethingElse' }
 );
@@ -67,7 +97,13 @@ test(
 test(
   'With base class',
   template,
-  `Component = {};`,
+  [
+    {
+      name: 'Component',
+      parent: { name: 'Component' },
+      properties: { type: 'shape', argument: {}, isComponentClass: true }
+    }
+  ],
   imports +
     `public class Component : BaseClass
   {
@@ -75,16 +111,27 @@ test(
   { baseClass: 'BaseClass', componentName: 'Component' }
 );
 
-// Base class should only be applied to the class matching 'componentName'
+// Base class should only be applied to the class where 'isComponentClass' === true
 test(
   'Nested properties with base class',
   template,
-  'Component = {}; ComponentProperty = {};',
+  [
+    {
+      name: 'Component',
+      parent: { name: 'Component' },
+      properties: { type: 'shape', argument: {}, isComponentClass: true }
+    },
+    {
+      name: 'ComponentProperty',
+      parent: { name: 'Component' },
+      properties: { type: 'shape', argument: {} }
+    }
+  ],
   imports +
     `public class Component : BaseClass
     {
     }
-    public class ComponentProperty
+    public class Component_ComponentProperty
     {
     }`,
   { baseClass: 'BaseClass', componentName: 'Component' }
@@ -93,7 +140,13 @@ test(
 test(
   'With name collision between class name and base class',
   template,
-  `Component = {};`,
+  [
+    {
+      name: 'Component',
+      parent: { name: 'Component' },
+      properties: { type: 'shape', argument: {}, isComponentClass: true }
+    }
+  ],
   imports +
     `public class Component
   {
@@ -104,7 +157,17 @@ test(
 test(
   'With different indentation',
   template,
-  `Component = { a: string };`,
+  [
+    {
+      name: 'Component',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        argument: { a: { type: 'string' } },
+        isComponentClass: true
+      }
+    }
+  ],
   imports +
     `
 public class Component
@@ -119,18 +182,30 @@ public class Component
 test(
   'Optional enum',
   template,
-  `Component = {
-    enum: Enum
-  };
-  Enum = ['value-1', 'value-2'];
-  `,
-
+  [
+    {
+      name: 'Component',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        argument: {
+          enum: { type: 'enum', hasClassDefinition: true }
+        },
+        isComponentClass: true
+      }
+    },
+    {
+      name: 'enum',
+      parent: { name: 'Component' },
+      properties: { type: 'oneOf', argument: ['value-1', 'value-2'] }
+    }
+  ],
   imports +
     `public class Component
     {
-      public Enum Enum { get; set; }
+      public Component_Enum Enum { get; set; }
     }
-    public enum Enum
+    public enum Component_Enum
     {
       [EnumMember(Value = "")]
       None = 0,
@@ -144,18 +219,35 @@ test(
 test(
   'Required enum',
   template,
-  `Component = {
-      enum: Enum.isRequired
-    };
-    Enum = ['value-1', 'value-2'];
-  `,
+  [
+    {
+      name: 'Component',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        argument: {
+          enum: { type: 'enum', isRequired: true, hasClassDefinition: true }
+        },
+        isComponentClass: true
+      }
+    },
+    {
+      name: 'enum',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'oneOf',
+        isRequired: true,
+        argument: ['value-1', 'value-2']
+      }
+    }
+  ],
   imports +
     `public class Component
       {
         [Required]
-        public Enum Enum { get; set; }
+        public Component_Enum Enum { get; set; }
       }
-      public enum Enum
+      public enum Component_Enum
       {
         [EnumMember(Value = "value-1")]
         Value1 = 0,
@@ -168,17 +260,33 @@ test(
 test(
   'Enum with name starting with non-letter',
   template,
-  `Component = {
-      enum: Enum
-    };
-    Enum = ['-value-1', '.value-2', '#value-3'];
-  `,
+  [
+    {
+      name: 'Component',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        argument: {
+          enum: { type: 'enum', hasClassDefinition: true }
+        },
+        isComponentClass: true
+      }
+    },
+    {
+      name: 'enum',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'oneOf',
+        argument: ['-value-1', '.value-2', '#value-3']
+      }
+    }
+  ],
   imports +
     `public class Component
       {
-        public Enum Enum { get; set; }
+        public Component_Enum Enum { get; set; }
       }
-      public enum Enum
+      public enum Component_Enum
       {
         [EnumMember(Value = "")]
         None = 0,
@@ -195,16 +303,30 @@ test(
 test(
   'Empty definition',
   template,
-  `Component = {
-    property: Property
-  };
-  Property = {};`,
+  [
+    {
+      name: 'Component',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        argument: {
+          property: { type: 'property', hasClassDefinition: true }
+        },
+        isComponentClass: true
+      }
+    },
+    {
+      name: 'property',
+      parent: { name: 'Component' },
+      properties: { type: 'shape', argument: {} }
+    }
+  ],
   imports +
     `public class Component
     {
-      public Property Property { get; set; }
+      public Component_Property Property { get; set; }
     }
-    public class Property
+    public class Component_Property
     {
     }`
 );
@@ -212,19 +334,20 @@ test(
 test(
   'Component reference',
   template,
-  'Component = AnotherComponent;',
+  'AnotherComponent',
   imports +
     `
 public class Component : AnotherComponent
 {
 }`,
+  { componentName: 'Component' },
   false
 );
 
 test(
   'Component reference with namespace',
   template,
-  'Component = AnotherComponent;',
+  'AnotherComponent',
   imports +
     `
 namespace Namespace
@@ -233,18 +356,19 @@ namespace Namespace
   {
   }
 }`,
-  { namespace: 'Namespace' },
+  { componentName: 'Component', namespace: 'Namespace' },
   false
 );
 
-test('Throws on function call', t => {
-  t.throws(() => {
-    stringify({
-      syntaxTree: parse(`
-        Component = {
-          prop: arrayOf()
-        }
-      `)
-    });
-  });
-});
+test(
+  'Component reference with base class',
+  template,
+  'AnotherComponent',
+  imports +
+    `
+public class Component : AnotherComponent
+{
+}`,
+  { componentName: 'Component', baseClass: 'BaseClass' },
+  false
+);

@@ -8,6 +8,14 @@ const template = (t, input, expected) => {
   t.deepEqual(expected, definitions);
 };
 
+test('Empty object', template, {}, [
+  {
+    name: 'Component',
+    parent: { name: 'Component' },
+    properties: { type: 'shape', argument: {}, isComponentClass: true }
+  }
+]);
+
 test(
   'Shape simple',
   template,
