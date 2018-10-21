@@ -22,6 +22,7 @@ module.exports = function({ types: t }) {
           body.replaceWith(t.classBody(newBody));
         }
       },
+      // This is kept for compatibility with babel < 7
       ClassProperty(path) {
         const key = path.get('key');
         if (key.isIdentifier({ name: 'propTypesMeta' })) {
