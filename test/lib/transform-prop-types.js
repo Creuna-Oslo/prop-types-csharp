@@ -97,3 +97,12 @@ legalTypes.forEach(type => {
     });
   });
 });
+
+// To make sure no shenanigans happen when props are called 'type'
+test(
+  'Prop named "type"',
+  template,
+  { type: { type: 'string' } },
+  {},
+  { type: { type: 'string' } }
+);

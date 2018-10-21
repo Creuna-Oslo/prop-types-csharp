@@ -8,7 +8,6 @@ const template = (t, input, expected) => {
   t.deepEqual(expected, definitions);
 };
 
-// TODO: Test for property named 'type'
 test('Empty object', template, {}, [
   {
     name: 'Component',
@@ -300,6 +299,26 @@ test(
       properties: {
         type: 'oneOf',
         argument: ['value-1', 'value-2']
+      }
+    }
+  ]
+);
+
+// To make sure no shenanigans happen when props are called 'type'
+test(
+  'Prop named "type"',
+  template,
+  {
+    type: { type: 'type' }
+  },
+  [
+    {
+      name: 'Component',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        isComponentClass: true,
+        argument: { type: { type: 'type' } }
       }
     }
   ]

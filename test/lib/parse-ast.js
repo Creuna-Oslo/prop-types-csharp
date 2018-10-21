@@ -137,3 +137,14 @@ test('Allowed function calls', t => {
     parseAST(ast);
   });
 });
+
+// To make sure no shenanigans happen when props are called 'type'
+test(
+  'Prop named "type"',
+  template,
+  `Component.propTypes = { type: (shape({ b: type })) }`,
+  {},
+  {
+    type: { type: 'shape', argument: { b: { type: 'type' } } }
+  }
+);

@@ -371,3 +371,29 @@ public class Component : AnotherComponent
   { componentName: 'Component', baseClass: 'BaseClass' },
   false
 );
+
+// To make sure no shenanigans happen when props are called 'type'
+test(
+  'Prop named "type"',
+  template,
+  [
+    {
+      name: 'Component',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        isComponentClass: true,
+        argument: {
+          type: { type: 'string' }
+        }
+      }
+    }
+  ],
+  imports +
+    `
+public class Component
+{
+  public string Type { get; set; }
+}`,
+  { componentName: 'Component' }
+);
