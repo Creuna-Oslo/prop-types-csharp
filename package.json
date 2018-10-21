@@ -18,7 +18,7 @@
   "scripts": {
     "build": "webpack --config=fixtures/webpack.config --mode=production",
     "lint": "eslint lib eslint-plugin babel-plugin webpack-plugin test",
-    "test": "ava --verbose",
+    "test": "nyc --reporter=html --reporter=text ava --verbose",
     "test:babel": "ava --verbose ./test/babel-plugin",
     "test:eslint": "ava ./test/eslint-plugin",
     "test:lib": "ava ./test/lib",
@@ -49,6 +49,7 @@
     "eslint-loader": "^2.0.0",
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-react": "^7.10.0",
+    "nyc": "^13.1.0",
     "prettier": "^1.13.7",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
