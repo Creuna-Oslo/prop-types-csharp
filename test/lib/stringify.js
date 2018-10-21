@@ -1,6 +1,6 @@
 const test = require('ava');
 
-const stringify = require('../../lib/stringify');
+const stringify = require('../../lib/stringify/lang/csharp');
 const normalize = require('../utils/_normalize-string');
 
 const basicDefinitions = [
