@@ -70,6 +70,12 @@ test(
   'C.propTypesMeta = { a: Object.keys(obj) };'
 );
 
+test(
+  'Throws when argument to Array is not an Identifier',
+  throwsTemplate,
+  'C.propTypesMeta = { a: Array(Component.propTypes) };'
+);
+
 const unsupportedTypes = ['null', 'false', 'true', '[]'];
 
 test('Throws on unsupported meta types', t => {
