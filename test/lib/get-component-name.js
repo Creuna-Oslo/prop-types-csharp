@@ -54,6 +54,8 @@ test(
 
 test('Throws on missing export', throwsTemplate, 'const Component = () => {};');
 
+test('Throws on export all', throwsTemplate, 'export * from "Component";');
+
 test(
   'Throws on multiple named exports',
   throwsTemplate,
