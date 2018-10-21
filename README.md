@@ -1,6 +1,6 @@
 # PropTypes to C# class generator
 
-[![Travis status](https://travis-ci.org/Creuna-Oslo/prop-types-csharp-webpack-plugin.svg?branch=master)](https://travis-ci.org/Creuna-Oslo/prop-types-csharp-webpack-plugin)
+[![Travis status](https://travis-ci.org/Creuna-Oslo/prop-types-csharp.svg?branch=master)](https://travis-ci.org/Creuna-Oslo/prop-types-csharp)
 
 This package has tools for generating C# classes from React components using propTypes.
 
@@ -12,6 +12,8 @@ This package has tools for generating C# classes from React components using pro
 - [Webpack plugin](#webpack)
 - [Babel plugin](#babel)
 - [eslint plugin](#eslint)
+
+## Install
 
 ```
 yarn add @creuna/prop-types-csharp
