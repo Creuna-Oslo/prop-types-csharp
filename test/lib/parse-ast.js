@@ -50,6 +50,13 @@ test(
   { a: { type: 'oneOf', argument: ['a', 'b'] } }
 );
 
+test('Invalid oneOf value', t => {
+  const ast = parse(`Component.propTypes = { a: oneOf([true, false]) };`);
+  t.throws(() => {
+    parseAST(ast);
+  });
+});
+
 test(
   'oneOf required',
   template,
