@@ -9,6 +9,7 @@ const log = require('./log');
 function PropTypesCSharpPlugin(options) {
   this.options = Object.assign(
     {
+      async: false, // Fallback is webpackConfig.mode === 'production'
       baseClass: '',
       exclude: ['node_modules'],
       indent: 2,
@@ -24,13 +25,12 @@ function PropTypesCSharpPlugin(options) {
 // This function defines a lot of things before actually calling them.
 // Reading this from the bottom is probably the easiest.
 PropTypesCSharpPlugin.prototype.apply = function(compiler) {
-  const hasDevServer = Boolean(compiler.options.devServer);
-  const runSync = compiler.options.mode === 'production' || !hasDevServer;
+  const isAsync = this.options.async;
 
   // In 'development' mode the class generation runs in parallel (using child_process.fork) in order to not degrade developer experience.
-  const generateClassesAsync = runSync
-    ? null
-    : fork(path.join(__dirname, './generate-classes'));
+  const generateClassesAsync = isAsync
+    ? fork(path.join(__dirname, './generate-classes'))
+    : null;
 
   // Compiler 'emit' callback. Receives a webpack compilation object that holds information about compiled modules (and tons of other stuff) and lets us add our own assets and errors/warnings.
   const emit = compilation => {
@@ -44,14 +44,14 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
     }
 
     if (!Array.isArray(this.options.exclude)) {
-      log(this.options, runSync, compilation, {
+      log(this.options, isAsync, compilation, {
         error: 'Bad configuration: options.exclude is not an array'
       });
       return;
     }
 
     if (!Array.isArray(this.options.match)) {
-      log(this.options, runSync, compilation, {
+      log(this.options, isAsync, compilation, {
         error: 'Bad configuration: options.match is not an array'
       });
       return;
@@ -74,7 +74,7 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
       namespace: this.options.namespace
     };
 
-    if (runSync) {
+    if (!isAsync) {
       const result = generateClasses(generateClassesOptions);
       const { classes, error } = result;
 
@@ -91,7 +91,7 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
         });
       }
 
-      log(this.options, runSync, compilation, result);
+      log(this.options, isAsync, compilation, result);
     } else {
       // Run class generation in parallel
       generateClassesAsync.send(generateClassesOptions);
@@ -99,7 +99,7 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
   };
 
   // Attach parallel class generation for development build
-  if (!runSync) {
+  if (isAsync) {
     generateClassesAsync.on('message', result => {
       const { classes, error } = result;
 
@@ -117,7 +117,7 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
         });
       }
 
-      log(this.options, runSync, this.compilation, result);
+      log(this.options, isAsync, this.compilation, result);
     });
   }
 

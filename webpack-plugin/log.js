@@ -1,9 +1,9 @@
-const logError = (isSync, compilation, error) => {
+const logError = (isAsync, compilation, error) => {
   const errorMessage = `C# class generator plugin\n${error}`;
 
   compilation.errors.push(errorMessage);
 
-  if (isSync) {
+  if (!isAsync) {
     return;
   }
 
@@ -12,8 +12,8 @@ const logError = (isSync, compilation, error) => {
 };
 
 // Writes errors/warnings and status messages (if enabled)
-const log = (options, isSync, compilation, { classes, duration, error }) => {
-  const errorLogger = logError.bind(null, isSync, compilation);
+const log = (options, isAsync, compilation, { classes, duration, error }) => {
+  const errorLogger = logError.bind(null, isAsync, compilation);
 
   if (error) errorLogger(error);
 
