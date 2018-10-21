@@ -189,7 +189,7 @@ The plugin will extract PropType definitions from `.jsx` files and convert them 
 ### Config example
 
 ```js
-const PropTypesCSharpPlugin = require('@creuna/prop-types-csharp-plugin');
+const PropTypesCSharpPlugin = require('@creuna/prop-types-csharp/webpack-plugin');
 
 module.exports = function(env, options = {}) {
   return {
