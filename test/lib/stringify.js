@@ -1,4 +1,3 @@
-const { parse } = require('@babel/parser');
 const test = require('ava');
 
 const stringify = require('../../lib/stringify');

@@ -8,6 +8,7 @@ const template = (t, input, expected) => {
   t.deepEqual(expected, definitions);
 };
 
+// TODO: Test for property named 'type'
 test('Empty object', template, {}, [
   {
     name: 'Component',

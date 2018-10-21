@@ -39,7 +39,7 @@
     "no-irregular-whitespace": 1,
     "no-use-before-define": [2, "nofunc"],
     "no-unused-vars": [
-      1,
+      2,
       {
         "vars": "all",
         "args": "after-used",

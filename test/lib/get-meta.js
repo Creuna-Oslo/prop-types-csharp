@@ -1,4 +1,3 @@
-const bt = require('@babel/types');
 const { parse } = require('@babel/parser');
 const test = require('ava');
 

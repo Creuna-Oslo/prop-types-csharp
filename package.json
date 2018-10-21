@@ -16,6 +16,7 @@
   "license": "MIT",
   "scripts": {
     "build": "webpack --config=fixtures/webpack.config --mode=production",
+    "lint": "eslint lib eslint-plugin babel-plugin webpack-plugin test",
     "test": "ava --verbose",
     "test:babel": "ava --verbose ./test/babel-plugin",
     "test:eslint": "ava ./test/eslint-plugin",
