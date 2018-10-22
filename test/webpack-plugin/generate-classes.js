@@ -13,17 +13,41 @@ test('Generates classes', t => {
     ]
   });
 
-  t.is(error, null);
+  t.is(null, error);
   t.is(classes.filter(({ error }) => !error).length, 2);
 });
 
 test('Returns error on duplicate component names', t => {
+  const component1Path = path.resolve(
+    __dirname,
+    '../../fixtures/func-component.jsx'
+  );
+  const component2Path = path.resolve(
+    __dirname,
+    '../../fixtures/nested-component/func-component.jsx'
+  );
+
   const { error } = generateClasses({
-    modulePaths: [
-      path.join(__dirname, '../../fixtures/func-component.jsx'),
-      path.join(__dirname, '../../fixtures/nested-component/func-component.jsx')
-    ]
+    modulePaths: [component1Path, component2Path]
   });
 
-  t.not(error, null);
+  const expectedError = `Found duplicate component names in:
+FunctionalComponent (${component1Path})
+FunctionalComponent (${component2Path})`;
+
+  t.is(expectedError, error);
+});
+
+test('Returns class generation error', t => {
+  const modulePath = path.resolve(
+    __dirname,
+    '../../fixtures/error-component.jsx'
+  );
+  const { classes } = generateClasses({ modulePaths: [modulePath] });
+  const expectedError = `
+${modulePath}
+Invalid type 'object' for prop 'a'.
+Replace with 'PropTypes.shape' or provide a meta type\n`;
+
+  t.is(expectedError, classes[0].error);
 });

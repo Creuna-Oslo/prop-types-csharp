@@ -5,4 +5,10 @@ import ReactDOM from 'react-dom';
 import Component from './func-component';
 import DuplicateComponent from './nested-component/func-component';
 
-ReactDOM.render(<Component />, document.getElementById('mount-point'));
+ReactDOM.render(
+  <div>
+    <Component />
+    <DuplicateComponent />
+  </div>,
+  document.getElementById('mount-point')
+);
