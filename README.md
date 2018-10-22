@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@creuna/prop-types-csharp.svg)](https://npmjs.com/package/@creuna/prop-types-csharp)
 [![Travis status](https://travis-ci.org/Creuna-Oslo/prop-types-csharp.svg?branch=master)](https://travis-ci.org/Creuna-Oslo/prop-types-csharp)
-[![Coverage Status](https://coveralls.io/repos/github/Creuna-Oslo/prop-types-csharp/badge.svg?branch=refactor%2Fcustom-tree)](https://coveralls.io/github/Creuna-Oslo/prop-types-csharp?branch=refactor%2Fcustom-tree)
+[![Coverage Status](https://coveralls.io/repos/github/Creuna-Oslo/prop-types-csharp/badge.svg?branch=master)](https://coveralls.io/github/Creuna-Oslo/prop-types-csharp?branch=master)
 
 This package has tools for generating C# classes from React components using propTypes.
 
