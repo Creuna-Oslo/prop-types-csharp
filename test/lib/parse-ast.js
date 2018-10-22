@@ -9,6 +9,15 @@ const template = (t, input, propTypeMeta, expected) => {
   t.deepEqual(expected, parseAST(ast, propTypeMeta));
 };
 
+const throwsTemplate = (t, input, errorMessage) => {
+  const ast = parse(input);
+  const error = t.throws(() => {
+    parseAST(ast);
+  });
+
+  t.is(errorMessage, error.message);
+};
+
 test(
   'Other component reference',
   template,
@@ -50,12 +59,12 @@ test(
   { a: { type: 'oneOf', argument: ['a', 'b'] } }
 );
 
-test('Invalid oneOf value', t => {
-  const ast = parse(`Component.propTypes = { a: oneOf([true, false]) };`);
-  t.throws(() => {
-    parseAST(ast);
-  });
-});
+test(
+  'Invalid oneOf value',
+  throwsTemplate,
+  `Component.propTypes = { a: oneOf([true, false]) };`,
+  'Unsupported BooleanLiteral in PropTypes.oneOf'
+);
 
 test(
   'oneOf required',
@@ -116,12 +125,12 @@ test(
   }
 );
 
-test('Invalid function call', t => {
-  const ast = parse(`Component.propTypes = { a: someFunc() };`);
-  t.throws(() => {
-    parseAST(ast);
-  });
-});
+test(
+  'Invalid function call',
+  throwsTemplate,
+  'Component.propTypes = { a: someFunc() };',
+  "Invalid function call 'someFunc'"
+);
 
 test('Invalid function call with exclude', t => {
   const ast = parse(`Component.propTypes = { a: someFunc() };`);

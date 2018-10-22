@@ -113,16 +113,36 @@ test(
   }
 );
 
-const illegalTypes = ['array', 'object', 'oneOfType'];
-
-illegalTypes.forEach(type => {
-  test(`Throws on '${type}'`, t => {
-    const propTypes = { a: { type } };
-    t.throws(() => {
-      transformPropTypes(propTypes, {});
-    });
+const throwsTemplate = (t, input, errorMessage) => {
+  const error = t.throws(() => {
+    transformPropTypes(input, {});
   });
-});
+  t.is(errorMessage, error.message);
+};
+
+test(
+  'Throws on array',
+  throwsTemplate,
+  { a: { type: 'array' } },
+  `Invalid type 'array' for prop 'a'.
+Replace with 'PropTypes.arrayOf' or provide a meta type`
+);
+
+test(
+  'Throws on object',
+  throwsTemplate,
+  { a: { type: 'object' } },
+  `Invalid type 'object' for prop 'a'.
+Replace with 'PropTypes.shape' or provide a meta type`
+);
+
+test(
+  'Throws on oneOfType',
+  throwsTemplate,
+  { a: { type: 'oneOfType' } },
+  `Invalid type 'oneOfType' for prop 'a'.
+'PropTypes.oneOfType' is not yet supported`
+);
 
 // Also test legal types to avoid false positive
 const legalTypes = ['string', 'int', 'float'];

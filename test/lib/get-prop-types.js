@@ -32,22 +32,26 @@ test('Class component', t => {
   t.true(bt.isIdentifier(property.value, { name: 'string' }));
 });
 
-// TODO: also check error messages
-test('Throws on missing propTypes', t => {
-  const syntaxTree = parse('const C = () => <div />;', { plugins: ['jsx'] });
+const throwsTemplate = (t, input, errorMessage) => {
+  const syntaxTree = parse(input, { plugins: ['jsx'] });
 
-  t.throws(() => {
+  const error = t.throws(() => {
     getPropTypes({ componentName: 'C', syntaxTree });
   });
-});
 
-test('Throws with wrong component name in propTypes definition', t => {
-  const syntaxTree = parse(
-    'const C = () => <div />; D.propTypes = { a: PropTypes.string };',
-    { plugins: ['jsx'] }
-  );
+  t.is(errorMessage, error.message);
+};
 
-  t.throws(() => {
-    getPropTypes({ componentName: 'C', syntaxTree });
-  });
-});
+test(
+  'Throws on missing propTypes',
+  throwsTemplate,
+  'const C = () => <div />;',
+  'PropTypes not found'
+);
+
+test(
+  'Throws with wrong component name in propTypes definition',
+  throwsTemplate,
+  'const C = () => <div />; D.propTypes = { a: PropTypes.string };',
+  'PropTypes not found'
+);

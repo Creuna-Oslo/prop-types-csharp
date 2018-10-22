@@ -9,11 +9,13 @@ const template = (t, input, expected) => {
   t.deepEqual(expected, getMeta({ syntaxTree }).propTypesMeta);
 };
 
-const throwsTemplate = (t, input) => {
+const throwsTemplate = (t, input, errorMessage) => {
   const syntaxTree = parse(input, { sourceType: 'module' });
-  t.throws(() => {
+  const error = t.throws(() => {
     getMeta({ syntaxTree });
   });
+
+  t.is(errorMessage, error.message);
 };
 
 test('Functional component', template, 'C.propTypesMeta = { a: "exclude" };', {
@@ -73,36 +75,40 @@ test(
 test(
   'Throws on misspelled string',
   throwsTemplate,
-  'C.propTypesMeta = { a: "exclud" };'
+  'C.propTypesMeta = { a: "exclud" };',
+  "Invalid meta type 'exclud' for 'a'. Expected one of [exclude,float,int]"
 );
 
 test(
   'Throws on calls other than Array',
   throwsTemplate,
-  'C.propTypesMeta = { a: Object.keys(obj) };'
+  'C.propTypesMeta = { a: Object.keys(obj) };',
+  "Unsupported function call in meta type for 'a'"
 );
 
 test(
   'Throws on empty Array',
   throwsTemplate,
-  'C.propTypesMeta = { a: Array() };'
+  'C.propTypesMeta = { a: Array() };',
+  "Missing value in 'Array' in meta type for 'a'"
 );
 
 test(
   'Throws when argument to Array is not an Identifier',
   throwsTemplate,
-  'C.propTypesMeta = { a: Array(Component.propTypes) };'
+  'C.propTypesMeta = { a: Array(Component.propTypes) };',
+  "Unsupported value in Array() in meta type for 'a'"
 );
 
 const unsupportedTypes = ['null', 'false', 'true', '[]'];
 
 test('Throws on unsupported meta types', t => {
-  t.plan(unsupportedTypes.length);
-
   unsupportedTypes.forEach(type => {
     const syntaxTree = parse(`C.propTypesMeta = { a: ${type} };`);
-    t.throws(() => {
+    const error = t.throws(() => {
       getMeta({ syntaxTree });
     });
+
+    t.is("Unsupported meta type for 'a'", error.message);
   });
 });

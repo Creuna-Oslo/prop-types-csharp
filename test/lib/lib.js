@@ -55,9 +55,14 @@ test('Throws on name collisions', t => {
   const Component = ({ component }) => <div>{component}</div>;
   Component.propTypes = { component: PropTypes.string };
   export default Component;`;
-  t.throws(() => {
+  const error = t.throws(() => {
     generateClass({ sourceCode });
   });
+
+  t.is(
+    "Illegal prop name 'component'. Prop names must be different from component name.",
+    error.message
+  );
 });
 
 test(
