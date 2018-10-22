@@ -81,6 +81,38 @@ test(
   { a: { type: 'arrayOf', argument: { type: 'Link' } } }
 );
 
+test(
+  'Meta is merged with propType',
+  template,
+  {
+    a: {
+      type: 'arrayOf',
+      argument: {
+        type: 'shape',
+        argument: { b: { type: 'number' }, c: { type: 'string' } }
+      }
+    }
+  },
+  {
+    a: {
+      type: 'arrayOf',
+      argument: {
+        type: 'shape',
+        argument: { b: { type: 'float' } }
+      }
+    }
+  },
+  {
+    a: {
+      type: 'arrayOf',
+      argument: {
+        type: 'shape',
+        argument: { b: { type: 'float' }, c: { type: 'string' } }
+      }
+    }
+  }
+);
+
 const illegalTypes = ['array', 'object', 'oneOfType'];
 
 illegalTypes.forEach(type => {
