@@ -258,6 +258,10 @@ Path relative to `output.path` to put `.cs` files.
 
 Having a bunch of `propTypesMeta` scattered all around your production code might not be what you want. To solve this issue, a Babel plugin is included which, if enabled, will strip all instances of `ComponentName.propTypesMeta` or `static propTypesMeta` when building with Webpack.
 
+**IMPORTANT**
+
+`@creuna/prop-types-csharp/babel-plugin` needs to be the first plugin to run on your code. If other plugins have transformed the code first, we can't guarantee that it will work like expected.
+
 **.babelrc**:
 
 ```json
