@@ -29,6 +29,12 @@
     "type": "git",
     "url": "https://github.com/Creuna-Oslo/prop-types-csharp.git"
   },
+  "nyc": {
+    "exclude": [
+      "fixtures",
+      "test"
+    ]
+  },
   "dependencies": {
     "@babel/parser": "^7.1.2",
     "@babel/traverse": "^7.1.0",
