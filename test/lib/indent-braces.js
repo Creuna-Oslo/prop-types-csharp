@@ -25,3 +25,9 @@ hello
 
   t.is(expected, indentedString);
 });
+
+test("Doesn't crash when parameters are missing", t => {
+  t.notThrows(() => {
+    indentBraces();
+  });
+});
