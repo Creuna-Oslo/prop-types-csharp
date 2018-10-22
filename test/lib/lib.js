@@ -42,6 +42,13 @@ test(
 `
 );
 
+test(
+  'Bad propTypes value',
+  template,
+  `const Component = () => {}; Component.propTypes = false; export default Component;`,
+  undefined
+);
+
 test('Throws on name collisions', t => {
   const sourceCode = `
   import PropTypes from 'prop-types';
@@ -124,4 +131,11 @@ test(
   {
     baseClass: 'BaseClass'
   }
+);
+
+test(
+  'Non-propType reference',
+  template,
+  `const Component = () => {}; Component.propTypes = object.property; export default Component;`,
+  undefined
 );
