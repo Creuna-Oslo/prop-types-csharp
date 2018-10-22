@@ -123,7 +123,7 @@ const throwsTemplate = (t, entry, expectedErrorMessage) => {
       const compilation = stats.toJson();
 
       t.is(1, compilation.errors.length);
-      t.is(expectedErrorMessage, compilation.errors[0]);
+      t.is(normalize(expectedErrorMessage), normalize(compilation.errors[0]));
 
       const CSharpFilePaths = compilation.assets
         .filter(asset => asset.name.match(/\.cs$/))
@@ -165,9 +165,7 @@ test.cb(
   throwsTemplate,
   './fixtures/app-error-component.js',
   `C# class generator plugin
-
 ${errorComponentPath}
 Invalid type 'object' for prop 'a'.
-Replace with 'PropTypes.shape' or provide a meta type
-`
+Replace with 'PropTypes.shape' or provide a meta type`
 );
