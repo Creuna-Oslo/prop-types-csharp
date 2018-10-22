@@ -59,6 +59,18 @@ test(
 );
 
 test(
+  'Array with object literal',
+  template,
+  'C.propTypesMeta = { a: Array({ b: "float" }) };',
+  {
+    a: {
+      type: 'arrayOf',
+      argument: { type: 'shape', argument: { b: { type: 'float' } } }
+    }
+  }
+);
+
+test(
   'Throws on misspelled string',
   throwsTemplate,
   'C.propTypesMeta = { a: "exclud" };'
@@ -68,6 +80,12 @@ test(
   'Throws on calls other than Array',
   throwsTemplate,
   'C.propTypesMeta = { a: Object.keys(obj) };'
+);
+
+test(
+  'Throws on empty Array',
+  throwsTemplate,
+  'C.propTypesMeta = { a: Array() };'
 );
 
 test(
