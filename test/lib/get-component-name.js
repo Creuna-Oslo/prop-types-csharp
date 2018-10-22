@@ -8,11 +8,13 @@ const template = (t, input, expected) => {
   t.is(getComponentName({ syntaxTree }).componentName, expected);
 };
 
-const throwsTemplate = (t, input) => {
+const throwsTemplate = (t, input, errorMessage) => {
   const syntaxTree = parse(input, { sourceType: 'module' });
-  t.throws(() => {
+  const error = t.throws(() => {
     getComponentName({ syntaxTree });
   });
+
+  t.is(errorMessage, error.message);
 };
 
 test(
@@ -52,16 +54,36 @@ test(
   'Component'
 );
 
-test('Throws on missing export', throwsTemplate, 'const Component = () => {};');
+const componentNameNotFoundError = `Component name not found. Make sure that:
+• your component is exported as an ES module
+• the file has at most one named export or a default export`;
+
+const multipleExportsError = `Couldn't get component name because of multiple exports.`;
 
 test(
-  'Throws on multiple named exports',
+  'Throws on missing export',
   throwsTemplate,
-  'export { Component, OtherComponent };'
+  'const Component = () => {};',
+  componentNameNotFoundError
+);
+
+test(
+  'Throws on export all',
+  throwsTemplate,
+  'export * from "Component";',
+  componentNameNotFoundError
 );
 
 test(
   'Throws on multiple named exports',
   throwsTemplate,
-  'export const a = "a"; export { Component };'
+  'export { Component, OtherComponent };',
+  multipleExportsError
+);
+
+test(
+  'Throws on multiple named exports',
+  throwsTemplate,
+  'export const a = "a"; export { Component };',
+  multipleExportsError
 );

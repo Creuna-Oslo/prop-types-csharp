@@ -47,3 +47,5 @@ test(
   excludePatterns,
   ['\\\\root\\\\one\\\\one.jsx']
 );
+
+test('Without arguments', template, undefined, undefined, undefined, []);

@@ -14,10 +14,13 @@ public class ClassComponent
   public ClassComponent_SingleObject SingleObject { get; set; }
   [Required]
   public IList<ClassComponent_ObjectsItem> Objects { get; set; }
+  [Required]
   public ClassComponent_ShapeMeta ShapeMeta { get; set; }
   [Required]
   public IList<Link> ObjectArray { get; set; }
   public IList<IList<IList<string>>> NestedList { get; set; }
+  public ClassComponent_NestedExclude NestedExclude { get; set; }
+  public ClassComponent_NestedShape NestedShape { get; set; }
   public Link Link { get; set; }
   public IList<Link> LinkList { get; set; }
   public Link LinkMeta { get; set; }
@@ -45,6 +48,25 @@ public class ClassComponent_ShapeMeta
   public Link Object { get; set; }
 }
 
+public class ClassComponent_NestedExclude
+{
+}
+
+public class ClassComponent_NestedShape
+{
+  public ClassComponent_NestedShape_A A { get; set; }
+}
+
+public class ClassComponent_NestedShape_A
+{
+  public ClassComponent_NestedShape_A_B B { get; set; }
+}
+
+public class ClassComponent_NestedShape_A_B
+{
+  public string C { get; set; }
+}
+
 public enum ClassComponent_EnumArray 
 {
   [EnumMember(Value = "value-1")]
@@ -56,8 +78,8 @@ public enum ClassComponent_EnumArray
 public enum ClassComponent_EnumInline 
 {
   None = 0,
-  ClassComponentEnumInline1 = 1,
-  ClassComponentEnumInline2 = 2,
+  EnumInline1 = 1,
+  EnumInline2 = 2,
 }
 
 public enum ClassComponent_EnumObject 

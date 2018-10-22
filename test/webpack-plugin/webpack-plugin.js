@@ -103,28 +103,27 @@ test.cb('Adds base class', t => {
   );
 });
 
-test.cb('Aborts when duplicate names exist', t => {
-  t.plan(1);
+const throwsTemplate = (t, entry, expectedErrorMessage) => {
+  t.plan(3);
 
   webpack(
     webpackConfig(
       {
-        entry: './fixtures/app-duplicate-component.js',
+        entry,
         path: tempy.directory()
       },
       { mode: 'production' }
     ),
     (error, stats) => {
       if (error) {
+        // To see webpack errors when running tests
         throw error;
       }
 
-      if (!stats.hasErrors()) {
-        // Custom fail of test to avoid humongous webpack output
-        t.fail("Didn't throw");
-      }
-
       const compilation = stats.toJson();
+
+      t.is(1, compilation.errors.length);
+      t.is(normalize(expectedErrorMessage), normalize(compilation.errors[0]));
 
       const CSharpFilePaths = compilation.assets
         .filter(asset => asset.name.match(/\.cs$/))
@@ -135,4 +134,38 @@ test.cb('Aborts when duplicate names exist', t => {
       t.end();
     }
   );
-});
+};
+
+const duplicateComponent1Path = path.resolve(
+  __dirname,
+  '../../fixtures/func-component.jsx'
+);
+const duplicateComponent2Path = path.resolve(
+  __dirname,
+  '../../fixtures/nested-component/func-component.jsx'
+);
+
+test.cb(
+  'Aborts when duplicate names exist',
+  throwsTemplate,
+  './fixtures/app-duplicate-component.js',
+  `C# class generator plugin
+Found duplicate component names in:
+FunctionalComponent (${duplicateComponent1Path})
+FunctionalComponent (${duplicateComponent2Path})`
+);
+
+const errorComponentPath = path.resolve(
+  __dirname,
+  '../../fixtures/error-component.jsx'
+);
+
+test.cb(
+  'Aborts when class generation fails',
+  throwsTemplate,
+  './fixtures/app-error-component.js',
+  `C# class generator plugin
+${errorComponentPath}
+Invalid type 'object' for prop 'a'.
+Replace with 'PropTypes.shape' or provide a meta type`
+);

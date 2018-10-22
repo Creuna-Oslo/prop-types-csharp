@@ -11,78 +11,125 @@ const template = (t, input, expected, propTypesMeta = {}) => {
   t.is(generate(syntaxTree, { minified: true }).code, expected);
 };
 
+const throwsTemplate = (t, input, errorMessage) => {
+  const syntaxTree = parse(input, {
+    sourceType: 'module',
+    plugins: ['classProperties']
+  });
+  const error = t.throws(() => {
+    expandReferencess({ syntaxTree, componentName: 'Component' });
+  });
+  t.is(error.message, errorMessage);
+};
+
 test(
   'Func component: inline literal',
   template,
   'Component.propTypes={prop:oneOf([1,2])};',
-  'Component.propTypes={prop:[1,2]};'
+  'Component.propTypes={prop:oneOf([1,2])};'
 );
 
 test(
   'Func component: array literal',
   template,
   'const array=[1,2];Component.propTypes={prop:oneOf(array)};',
-  'const array=[1,2];Component.propTypes={prop:[1,2]};'
+  'const array=[1,2];Component.propTypes={prop:oneOf([1,2])};'
 );
 
 test(
   'Func component: object keys',
   template,
   'const object={a:1,b:2};Component.propTypes={prop:oneOf(Object.keys(object))}',
-  'const object={a:1,b:2};Component.propTypes={prop:["a","b"]};'
+  'const object={a:1,b:2};Component.propTypes={prop:oneOf(["a","b"])};'
 );
 
 test(
   'Func component: object values',
   template,
   'const object={a:1,b:2};Component.propTypes={prop:oneOf(Object.values(object))}',
-  'const object={a:1,b:2};Component.propTypes={prop:[1,2]};'
+  'const object={a:1,b:2};Component.propTypes={prop:oneOf([1,2])};'
 );
 
-test('Func component: missing literal', t => {
-  const syntaxTree = parse(
-    'import array from ".";Component.propTypes={prop:oneOf(array)};',
-    { sourceType: 'module' }
-  );
-  t.throws(() => {
-    expandReferencess({ syntaxTree, componentName: 'Component' });
-  });
-});
-
 test(
-  'Func component: inline literal',
+  'Class component: inline literal',
   template,
   'class Component{static propTypes={prop:oneOf([1,2])};}',
-  'class Component{static propTypes={prop:[1,2]}}'
+  'class Component{static propTypes={prop:oneOf([1,2])}}'
 );
 
 test(
   'Class component: array literal',
   template,
   'const array=[1,2];class Component{static propTypes={prop:oneOf(array)};}',
-  'const array=[1,2];class Component{static propTypes={prop:[1,2]}}'
+  'const array=[1,2];class Component{static propTypes={prop:oneOf([1,2])}}'
 );
 
 test(
   'Class component: object keys',
   template,
   'const object={a:1,b:2};class Component{static propTypes={prop:oneOf(Object.keys(object))};}',
-  'const object={a:1,b:2};class Component{static propTypes={prop:["a","b"]}}'
+  'const object={a:1,b:2};class Component{static propTypes={prop:oneOf(["a","b"])}}'
 );
 
 test(
   'Func component: object values',
   template,
   'const object={a:1,b:2};class Component{static propTypes={prop:oneOf(Object.values(object))}}',
-  'const object={a:1,b:2};class Component{static propTypes={prop:[1,2]}}'
+  'const object={a:1,b:2};class Component{static propTypes={prop:oneOf([1,2])}}'
 );
 
-test('Class component: missing literal', t => {
-  const syntaxTree = parse(
-    'import array from ".";class Component{static propTypes={prop:oneOf(array)};}',
-    { plugins: ['classProperties'], sourceType: 'module' }
-  );
-  t.throws(() => {
-    expandReferencess({ syntaxTree, componentName: 'Component' });
-  });
-});
+test(
+  'Class component: throws on missing literal',
+  throwsTemplate,
+  'import array from ".";class Component{static propTypes={prop:oneOf(array)};}',
+  "Couldn't resolve 'oneOf' value for prop 'prop'. Make sure 'array' is defined in the above file."
+);
+
+test(
+  'Func component: throws on missing literal',
+  throwsTemplate,
+  'import array from ".";Component.propTypes={prop:oneOf(array)};',
+  "Couldn't resolve 'oneOf' value for prop 'prop'. Make sure 'array' is defined in the above file."
+);
+
+test(
+  'Throws on undefined literal',
+  throwsTemplate,
+  'Component.propTypes={prop:oneOf(array)};',
+  "Couldn't resolve 'oneOf' value for prop 'prop'. Make sure 'array' is defined in the above file."
+);
+
+test(
+  'Throws on empty oneOf',
+  throwsTemplate,
+  'Component.propTypes={prop:oneOf()};',
+  "Missing value in 'oneOf' for prop 'prop'"
+);
+
+test(
+  'Throws on empty Object.keys in oneOf',
+  throwsTemplate,
+  'Component.propTypes={prop:oneOf(Object.keys())}',
+  "Missing value in 'oneOf' for prop 'prop'"
+);
+
+test(
+  'Throws on missing object literal',
+  throwsTemplate,
+  'Component.propTypes={prop:oneOf(Object.keys(obj))}',
+  "Couldn't resolve 'oneOf' value for prop 'prop'. Make sure 'obj' is defined in the above file."
+);
+
+test(
+  'Throws on undefined object value',
+  throwsTemplate,
+  'let obj; Component.propTypes={prop:oneOf(Object.keys(obj))}',
+  "Couldn't resolve 'oneOf' value for prop 'prop'. Make sure 'obj' is defined in the above file."
+);
+
+test(
+  'Throws on unsupported Object method',
+  throwsTemplate,
+  'const obj = {}; Component.propTypes={prop:oneOf(Object.entries(obj))}',
+  "Unsupported method 'Object.entries' for prop 'prop'"
+);

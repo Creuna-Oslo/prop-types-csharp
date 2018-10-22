@@ -1,6 +1,8 @@
 # PropTypes to C# class generator
 
-[![Travis status](https://travis-ci.org/Creuna-Oslo/prop-types-csharp-webpack-plugin.svg?branch=master)](https://travis-ci.org/Creuna-Oslo/prop-types-csharp-webpack-plugin)
+[![npm version](https://img.shields.io/npm/v/@creuna/prop-types-csharp.svg)](https://npmjs.com/package/@creuna/prop-types-csharp)
+[![Travis status](https://travis-ci.org/Creuna-Oslo/prop-types-csharp.svg?branch=master)](https://travis-ci.org/Creuna-Oslo/prop-types-csharp)
+[![Coverage Status](https://coveralls.io/repos/github/Creuna-Oslo/prop-types-csharp/badge.svg?branch=master)](https://coveralls.io/github/Creuna-Oslo/prop-types-csharp?branch=master)
 
 This package has tools for generating C# classes from React components using propTypes.
 
@@ -12,6 +14,8 @@ This package has tools for generating C# classes from React components using pro
 - [Webpack plugin](#webpack)
 - [Babel plugin](#babel)
 - [eslint plugin](#eslint)
+
+## Install
 
 ```
 yarn add @creuna/prop-types-csharp
@@ -67,7 +71,7 @@ Supported values for props in `propTypesMeta` are
 - `"float"`
 - `"exclude"`
 - React component
-- Array(< React component >)
+- `Array(< React component > | Object)`
 
 `"int"` and `"float"` replace `PropTypes.number` if supplied. By default, `PropTypes.number` will result in `int` in C# classes.
 
@@ -80,14 +84,20 @@ Component.propTypes = {
   someProp: PropTypes.number,
   anotherProp: PropTypes.string,
   someComponent: PropTypes.object,
-  items: PropTypes.array
+  items: PropTypes.array,
+  numbers: PropTypes.arrayOf(
+    PropTypes.shape({
+      number: PropTypes.number
+    })
+  )
 };
 
 Component.propTypesMeta = {
   someProp: "float",
   anotherProp: "exclude",
   someComponent: SomeComponent,
-  items: Array(AnotherComponent)
+  items: Array(AnotherComponent),
+  numbers: Array({ number: "float" })
 };
 ```
 
@@ -99,14 +109,20 @@ class Component extends React.Component {
     someProp: PropTypes.number,
     anotherProp: PropTypes.string,
     someComponent: PropTypes.object,
-    items: PropTypes.array
+    items: PropTypes.array,
+    numbers: PropTypes.arrayOf(
+      PropTypes.shape({
+        number: PropTypes.number
+      })
+    )
   };
 
   static propTypesMeta = {
     someProp: "float",
     anotherProp: "exclude",
     someComponent: SomeComponent,
-    items: Array(AnotherComponent)
+    items: Array(AnotherComponent),
+    numbers: Array({ number: "float" })
   };
 }
 ```
@@ -153,6 +169,14 @@ Source code for new C# class.
 
 ### Options
 
+**baseClass**: `String`
+
+Optional base class that generated classes will extend
+
+**generator**: `Function` = `lib/stringify/lang/csharp`
+
+Optional generator. Use this if you want to generate something other than C#. The Node.js API options are passed to the generator, in addition to `componentName` (`string`) and `definitions` – an `array` with abstract representations of the component class and any child classes.
+
 **indent**: `Number` = `2`
 Number of spaces of indentation in generated C# file
 
@@ -181,7 +205,7 @@ The plugin will extract PropType definitions from `.jsx` files and convert them 
 ### Config example
 
 ```js
-const PropTypesCSharpPlugin = require('@creuna/prop-types-csharp-plugin');
+const PropTypesCSharpPlugin = require('@creuna/prop-types-csharp/webpack-plugin');
 
 module.exports = function(env, options = {}) {
   return {
@@ -235,6 +259,10 @@ Path relative to `output.path` to put `.cs` files.
 ## <a id="babel"></a>Babel plugin
 
 Having a bunch of `propTypesMeta` scattered all around your production code might not be what you want. To solve this issue, a Babel plugin is included which, if enabled, will strip all instances of `ComponentName.propTypesMeta` or `static propTypesMeta` when building with Webpack.
+
+**IMPORTANT**
+
+`@creuna/prop-types-csharp/babel-plugin` needs to be the first plugin to run on your code. If other plugins have transformed the code first, we can't guarantee that it will work like expected.
 
 **.babelrc**:
 

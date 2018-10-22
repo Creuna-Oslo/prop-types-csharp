@@ -15,10 +15,13 @@ public class FunctionalComponent
   public FunctionalComponent_SingleObject SingleObject { get; set; }
   [Required]
   public IList<FunctionalComponent_ObjectsItem> Objects { get; set; }
+  [Required]
   public FunctionalComponent_ShapeMeta ShapeMeta { get; set; }
   [Required]
   public IList<Link> ObjectArray { get; set; }
   public IList<IList<IList<string>>> NestedList { get; set; }
+  public FunctionalComponent_NestedExclude NestedExclude { get; set; }
+  public FunctionalComponent_NestedShape NestedShape { get; set; }
   public Link Link { get; set; }
   public IList<Link> LinkList { get; set; }
   public Link LinkMeta { get; set; }
@@ -46,6 +49,25 @@ public class FunctionalComponent_ShapeMeta
   public Link Object { get; set; }
 }
 
+public class FunctionalComponent_NestedExclude
+{
+}
+
+public class FunctionalComponent_NestedShape
+{
+  public FunctionalComponent_NestedShape_A A { get; set; }
+}
+
+public class FunctionalComponent_NestedShape_A
+{
+  public FunctionalComponent_NestedShape_A_B B { get; set; }
+}
+
+public class FunctionalComponent_NestedShape_A_B
+{
+  public string C { get; set; }
+}
+
 public enum FunctionalComponent_EnumArray 
 {
   [EnumMember(Value = "value-1")]
@@ -57,8 +79,8 @@ public enum FunctionalComponent_EnumArray
 public enum FunctionalComponent_EnumInline 
 {
   None = 0,
-  FunctionalComponentEnumInline1 = 1,
-  FunctionalComponentEnumInline2 = 2,
+  EnumInline1 = 1,
+  EnumInline2 = 2,
 }
 
 public enum FunctionalComponent_EnumObject 

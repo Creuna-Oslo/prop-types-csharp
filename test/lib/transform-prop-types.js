@@ -1,163 +1,166 @@
-const generate = require('@babel/generator').default;
-const { parse } = require('@babel/parser');
-const bt = require('@babel/types');
 const test = require('ava');
 
 const transformPropTypes = require('../../lib/transforms/transform-prop-types');
 
-const template = (t, input, expected, propTypesMeta = {}) => {
-  const syntaxTree = parse(input);
-  transformPropTypes({
-    propTypesIdentifierName: 'pt',
-    propTypesMeta,
-    syntaxTree
-  });
-
-  t.is(expected, generate(syntaxTree, { minified: true }).code);
+const template = (t, input, propTypesMeta = {}, expected) => {
+  t.deepEqual(expected, transformPropTypes(input, propTypesMeta));
 };
 
 test(
   'Removes client-only props',
   template,
-  'C.propTypes={a:element,b:func,c:instanceOf,d:node}',
-  'C={};'
+  {
+    a: { type: 'element' },
+    b: { type: 'func' },
+    c: { type: 'instanceOf' },
+    d: { type: 'node' }
+  },
+  {},
+  {}
 );
 
-test('Removes excluded props', template, 'C.propTypes={a:array};', 'C={};', {
-  a: bt.identifier('exclude')
-});
+test(
+  'Removes excluded props',
+  template,
+  { a: { type: 'array' } },
+  { a: { type: 'exclude' } },
+  {}
+);
 
 test(
   'Removes excluded props with nesting',
   template,
-  'C.propTypes={a:shape({ b: object })};',
-  'C={};',
-  {
-    a: bt.identifier('exclude')
-  }
-);
-
-test(
-  'Removes excluded prop with illegal function call',
-  template,
-  'C.propTypes={a: someFunc()};',
-  'C={};',
-  { a: bt.identifier('exclude') }
+  { a: { type: 'shape', argument: { b: { type: 'object' } } } },
+  { a: { type: 'shape', argument: { b: { type: 'exclude' } } } },
+  { a: { type: 'shape', argument: {} } }
 );
 
 test(
   'Applies meta types',
   template,
-  'C.propTypes={a:number,b:number};',
-  'C={a:int,b:float};',
-  {
-    a: bt.identifier('int'),
-    b: bt.identifier('float')
-  }
+  { a: { type: 'number' }, b: { type: 'number' } },
+  { a: { type: 'int' }, b: { type: 'float' } },
+  { a: { type: 'int' }, b: { type: 'float' } }
 );
 
 test(
   'Replaces "number" with "int" by default',
   template,
-  'C.propTypes={a:number};',
-  'C={a:int};'
+  {
+    a: { type: 'number' },
+    b: { type: 'shape', argument: { c: { type: 'number' } } }
+  },
+  {},
+  {
+    a: { type: 'int' },
+    b: { type: 'shape', argument: { c: { type: 'int' } } }
+  }
 );
 
 test(
   'Replaces "number" with "int" by default with isRequired',
   template,
-  'C.propTypes={a:{b:number.isRequired}};',
-  'C={a:{b:int.isRequired}};'
+  { a: { type: 'number', isRequired: true } },
+  {},
+  { a: { type: 'int', isRequired: true } }
 );
 
 test(
   'Replaces nested meta types',
   template,
-  'C.propTypes={a:shape({b:object})};',
-  'C={a:{b:Link}};',
+  { a: { type: 'shape', argument: { b: { type: 'object' } } } },
+  { a: { type: 'shape', argument: { b: { type: 'Link' } } } },
+  { a: { type: 'shape', argument: { b: { type: 'Link' } } } }
+);
+
+test(
+  'Array meta',
+  template,
+  { a: { type: 'array' } },
+  { a: { type: 'arrayOf', argument: { type: 'Link' } } },
+  { a: { type: 'arrayOf', argument: { type: 'Link' } } }
+);
+
+test(
+  'Meta is merged with propType',
+  template,
   {
     a: {
-      b: bt.identifier('Link')
+      type: 'arrayOf',
+      argument: {
+        type: 'shape',
+        argument: { b: { type: 'number' }, c: { type: 'string' } }
+      }
+    }
+  },
+  {
+    a: {
+      type: 'arrayOf',
+      argument: {
+        type: 'shape',
+        argument: { b: { type: 'float' } }
+      }
+    }
+  },
+  {
+    a: {
+      type: 'arrayOf',
+      argument: {
+        type: 'shape',
+        argument: { b: { type: 'float' }, c: { type: 'string' } }
+      }
     }
   }
 );
 
-test('Array meta', template, 'C.propTypes={a:array};', 'C={a:[Link]};', {
-  a: bt.arrayExpression([bt.identifier('Link')])
-});
+const throwsTemplate = (t, input, errorMessage) => {
+  const error = t.throws(() => {
+    transformPropTypes(input, {});
+  });
+  t.is(errorMessage, error.message);
+};
 
 test(
-  'Removes excluded nested prop',
-  template,
-  'C.propTypes={a:shape({ b: object })};',
-  'C={a:{}};',
-  {
-    a: {
-      b: bt.identifier('exclude')
-    }
-  }
+  'Throws on array',
+  throwsTemplate,
+  { a: { type: 'array' } },
+  `Invalid type 'array' for prop 'a'.
+Replace with 'PropTypes.arrayOf' or provide a meta type`
 );
 
 test(
-  'Deep nesting',
-  template,
-  'C.propTypes={a:arrayOf(arrayOf(arrayOf(string)))};',
-  'C={a:[[[string]]]};'
+  'Throws on object',
+  throwsTemplate,
+  { a: { type: 'object' } },
+  `Invalid type 'object' for prop 'a'.
+Replace with 'PropTypes.shape' or provide a meta type`
 );
 
-const illegalTypes = ['array', 'object', 'oneOfType'];
+test(
+  'Throws on oneOfType',
+  throwsTemplate,
+  { a: { type: 'oneOfType' } },
+  `Invalid type 'oneOfType' for prop 'a'.
+'PropTypes.oneOfType' is not yet supported`
+);
 
-illegalTypes.forEach(type => {
+// Also test legal types to avoid false positive
+const legalTypes = ['string', 'int', 'float'];
+
+legalTypes.forEach(type => {
   test(`Throws on '${type}'`, t => {
-    const syntaxTree = parse(`C.propTypes={a:${type}};`);
-    t.throws(() => {
-      transformPropTypes({
-        propTypesIdentifierName: 'pt',
-        propTypesMeta: {},
-        syntaxTree
-      });
+    const propTypes = { a: { type } };
+    t.notThrows(() => {
+      transformPropTypes(propTypes, {});
     });
   });
 });
 
-illegalTypes.forEach(type => {
-  test(`Throws on '${type}' with isRequired`, t => {
-    const syntaxTree = parse(`C.propTypes={a:${type}.isRequired};`);
-    t.throws(() => {
-      transformPropTypes({
-        propTypesIdentifierName: 'pt',
-        propTypesMeta: {},
-        syntaxTree
-      });
-    });
-  });
-});
-
+// To make sure no shenanigans happen when props are called 'type'
 test(
-  'Removes propTypes "prefix"',
+  'Prop named "type"',
   template,
-  'C.propTypes={a:arrayOf(string),b:shape({c:string})};',
-  'C={a:[string],b:{c:string}};'
-);
-
-test(
-  'Component reference',
-  template,
-  'C.propTypes={a:arrayOf(shape(Link.propTypes))};',
-  'C={a:[Link]};'
-);
-
-// Doing this will result in PropTypes-validation failing, but we can generate a class anyway
-test(
-  'Component reference without shape',
-  template,
-  'C.propTypes={a:arrayOf(Link.propTypes)};',
-  'C={a:[Link]};'
-);
-
-test(
-  'Component with nesting',
-  template,
-  'C.propTypes={a:arrayOf(shape({ b: Link.propTypes }))};',
-  'C={a:[{b:Link}]};'
+  { type: { type: 'string' } },
+  {},
+  { type: { type: 'string' } }
 );

@@ -1,6 +1,6 @@
 {
   "name": "@creuna/prop-types-csharp",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Tools for generating C# classes from React component propTypes",
   "author": "Asbjørn Hegdahl <asbjorn.hegdahl@creuna.no>",
   "main": "index.js",
@@ -17,15 +17,24 @@
   "license": "MIT",
   "scripts": {
     "build": "webpack --config=fixtures/webpack.config --mode=production",
-    "test": "ava --verbose",
+    "lint": "eslint lib eslint-plugin babel-plugin webpack-plugin test",
+    "test": "nyc --reporter=html --reporter=text ava --verbose",
+    "test:ci": "nyc ava && nyc report --reporter=text-lcov | coveralls",
     "test:babel": "ava --verbose ./test/babel-plugin",
-    "test:eslint": "ava --verbose ./test/eslint-plugin",
-    "test:lib": "ava --verbose ./test/lib",
-    "test:webpack": "ava --verbose ./test/webpack-plugin"
+    "test:eslint": "ava ./test/eslint-plugin",
+    "test:lib": "ava ./test/lib",
+    "test:webpack": "ava --verbose ./test/webpack-plugin",
+    "test:e2e": "ava ./test/lib/lib.js"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/Creuna-Oslo/prop-types-csharp.git"
+  },
+  "nyc": {
+    "exclude": [
+      "fixtures",
+      "test"
+    ]
   },
   "dependencies": {
     "@babel/parser": "^7.1.2",
@@ -39,14 +48,18 @@
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-react": "^7.0.0",
     "ava": "^0.25.0",
+    "babel-core": "^6.26.3",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.4",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "coveralls": "^3.0.2",
     "eslint": "^5.0.1",
     "eslint-ava-rule-tester": "^2.0.2",
     "eslint-config-prettier": "^3.1.0",
     "eslint-loader": "^2.0.0",
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-react": "^7.10.0",
+    "nyc": "^13.1.0",
     "prettier": "^1.13.7",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",

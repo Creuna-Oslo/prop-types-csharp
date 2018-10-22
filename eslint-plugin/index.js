@@ -4,7 +4,7 @@ const messages = require('./messages');
 const validate = require('./validate');
 
 const getPropTypesMeta = objectExpression => {
-  if (!objectExpression || !objectExpression.properties) {
+  if (!objectExpression.properties) {
     return {};
   }
 

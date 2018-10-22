@@ -12,6 +12,10 @@ const template = (t, input, expected, options) => {
   t.is(normalize(expected), normalize(transformedSource.code));
 };
 
+const csharpImports = `using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.Serialization;`;
+
 test(
   'Functional component',
   template,
@@ -31,14 +35,18 @@ test(
   template,
   `const Component = () => {}; Component.propTypes = {}; export default Component;`,
 
-  `using System.Collections.Generic;
-  using System.ComponentModel.DataAnnotations;
-  using System.Runtime.Serialization;
-
+  `${csharpImports}
   public class Component
   {
   }
 `
+);
+
+test(
+  'Bad propTypes value',
+  template,
+  `const Component = () => {}; Component.propTypes = false; export default Component;`,
+  undefined
 );
 
 test('Throws on name collisions', t => {
@@ -47,9 +55,14 @@ test('Throws on name collisions', t => {
   const Component = ({ component }) => <div>{component}</div>;
   Component.propTypes = { component: PropTypes.string };
   export default Component;`;
-  t.throws(() => {
+  const error = t.throws(() => {
     generateClass({ sourceCode });
   });
+
+  t.is(
+    "Illegal prop name 'component'. Prop names must be different from component name.",
+    error.message
+  );
 });
 
 test(
@@ -73,9 +86,7 @@ test(
   };
   export default Component;`,
 
-  `using System.Collections.Generic;
-  using System.ComponentModel.DataAnnotations;
-  using System.Runtime.Serialization;
+  `${csharpImports}
   public class Component
   {
   }`
@@ -89,9 +100,7 @@ test(
   Component.propTypes = {};
   export default Component;`,
 
-  `using System.Collections.Generic;
-  using System.ComponentModel.DataAnnotations;
-  using System.Runtime.Serialization;
+  `${csharpImports}
   public class Component : BaseClass
   {
   }`,
@@ -107,9 +116,7 @@ test(
   Component.propTypes = AnotherComponent.propTypes;
   export default Component;`,
 
-  `using System.Collections.Generic;
-  using System.ComponentModel.DataAnnotations;
-  using System.Runtime.Serialization;
+  `${csharpImports}
   public class Component : AnotherComponent
   {
   }`
@@ -122,13 +129,18 @@ test(
   Component.propTypes = AnotherComponent.propTypes;
   export default Component;`,
 
-  `using System.Collections.Generic;
-  using System.ComponentModel.DataAnnotations;
-  using System.Runtime.Serialization;
+  `${csharpImports}
   public class Component : AnotherComponent
   {
   }`,
   {
     baseClass: 'BaseClass'
   }
+);
+
+test(
+  'Non-propType reference',
+  template,
+  `const Component = () => {}; Component.propTypes = object.property; export default Component;`,
+  undefined
 );

@@ -39,7 +39,7 @@
     "no-irregular-whitespace": 1,
     "no-use-before-define": [2, "nofunc"],
     "no-unused-vars": [
-      1,
+      2,
       {
         "vars": "all",
         "args": "after-used",
@@ -49,6 +49,7 @@
     "arrow-parens": [1, "as-needed"],
     "no-dupe-keys": 2,
     "no-dupe-args": 2,
+    "no-warning-comments": 2,
     "react/no-deprecated": 2,
     "react/no-direct-mutation-state": 2,
     "react/no-multi-comp": 1,

@@ -32,9 +32,19 @@ FunctionalComponent.propTypes = {
   }),
   shapeMeta: pt.shape({
     object: pt.object
-  }),
+  }).isRequired,
   objectArray: pt.arrayOf(pt.object).isRequired,
   nestedList: pt.arrayOf(pt.arrayOf(pt.arrayOf(pt.string))),
+  nestedExclude: pt.shape({
+    a: pt.object
+  }),
+  nestedShape: pt.shape({
+    a: pt.shape({
+      b: pt.shape({
+        c: pt.string
+      })
+    })
+  }),
   link: pt.shape(Link.propTypes),
   linkList: pt.arrayOf(pt.shape(Link.propTypes)),
   linkMeta: pt.object,
@@ -56,6 +66,9 @@ FunctionalComponent.propTypesMeta = {
   shapeExclude: 'exclude',
   shapeMeta: {
     object: Link
+  },
+  nestedExclude: {
+    a: 'exclude'
   },
   objectArray: Array(Link),
   linkMeta: Link,
