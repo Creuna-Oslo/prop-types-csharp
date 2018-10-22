@@ -32,8 +32,20 @@ const validCases = [
   // Only export statement
   '',
 
+  // Empty propTypes
+  'A.propTypes = {};',
+
   // No object literal in propTypes
   'A.propTypes = B.propTypes;',
+
+  // Weird value for propTypes
+  'A.propTypes = false;',
+
+  // Empty propTypesMeta
+  'A.propTypesMeta = {};',
+
+  // Non-object propTypesMeta
+  'A.propTypesMeta = false;',
 
   // No object literal in propTypes (class component)
   'class A { static propTypes = B.propTypes; }',
@@ -158,6 +170,12 @@ const invalidCases = [
     errors.illegalFunctionCall
   ],
 
+  // Invalid identifier
+  [
+    'class A { static propTypes = { b: someIdentifier }; }',
+    errors.illegalIdentifier
+  ],
+
   // Nested without meta
   [
     'A.propTypes = { b: PropTypes.shape({ c: PropTypes.object }) };',
@@ -221,4 +239,10 @@ ruleTester.run('all', plugin.rules.all, {
       messageId: error
     }))
   }))
+});
+
+// Test non-jsx files
+ruleTester.run('all', plugin.rules.all, {
+  valid: [{ code: 'C.propTypes = { a: propTypes.object };', filename: 'a.js' }],
+  invalid: []
 });

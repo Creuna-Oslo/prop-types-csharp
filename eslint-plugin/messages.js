@@ -9,6 +9,7 @@ module.exports = {
     metaTypes.strings
   )}] but got '{{value}}'.`,
   illegalFunctionCall: `Illegal function call`,
+  illegalIdentifier: `Illegal identifier`,
   importedArrayReference: `Imported arrays are not supported.`,
   importedObjectReference: `Imported objects are not supported.`,
   missingObjectReference: 'Missing object value for prop.',

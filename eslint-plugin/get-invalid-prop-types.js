@@ -14,15 +14,7 @@ const getInvalidPropTypes = (objectExpression, scope) => {
     scope.childScopes[0].type === 'module' &&
     scope.childScopes[0].variables;
 
-  if (!objectExpression || !objectExpression.properties) {
-    return {};
-  }
-
   return objectExpression.properties.reduce((accum, objectProperty) => {
-    if (!objectProperty) {
-      return accum;
-    }
-
     const key = objectProperty.key.name;
     const value = objectProperty.value;
 
@@ -36,84 +28,88 @@ const getInvalidPropTypes = (objectExpression, scope) => {
     // propTypeNode might be a CallExpression node (like in 'PropTypes.arrayOf()'), in which case the propType node will be accessible in obectProperty.value.callee. If not, the node is a MemberExpression, and the node is accessible in objectProperty.value.
     const propTypeNode = objectProperty.value.callee || objectProperty.value;
 
-    if (t.isMemberExpression(propTypeNode)) {
-      const isRequired =
-        t.isMemberExpression(propTypeNode.object) &&
-        t.isIdentifier(propTypeNode.property, { name: 'isRequired' });
+    if (!t.isMemberExpression(propTypeNode)) {
+      return Object.assign(accum, {
+        [key]: { node: value, message: messages.illegalIdentifier }
+      });
+    }
 
-      // If .isRequired is used, 'propTypeNode.object' will be another MemberExpression. The type name will be accessible in the 'property' property of 'propTypeNode.object'.
-      const propTypeName = isRequired
-        ? propTypeNode.object.property.name
-        : propTypeNode.property.name;
+    const isRequired =
+      t.isMemberExpression(propTypeNode.object) &&
+      t.isIdentifier(propTypeNode.property, { name: 'isRequired' });
 
-      if (illegalTypes[propTypeName]) {
-        accum[key] = {
-          node: propTypeNode.property,
-          message: illegalTypes[propTypeName]
-        };
+    // If .isRequired is used, 'propTypeNode.object' will be another MemberExpression. The type name will be accessible in the 'property' property of 'propTypeNode.object'.
+    const propTypeName = isRequired
+      ? propTypeNode.object.property.name
+      : propTypeNode.property.name;
+
+    if (illegalTypes[propTypeName]) {
+      accum[key] = {
+        node: propTypeNode.property,
+        message: illegalTypes[propTypeName]
+      };
+    }
+
+    // Recursively check object literals inside PropTypes.shape
+    if (t.isCallExpression(value) && propTypeName === 'shape') {
+      const [argument] = value.arguments;
+
+      return Object.assign(accum, {
+        [key]: getInvalidPropTypes(argument, scope)
+      });
+    }
+
+    // Check for references inside PropTypes.oneOf. Run checks only if there are defined variables in scope. Undefined variables are caught by 'no-undef', which every sane person should be using.
+    if (
+      t.isCallExpression(value) &&
+      propTypeName === 'oneOf' &&
+      variablesInScope.length
+    ) {
+      const [argument] = value.arguments;
+
+      // Check references to arrays
+      if (t.isIdentifier(argument)) {
+        const hasLiteral = variablesInScope.some(
+          variable =>
+            variable.name === argument.name &&
+            t.isArrayExpression(variable.references[0].writeExpr)
+        );
+
+        if (!hasLiteral) {
+          accum[key] = {
+            node: argument,
+            message: messages.importedArrayReference
+          };
+        }
       }
 
-      // Recursively check object literals inside PropTypes.shape
-      if (t.isCallExpression(value) && propTypeName === 'shape') {
-        const [argument] = value.arguments;
-
-        return Object.assign(accum, {
-          [key]: getInvalidPropTypes(argument, scope)
-        });
-      }
-
-      // Check for references inside PropTypes.oneOf. Run checks only if there are defined variables in scope. Undefined variables are caught by 'no-undef', which every sane person should be using.
+      // Check references to objects in Object.keys and Object.values
       if (
-        t.isCallExpression(value) &&
-        propTypeName === 'oneOf' &&
-        variablesInScope.length
+        t.isCallExpression(argument) &&
+        t.isMemberExpression(argument.callee) &&
+        argument.callee.object.name === 'Object' &&
+        ['keys', 'values'].includes(argument.callee.property.name)
       ) {
-        const [argument] = value.arguments;
+        const [objectMethodArgument] = argument.arguments;
 
-        // Check references to arrays
-        if (t.isIdentifier(argument)) {
+        if (objectMethodArgument) {
           const hasLiteral = variablesInScope.some(
             variable =>
-              variable.name === argument.name &&
-              t.isArrayExpression(variable.references[0].writeExpr)
+              variable.name === objectMethodArgument.name &&
+              t.isObjectExpression(variable.references[0].writeExpr)
           );
 
           if (!hasLiteral) {
             accum[key] = {
-              node: argument,
-              message: messages.importedArrayReference
+              node: objectMethodArgument,
+              message: messages.importedObjectReference
             };
           }
-        }
-
-        // Check references to objects in Object.keys and Object.values
-        if (
-          t.isCallExpression(argument) &&
-          t.isMemberExpression(argument.callee) &&
-          argument.callee.object.name === 'Object' &&
-          ['keys', 'values'].includes(argument.callee.property.name)
-        ) {
-          const [objectMethodArgument] = argument.arguments;
-
-          if (objectMethodArgument) {
-            const hasLiteral = variablesInScope.some(
-              variable =>
-                variable.name === objectMethodArgument.name &&
-                t.isObjectExpression(variable.references[0].writeExpr)
-            );
-
-            if (!hasLiteral) {
-              accum[key] = {
-                node: objectMethodArgument,
-                message: messages.importedObjectReference
-              };
-            }
-          } else {
-            accum[key] = {
-              node: argument,
-              message: messages.missingObjectReference
-            };
-          }
+        } else {
+          accum[key] = {
+            node: argument,
+            message: messages.missingObjectReference
+          };
         }
       }
     }
