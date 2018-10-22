@@ -46,9 +46,15 @@ test(
 test(
   'Replaces "number" with "int" by default',
   template,
-  { a: { type: 'number' } },
+  {
+    a: { type: 'number' },
+    b: { type: 'shape', argument: { c: { type: 'number' } } }
+  },
   {},
-  { a: { type: 'int' } }
+  {
+    a: { type: 'int' },
+    b: { type: 'shape', argument: { c: { type: 'int' } } }
+  }
 );
 
 test(
