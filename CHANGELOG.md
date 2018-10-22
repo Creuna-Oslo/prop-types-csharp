@@ -1,3 +1,7 @@
+# 0.5.0
+
+- Adds support for object literals in `Array` meta
+
 # 0.4.0
 
 - "Major" version bump because it turns out `0.3.6` was a breaking change.

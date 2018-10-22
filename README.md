@@ -69,7 +69,7 @@ Supported values for props in `propTypesMeta` are
 - `"float"`
 - `"exclude"`
 - React component
-- Array(< React component >)
+- `Array(< React component > | Object)`
 
 `"int"` and `"float"` replace `PropTypes.number` if supplied. By default, `PropTypes.number` will result in `int` in C# classes.
 
@@ -82,14 +82,20 @@ Component.propTypes = {
   someProp: PropTypes.number,
   anotherProp: PropTypes.string,
   someComponent: PropTypes.object,
-  items: PropTypes.array
+  items: PropTypes.array,
+  numbers: PropTypes.arrayOf(
+    PropTypes.shape({
+      number: PropTypes.number
+    })
+  )
 };
 
 Component.propTypesMeta = {
   someProp: "float",
   anotherProp: "exclude",
   someComponent: SomeComponent,
-  items: Array(AnotherComponent)
+  items: Array(AnotherComponent),
+  numbers: Array({ number: "float" })
 };
 ```
 
@@ -101,14 +107,20 @@ class Component extends React.Component {
     someProp: PropTypes.number,
     anotherProp: PropTypes.string,
     someComponent: PropTypes.object,
-    items: PropTypes.array
+    items: PropTypes.array,
+    numbers: PropTypes.arrayOf(
+      PropTypes.shape({
+        number: PropTypes.number
+      })
+    )
   };
 
   static propTypesMeta = {
     someProp: "float",
     anotherProp: "exclude",
     someComponent: SomeComponent,
-    items: Array(AnotherComponent)
+    items: Array(AnotherComponent),
+    numbers: Array({ number: "float" })
   };
 }
 ```
