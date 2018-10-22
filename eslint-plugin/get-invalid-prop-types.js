@@ -14,6 +14,10 @@ const getInvalidPropTypes = (objectExpression, scope) => {
     scope.childScopes[0].type === 'module' &&
     scope.childScopes[0].variables;
 
+  if (!objectExpression.properties) {
+    return {};
+  }
+
   return objectExpression.properties.reduce((accum, objectProperty) => {
     const key = objectProperty.key.name;
     const value = objectProperty.value;

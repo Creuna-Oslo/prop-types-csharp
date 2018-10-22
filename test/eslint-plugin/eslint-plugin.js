@@ -116,6 +116,9 @@ const validCases = [
   // Reference to object literal in Object.values
   'const obj = { c: "d" }; A.propTypes = { c: PropTypes.oneOf(Object.values(obj)) };',
 
+  // Reference to component in PropTypes.shape
+  'A.propTypes = { b: PropTypes.shape(C.propTypes) };',
+
   // Reference to array literal in oneOf
   'const arr = [1,2]; A.propTypes = { c: PropTypes.oneOf(arr) };'
 ].map(code => code + footer);
