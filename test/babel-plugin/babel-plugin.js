@@ -1,4 +1,5 @@
 const babel = require('@babel/core');
+const babel6 = require('babel-core');
 const fs = require('fs');
 const path = require('path');
 const tempy = require('tempy');
@@ -32,6 +33,18 @@ test(
 );
 
 test('Functional component', template, 'Component.propTypesMeta = {};', '');
+
+test('Babel 6', t => {
+  const source =
+    'class C extends React.Component { static propTypesMeta = {}; }';
+  const expected = 'class C extends React.Component {}';
+
+  const { code } = babel6.transform(source, {
+    plugins: [babelPlugin, 'transform-class-properties']
+  });
+
+  t.is(expected, code);
+});
 
 const webpackTemplate = (t, useBabelPlugin) => {
   t.plan(1);
