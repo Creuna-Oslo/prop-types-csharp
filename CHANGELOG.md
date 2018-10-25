@@ -2,7 +2,7 @@
 
 [https://github.com/Creuna-Oslo/prop-types-csharp/pull/42]()
 
-- When using `Object.values` in `PropTypes.oneOf`, the object keys will now be used as property names in generated enums, instead of the property values. The enum values will still use the object values.
+- When using `Object.values` in `PropTypes.oneOf`, the object keys will now be used as property names in generated enums, instead of the property values. Object values will still be used as enum string values
 
 # 0.5.0
 
