@@ -1,6 +1,6 @@
 {
   "name": "@creuna/prop-types-csharp",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Tools for generating C# classes from React component propTypes",
   "author": "Asbjørn Hegdahl <asbjorn.hegdahl@creuna.no>",
   "main": "index.js",

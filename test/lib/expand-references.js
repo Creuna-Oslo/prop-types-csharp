@@ -40,14 +40,14 @@ test(
   'Func component: object keys',
   template,
   'const object={a:1,b:2};Component.propTypes={prop:oneOf(Object.keys(object))}',
-  'const object={a:1,b:2};Component.propTypes={prop:oneOf(["a","b"])};'
+  'const object={a:1,b:2};Component.propTypes={prop:oneOf(Object.keys({a:1,b:2}))};'
 );
 
 test(
   'Func component: object values',
   template,
   'const object={a:1,b:2};Component.propTypes={prop:oneOf(Object.values(object))}',
-  'const object={a:1,b:2};Component.propTypes={prop:oneOf([1,2])};'
+  'const object={a:1,b:2};Component.propTypes={prop:oneOf(Object.values({a:1,b:2}))};'
 );
 
 test(
@@ -68,14 +68,14 @@ test(
   'Class component: object keys',
   template,
   'const object={a:1,b:2};class Component{static propTypes={prop:oneOf(Object.keys(object))};}',
-  'const object={a:1,b:2};class Component{static propTypes={prop:oneOf(["a","b"])}}'
+  'const object={a:1,b:2};class Component{static propTypes={prop:oneOf(Object.keys({a:1,b:2}))}}'
 );
 
 test(
   'Func component: object values',
   template,
   'const object={a:1,b:2};class Component{static propTypes={prop:oneOf(Object.values(object))}}',
-  'const object={a:1,b:2};class Component{static propTypes={prop:oneOf([1,2])}}'
+  'const object={a:1,b:2};class Component{static propTypes={prop:oneOf(Object.values({a:1,b:2}))}}'
 );
 
 test(
@@ -125,11 +125,4 @@ test(
   throwsTemplate,
   'let obj; Component.propTypes={prop:oneOf(Object.keys(obj))}',
   "Couldn't resolve 'oneOf' value for prop 'prop'. Make sure 'obj' is defined in the above file."
-);
-
-test(
-  'Throws on unsupported Object method',
-  throwsTemplate,
-  'const obj = {}; Component.propTypes={prop:oneOf(Object.entries(obj))}',
-  "Unsupported method 'Object.entries' for prop 'prop'"
 );
