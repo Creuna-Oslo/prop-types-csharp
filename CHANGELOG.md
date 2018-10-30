@@ -1,3 +1,7 @@
+# 0.5.2
+
+- Fixes `Unsupported method 'Object.entries'` being thrown for excluded props
+
 # 0.5.1
 
 [https://github.com/Creuna-Oslo/prop-types-csharp/pull/42]()

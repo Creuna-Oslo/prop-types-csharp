@@ -88,6 +88,29 @@ test(
 );
 
 test(
+  'Throws on unsupported Object method',
+  throwsTemplate,
+  'Component.propTypes={prop:oneOf(Object.entries({a:"b"}))}',
+  "Unsupported method 'Object.entries'."
+);
+
+test("Doesn't throw on Object method call without arguments", t => {
+  const ast = parse(`Component.propTypes = { a: oneOf(Object.values()) };`);
+
+  t.notThrows(() => {
+    parseAST(ast);
+  });
+});
+
+test("Doesn't throw on object without entries", t => {
+  const ast = parse(`Component.propTypes = { a: oneOf(Object.values({})) };`);
+
+  t.notThrows(() => {
+    parseAST(ast);
+  });
+});
+
+test(
   'Invalid oneOf value',
   throwsTemplate,
   `Component.propTypes = { a: oneOf([true, false]) };`,
@@ -162,6 +185,17 @@ test(
 
 test('Invalid function call with exclude', t => {
   const ast = parse(`Component.propTypes = { a: someFunc() };`);
+  const meta = { a: { type: 'exclude' } };
+
+  t.notThrows(() => {
+    parseAST(ast, meta);
+  });
+});
+
+test('Invalid function call and object method with exclude', t => {
+  const ast = parse(
+    `Component.propTypes = { a: someFunc(Object.entries({a:1})) };`
+  );
   const meta = { a: { type: 'exclude' } };
 
   t.notThrows(() => {
