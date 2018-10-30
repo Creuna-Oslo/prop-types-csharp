@@ -60,6 +60,34 @@ test(
 );
 
 test(
+  'oneOf Object.keys',
+  template,
+  `Component.propTypes = { a: oneOf(Object.keys({a:'b',c:'d'})) }`,
+  {},
+  { a: { type: 'oneOf', argument: ['a', 'c'] } }
+);
+
+test(
+  'oneOf Object.values',
+  template,
+  `Component.propTypes = { a: oneOf(Object.values({a:'b',c:'d'})) }`,
+  {},
+  {
+    a: {
+      type: 'oneOf',
+      argument: [{ key: 'a', value: 'b' }, { key: 'c', value: 'd' }]
+    }
+  }
+);
+
+test(
+  'Throws on unsupported Object method',
+  throwsTemplate,
+  'Component.propTypes={prop:oneOf(Object.entries({a:"b"}))}',
+  "Unsupported method 'Object.entries'."
+);
+
+test(
   'Invalid oneOf value',
   throwsTemplate,
   `Component.propTypes = { a: oneOf([true, false]) };`,

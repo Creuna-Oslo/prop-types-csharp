@@ -300,6 +300,42 @@ test(
 );
 
 test(
+  'Enum from Object.values',
+  template,
+  [
+    {
+      name: 'Component',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        isComponentClass: true,
+        argument: { a: { type: 'b', hasClassDefinition: true } }
+      }
+    },
+    {
+      name: 'b',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'oneOf',
+        argument: [{ key: 'a', value: 'b' }]
+      }
+    }
+  ],
+  imports +
+    `public class Component
+    {
+      public Component_B A { get; set; }
+    }
+    public enum Component_B
+    {
+      [EnumMember(Value = "")]
+      None = 0,
+      [EnumMember(Value = "b")]
+      A = 1,
+    }`
+);
+
+test(
   'Empty definition',
   template,
   [
