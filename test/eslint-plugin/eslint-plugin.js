@@ -107,6 +107,9 @@ const validCases = [
   // Object with nested meta
   'A.propTypes = { b: PropTypes.object }; A.propTypesMeta = { b: { c: Link } };',
 
+  // Empty shape
+  'A.propTypes = { b: PropTypes.shape() };',
+
   // Nested shape with bad prop and nested meta
   'A.propTypes = { b: PropTypes.shape({ c: PropTypes.object }) }; A.propTypesMeta = { b: { c: Link } };',
 

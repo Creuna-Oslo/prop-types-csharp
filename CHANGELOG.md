@@ -1,3 +1,7 @@
+# 0.5.3
+
+- Fixes eslint plugin crashing on `PropTypes.shape()` (without arguments)
+
 # 0.5.2
 
 - Fixes `Unsupported method 'Object.entries'` being thrown for excluded props
