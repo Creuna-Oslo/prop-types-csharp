@@ -126,6 +126,14 @@ test(
 );
 
 test(
+  'oneOfType with exclude',
+  template,
+  `Component.propTypes = { a: oneOf([string, number]) };`,
+  { a: { type: 'exclude' } },
+  {}
+);
+
+test(
   'shape',
   template,
   `Component.propTypes = { a: shape({ b: shape({ c: string })}) }`,

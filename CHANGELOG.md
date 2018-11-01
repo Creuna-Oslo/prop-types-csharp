@@ -1,3 +1,7 @@
+# 0.5.4
+
+- Fixes `exclude` meta not being respected for `PropTypes.oneOfType`
+
 # 0.5.3
 
 - Fixes eslint plugin crashing on `PropTypes.shape()` (without arguments)
