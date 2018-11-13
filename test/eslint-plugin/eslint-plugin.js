@@ -44,6 +44,12 @@ const validCases = [
   // Empty propTypesMeta
   'A.propTypesMeta = {};',
 
+  // No object literal
+  'A.propTypesMeta;',
+
+  // No object literal (class component)
+  'class A { static propTypesMeta }',
+
   // Non-object propTypesMeta
   'A.propTypesMeta = false;',
 
