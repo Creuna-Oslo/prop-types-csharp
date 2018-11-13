@@ -20,6 +20,17 @@ test(
 );
 
 test(
+  'Removes client-only props in arrayOf',
+  template,
+  {
+    a: { type: 'arrayOf', argument: { type: 'node' } },
+    b: { type: 'arrayOf', argument: { type: 'func' } }
+  },
+  {},
+  {}
+);
+
+test(
   'Removes excluded props',
   template,
   { a: { type: 'array' } },
