@@ -1,3 +1,9 @@
+# 0.6.0
+
+- Adds support for using `"exclude"` as the value for `propTypesMeta`, which will exclude a component from class generation ([issue 46](https://github.com/Creuna-Oslo/prop-types-csharp/issues/46));
+- Fixes [issue 44](https://github.com/Creuna-Oslo/prop-types-csharp/issues/44): `PropTypes.node` not being ignored in `PropTypes.arrayOf`.
+- Fixes [issue 45](https://github.com/Creuna-Oslo/prop-types-csharp/issues/45): Eslint plugin crashing when typing 'propTypesMeta' in class components.
+
 # 0.5.4
 
 - Fixes `exclude` meta not being respected for `PropTypes.oneOfType`
