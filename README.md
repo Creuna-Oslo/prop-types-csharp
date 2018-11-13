@@ -59,7 +59,13 @@ public class Component {
 
 `oneOfType` is currently also illegal until we figure out how to deal with it.
 
-### propTypesMeta
+### propTypesMeta (`String | Object`)
+
+#### `String`
+
+The only supported string value for `propTypesmeta` is `'exclude'`. When `Component.propTypesMeta = 'exclude';`, no class will be generated for the component.
+
+#### `Object`
 
 In general, it's recommended to define as much as possible in `propTypes`. In some cases however, that might be difficult, and in those cases `propTypesMeta` can be helpful.
 

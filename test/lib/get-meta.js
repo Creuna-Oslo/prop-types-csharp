@@ -18,6 +18,20 @@ const throwsTemplate = (t, input, errorMessage) => {
   t.is(errorMessage, error.message);
 };
 
+test(
+  'String literal "exclude"',
+  template,
+  'C.propTypesMeta = "exclude"',
+  'exclude'
+);
+
+test(
+  'Throws on misspelled string literal',
+  throwsTemplate,
+  'C.propTypesMeta = "excd";',
+  `Unsupported propTypesMeta value 'excd'. Expected 'exclude'.`
+);
+
 test('Functional component', template, 'C.propTypesMeta = { a: "exclude" };', {
   a: { type: 'exclude' }
 });

@@ -144,3 +144,13 @@ test(
   `const Component = () => {}; Component.propTypes = object.property; export default Component;`,
   undefined
 );
+
+test(
+  'Excluded component',
+  template,
+  `const Component = () => {};
+  Component.propTypes = {};
+  Component.propTypesMeta = "exclude";
+  export default Component;`,
+  undefined
+);
