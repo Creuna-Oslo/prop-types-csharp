@@ -1,3 +1,7 @@
+# 0.6.1
+
+- Fixes misleading example of Webpack plugin config in readme
+
 # 0.6.0
 
 - Adds support for using `"exclude"` as the value for `propTypesMeta`, which will exclude a component from class generation ([issue 46](https://github.com/Creuna-Oslo/prop-types-csharp/issues/46));

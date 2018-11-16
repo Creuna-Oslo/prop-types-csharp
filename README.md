@@ -220,9 +220,7 @@ module.exports = function(env, options = {}) {
     module: { ... },
     plugins: [
       new PropTypesCSharpPlugin({
-        path: 'classes',
-        match: [/\.jsx$/, 'source/components'],
-        exclude: ['node_modules', 'some/path']
+        exclude: ['node_modules', 'some/path/to/exclude']
       })
     ]
   };
