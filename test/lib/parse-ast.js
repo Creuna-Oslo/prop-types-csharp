@@ -147,6 +147,19 @@ test(
 );
 
 test(
+  'exact',
+  template,
+  `Component.propTypes = { a: exact({ b: exact({ c: string })}) }`,
+  {},
+  {
+    a: {
+      type: 'exact',
+      argument: { b: { type: 'exact', argument: { c: { type: 'string' } } } }
+    }
+  }
+);
+
+test(
   'shape with component reference',
   template,
   `Component.propTypes = { a: shape(OtherComponent.propTypes) }`,

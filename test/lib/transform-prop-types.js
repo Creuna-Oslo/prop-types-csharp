@@ -7,6 +7,26 @@ const template = (t, input, propTypesMeta = {}, expected) => {
 };
 
 test(
+  "Converts 'exact' to 'shape'",
+  template,
+  {
+    a: { type: 'exact', argument: {} }
+  },
+  {},
+  { a: { type: 'shape', argument: {} } }
+);
+
+test(
+  "Converts 'exact' to 'shape' in 'arrayOf'",
+  template,
+  {
+    a: { type: 'arrayOf', argument: { type: 'exact', argument: {} } }
+  },
+  {},
+  { a: { type: 'arrayOf', argument: { type: 'shape', argument: {} } } }
+);
+
+test(
   'Removes client-only props',
   template,
   {
