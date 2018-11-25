@@ -1,3 +1,8 @@
+# 0.6.2
+
+- Fixes Webpack plugin crashing when in async mode and output directory doesn't exist ([issue 48](https://github.com/Creuna-Oslo/prop-types-csharp/issues/48))
+- Fixes missing support for `PropTypes.exact` ([issue 49](https://github.com/Creuna-Oslo/prop-types-csharp/issues/49))
+
 # 0.6.1
 
 - Fixes misleading example of Webpack plugin config in readme
