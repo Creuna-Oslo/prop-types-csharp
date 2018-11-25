@@ -1,5 +1,6 @@
 const { fork } = require('child_process');
 const fs = require('fs');
+const fsExtra = require('fs-extra');
 const path = require('path');
 
 const filterPaths = require('./filter-paths');
@@ -98,7 +99,7 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
     }
   };
 
-  // Attach parallel class generation for development build
+  // Attach async class generation
   if (isAsync) {
     generateClassesAsync.on('message', result => {
       const { classes, error } = result;
@@ -107,11 +108,12 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
         return;
       }
 
-      // Since webpack dev server doesn't write files to disk, this is done manually here.
+      // Write files to disk since webpack dev server doesn't do so
       if (!error) {
         classes.forEach(({ code, componentName }) => {
           if (code && componentName) {
             const basePath = path.join(compiler.outputPath, this.outputPath);
+            fsExtra.ensureDirSync(basePath);
             fs.writeFileSync(path.join(basePath, `${componentName}.cs`), code);
           }
         });
