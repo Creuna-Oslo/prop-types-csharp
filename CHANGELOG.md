@@ -1,3 +1,8 @@
+# 0.6.3
+
+- Fixes eslint plugin not respecting `propTypesMeta = 'exclude';` ([issue 50](https://github.com/Creuna-Oslo/prop-types-csharp/issues/50))
+- Refactors eslint plugin message handling to fix false positives in tests ([issue 51](https://github.com/Creuna-Oslo/prop-types-csharp/issues/51))
+
 # 0.6.2
 
 - Fixes Webpack plugin crashing when in async mode and output directory doesn't exist ([issue 48](https://github.com/Creuna-Oslo/prop-types-csharp/issues/48))
