@@ -8,10 +8,20 @@ module.exports = ({
   bodyNode,
   context,
   exportDeclarations,
-  metaTypes,
+  metaTypes, // Literal node or js object with ObjectProperty nodes as values
   propTypes,
   propNames
 }) => {
+  if (t.isLiteral(metaTypes, { value: 'exclude' })) return;
+
+  if (t.isLiteral(metaTypes)) {
+    context.report({
+      node: metaTypes,
+      message: messages.badExclude,
+      data: { value: metaTypes.value }
+    });
+  }
+
   if (exportDeclarations.length > 1) {
     exportDeclarations.forEach(declaration => {
       context.report({

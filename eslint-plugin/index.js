@@ -3,12 +3,13 @@ const t = require('@babel/types');
 const messages = require('./messages');
 const validate = require('./validate');
 
-const getPropTypesMeta = objectExpression => {
-  if (!objectExpression || !objectExpression.properties) {
-    return {};
-  }
+const getPropTypesMeta = node => {
+  if (!node) return {};
+  // Manual type check for string because ESTree has no concept of StringLiteral:
+  if (t.isLiteral(node) && typeof node.value === 'string') return node;
+  if (!node.properties) return {};
 
-  return objectExpression.properties.reduce(
+  return node.properties.reduce(
     (accum, property) =>
       Object.assign(accum, { [property.key.name]: property.value }),
     {}
@@ -25,7 +26,7 @@ module.exports = {
       meta: { messages },
       create: function(context) {
         let exportDeclarations = [];
-        const metaTypes = {};
+        let metaTypes = {};
         let propTypes;
         let propNames = [];
 
@@ -63,7 +64,7 @@ module.exports = {
             }
 
             if (t.isIdentifier(node.key, { name: 'propTypesMeta' })) {
-              Object.assign(metaTypes, getPropTypesMeta(node.value));
+              metaTypes = getPropTypesMeta(node.value);
             }
           },
           AssignmentExpression: node => {
@@ -80,7 +81,7 @@ module.exports = {
               t.isMemberExpression(node.left) &&
               node.left.property.name === 'propTypesMeta'
             ) {
-              Object.assign(metaTypes, getPropTypesMeta(node.right));
+              metaTypes = getPropTypesMeta(node.right);
             }
           }
         };

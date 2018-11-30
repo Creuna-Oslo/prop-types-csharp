@@ -21,8 +21,9 @@ const ruleTester = new RuleTester(test, {
 });
 
 const { messages } = plugin.rules.all.meta;
-const errors = Object.keys(messages).reduce((accum, key) =>
-  Object.assign(accum, { [key]: key })
+const errors = Object.keys(messages).reduce(
+  (accum, key) => Object.assign(accum, { [key]: key }),
+  {}
 );
 
 const footer = 'export default A;';
@@ -55,6 +56,12 @@ const validCases = [
 
   // No object literal in propTypes (class component)
   'class A { static propTypes = B.propTypes; }',
+
+  // Excluded with propTyesMeta
+  'A.propTypes = { b: PropTypes.object }; A.propTypesMeta = "exclude";',
+
+  // Excluded with propTyesMeta (class)
+  'class A { static propTypes = { b: PropTypes.object }; static propTypesMeta = "exclude"; }',
 
   // Invalid 'object' with meta type
   'A.propTypes = { b: PropTypes.object }; A.propTypesMeta = { b: "exclude" };',
@@ -134,6 +141,10 @@ const validCases = [
 
 // These all have 'footer' appended further down
 const invalidCases = [
+  // Misspelled 'exclude' literal
+
+  ['A.propTypesMeta = "exclu";', errors.badExclude],
+
   // PropTypes.object
   ['A.propTypes = { b: PropTypes.object };', errors.object],
 

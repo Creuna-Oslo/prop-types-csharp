@@ -2,6 +2,7 @@ const metaTypes = require('../lib/meta-types');
 
 module.exports = {
   array: 'Unsupported type "array". Replace with "arrayOf" or add meta type',
+  badExclude: `Expected 'exclude' but got '{{value}}`,
   badFunctionCall: `Expected one of [${Object.values(
     metaTypes.functions
   )}] but got '{{value}}'.`,
