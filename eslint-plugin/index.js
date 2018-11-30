@@ -1,6 +1,5 @@
 const t = require('@babel/types');
 
-const messages = require('./messages');
 const validate = require('./validate');
 
 const getPropTypesMeta = node => {
@@ -23,7 +22,6 @@ const getPropNames = objectExpression => {
 module.exports = {
   rules: {
     all: {
-      meta: { messages },
       create: function(context) {
         let exportDeclarations = [];
         let metaTypes = {};

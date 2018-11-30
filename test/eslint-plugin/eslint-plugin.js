@@ -2,6 +2,7 @@ const test = require('ava');
 const RuleTester = require('eslint-ava-rule-tester');
 const path = require('path');
 
+const messages = require('../../eslint-plugin/messages');
 const plugin = require('../../eslint-plugin');
 
 test('Compatibility with proxy plugin path', t => {
@@ -19,12 +20,6 @@ const ruleTester = new RuleTester(test, {
     sourceType: 'module'
   }
 });
-
-const { messages } = plugin.rules.all.meta;
-const errors = Object.keys(messages).reduce(
-  (accum, key) => Object.assign(accum, { [key]: key }),
-  {}
-);
 
 const footer = 'export default A;';
 
@@ -143,112 +138,112 @@ const validCases = [
 const invalidCases = [
   // Misspelled 'exclude' literal
 
-  ['A.propTypesMeta = "exclu";', errors.badExclude],
+  ['A.propTypesMeta = "exclu";', messages.badExclude('exclu')],
 
   // PropTypes.object
-  ['A.propTypes = { b: PropTypes.object };', errors.object],
+  ['A.propTypes = { b: PropTypes.object };', messages.object()],
 
   // PropTypes.object (class component)
-  ['class A { static propTypes = { b: PropTypes.object };}', errors.object],
+  ['class A { static propTypes = { b: PropTypes.object };}', messages.object()],
 
   // PropTypes.array
-  ['A.propTypes = { b: PropTypes.array };', errors.array],
+  ['A.propTypes = { b: PropTypes.array };', messages.array()],
 
   // PropTypes.array (class component)
-  ['class A { static propTypes = { b: PropTypes.array }; }', errors.array],
+  ['class A { static propTypes = { b: PropTypes.array }; }', messages.array()],
 
   // PropTypes.object.isRequired
-  ['A.propTypes = { b: PropTypes.object.isRequired };', errors.object],
+  ['A.propTypes = { b: PropTypes.object.isRequired };', messages.object()],
 
   // PropTypes.object.isRequired (class component)
   [
     'class A { static propTypes = { b: PropTypes.object.isRequired }; }',
-    errors.object
+    messages.object()
   ],
 
   // PropTypes.oneOfType
-  ['A.propTypes = { b: PropTypes.oneOfType() };', errors.oneOfType],
+  ['A.propTypes = { b: PropTypes.oneOfType() };', messages.oneOfType()],
 
   // PropTypes.oneOfType (class component)
   [
     'class A { static propTypes = { b: PropTypes.oneOfType() }; }',
-    errors.oneOfType
+    messages.oneOfType()
   ],
 
   // Name collision
-  ['A.propTypes = { a: PropTypes.string };', errors.propNameCollision],
+  ['A.propTypes = { a: PropTypes.string };', messages.propNameCollision()],
 
   // Name collision (class component)
   [
     'class A { static propTypes = { a: PropTypes.string }; }',
-    errors.propNameCollision
+    messages.propNameCollision()
   ],
 
   // Invalid function call
-  ['A.propTypes = { b: someFunc() };', errors.illegalFunctionCall],
+  ['A.propTypes = { b: someFunc() };', messages.illegalFunctionCall()],
 
   // Invalid function call (class component)
   [
     'class A { static propTypes = { b: someFunc() }; }',
-    errors.illegalFunctionCall
+    messages.illegalFunctionCall()
   ],
 
   // Invalid identifier
   [
     'class A { static propTypes = { b: someIdentifier }; }',
-    errors.illegalIdentifier
+    messages.illegalIdentifier()
   ],
 
   // Nested without meta
   [
     'A.propTypes = { b: PropTypes.shape({ c: PropTypes.object }) };',
-    errors.object
+    messages.object()
   ],
 
   // Typos in string literals
-  ['A.propTypesMeta = { b: "exclud" };', errors.badStringLiteral],
+  ['A.propTypesMeta = { b: "exclud" };', messages.badStringLiteral('exclud')],
 
   // Bad function call
-  ['A.propTypesMeta = { b: Arr(B) };', errors.badFunctionCall],
+  ['A.propTypesMeta = { b: Arr(B) };', messages.badFunctionCall()],
 
   // Imported object in Object.keys
   [
     'import obj from "./obj"; A.propTypes = { c: PropTypes.oneOf(Object.keys(obj)) };',
-    errors.importedObjectReference
+    messages.importedObjectReference()
   ],
 
   // Imported object in Object.values
   [
     'import obj from "./obj"; A.propTypes = { c: PropTypes.oneOf(Object.values(obj)) };',
-    errors.importedObjectReference
+    messages.importedObjectReference()
   ],
 
   // Incomplete statement (should not make the plugin crash)
   [
     'const arr = [1,2]; A.propTypes = { c: PropTypes.oneOf(Object.values()) };',
-    errors.missingObjectReference
+    messages.missingObjectReference()
   ],
 
   // Imported arrays in oneOf
   [
     'import arr from "./arr"; A.propTypes = { c: PropTypes.oneOf(arr) };',
-    errors.importedArrayReference
+    messages.importedArrayReference()
   ]
 ]
   .map(([code, ...errors]) => [code + footer, ...errors])
   .concat([
     // Missing export
-    ['const A = () => {};', errors.noExport],
+    ['const A = () => {};', messages.noExport()],
 
     // Too many exports
-    ['export { A, B };', errors.tooManyExports, errors.tooManyExports],
+    ['export { A, B };', messages.tooManyExports(), messages.tooManyExports()],
 
     // Too many exports
     [
       'export default A; export { B, C };',
-      errors.tooManyExports,
-      errors.tooManyExports,
-      errors.tooManyExports
+      messages.tooManyExports(),
+      messages.tooManyExports(),
+      messages.tooManyExports()
     ]
   ]);
 
@@ -258,9 +253,7 @@ ruleTester.run('all', plugin.rules.all, {
   invalid: invalidCases.map(([code, ...errors]) => ({
     code,
     filename: 'a.jsx',
-    errors: errors.map(error => ({
-      messageId: error
-    }))
+    errors: errors.map(error => ({ message: error }))
   }))
 });
 

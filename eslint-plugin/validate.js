@@ -17,8 +17,7 @@ module.exports = ({
   if (t.isLiteral(metaTypes)) {
     context.report({
       node: metaTypes,
-      message: messages.badExclude,
-      data: { value: metaTypes.value }
+      message: messages.badExclude(metaTypes.value)
     });
   }
 
@@ -26,13 +25,13 @@ module.exports = ({
     exportDeclarations.forEach(declaration => {
       context.report({
         node: declaration,
-        message: messages.tooManyExports
+        message: messages.tooManyExports()
       });
     });
   } else if (!exportDeclarations.length) {
     context.report({
       node: bodyNode,
-      message: messages.noExport
+      message: messages.noExport()
     });
   } else {
     const componentName = exportDeclarations[0].name;
@@ -40,7 +39,7 @@ module.exports = ({
       if (prop.name.toLowerCase() === componentName.toLowerCase()) {
         context.report({
           node: prop,
-          message: messages.propNameCollision
+          message: messages.propNameCollision()
         });
       }
     });
@@ -70,8 +69,7 @@ module.exports = ({
     if (t.isLiteral(node) && !allowedMetaTypes.strings[node.value]) {
       context.report({
         node,
-        message: messages.badStringLiteral,
-        data: { value: node.value }
+        message: messages.badStringLiteral(node.value)
       });
     }
 
@@ -81,8 +79,7 @@ module.exports = ({
     ) {
       context.report({
         node,
-        message: messages.badFunctionCall,
-        data: { value: node.value }
+        message: messages.badFunctionCall(node.value)
       });
     }
   });

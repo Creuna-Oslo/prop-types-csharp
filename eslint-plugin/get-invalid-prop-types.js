@@ -3,9 +3,9 @@ const t = require('@babel/types');
 const messages = require('./messages');
 
 const illegalTypes = {
-  array: messages.array,
-  object: messages.object,
-  oneOfType: messages.oneOfType
+  array: messages.array(),
+  object: messages.object(),
+  oneOfType: messages.oneOfType()
 };
 
 const getInvalidPropTypes = (objectExpression, scope) => {
@@ -25,7 +25,7 @@ const getInvalidPropTypes = (objectExpression, scope) => {
     // Function calls not coming from PropTypes are illegal. Detect this by checking if the callee is an identifier (PropTypes.something is a MemberExpression).
     if (t.isCallExpression(value) && t.isIdentifier(value.callee)) {
       return Object.assign(accum, {
-        [key]: { node: value, message: messages.illegalFunctionCall }
+        [key]: { node: value, message: messages.illegalFunctionCall() }
       });
     }
 
@@ -34,7 +34,7 @@ const getInvalidPropTypes = (objectExpression, scope) => {
 
     if (!t.isMemberExpression(propTypeNode)) {
       return Object.assign(accum, {
-        [key]: { node: value, message: messages.illegalIdentifier }
+        [key]: { node: value, message: messages.illegalIdentifier() }
       });
     }
 
@@ -82,7 +82,7 @@ const getInvalidPropTypes = (objectExpression, scope) => {
         if (!hasLiteral) {
           accum[key] = {
             node: argument,
-            message: messages.importedArrayReference
+            message: messages.importedArrayReference()
           };
         }
       }
@@ -106,13 +106,13 @@ const getInvalidPropTypes = (objectExpression, scope) => {
           if (!hasLiteral) {
             accum[key] = {
               node: objectMethodArgument,
-              message: messages.importedObjectReference
+              message: messages.importedObjectReference()
             };
           }
         } else {
           accum[key] = {
             node: argument,
-            message: messages.missingObjectReference
+            message: messages.missingObjectReference()
           };
         }
       }
