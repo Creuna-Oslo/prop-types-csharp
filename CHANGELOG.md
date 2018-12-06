@@ -1,3 +1,8 @@
+# 0.6.5
+
+- Fixes [issue 54](https://github.com/Creuna-Oslo/prop-types-csharp/issues/54): incorrect C# generated from nested `PropTypes.shape` in `PropTypes.arrayOf`
+- Fixes [issue 55](https://github.com/Creuna-Oslo/prop-types-csharp/issues/55): incorrect C# generated from `PropTypes.arrayOf(PropTypes.oneOf())`
+
 # 0.6.4
 
 - Adds support for new string literals in `propTypesMeta`: `"int?"`, `"float?"`, `"double"` and `"double?"` ([issue 52](https://github.com/Creuna-Oslo/prop-types-csharp/issues/52) and [issue 53](https://github.com/Creuna-Oslo/prop-types-csharp/issues/53) )
