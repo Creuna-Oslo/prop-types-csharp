@@ -100,17 +100,27 @@ const validCases = [
   // Valid meta type 'exclude' (class component)
   'class A { static propTypesMeta = { b: "exclude" }; }',
 
-  // Valid meta type 'int'
-  'A.propTypesMeta = { b: "int" };',
+  // Valid meta types
+  `A.propTypesMeta = {
+    b: 'int',
+    c: 'int?',
+    d: 'float',
+    e: 'float?',
+    f: 'double',
+    g: 'double?'
+  };`,
 
-  // Valid meta type 'int' (class component)
-  'class A { static propTypesMeta = { b: "int" }; }',
-
-  // Valid meta type 'float'
-  'A.propTypesMeta = { b: "float" };',
-
-  // Valid meta type 'float' (class component)
-  'class A { static propTypesMeta = { b: "float" }; }',
+  // Valid meta types (class component)
+  `class A {
+    static propTypesMeta = {
+      b: 'int',
+      c: 'int?',
+      d: 'float',
+      e: 'float?',
+      f: 'double',
+      g: 'double?'
+    };
+  }`,
 
   // Object with nested meta
   'A.propTypes = { b: PropTypes.object }; A.propTypesMeta = { b: { c: Link } };',
