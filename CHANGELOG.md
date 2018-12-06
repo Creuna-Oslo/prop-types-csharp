@@ -1,3 +1,7 @@
+# 0.6.4
+
+- Adds support for new string literals in `propTypesMeta`: `"int?"`, `"float?"`, `"double"` and `"double?"` ([issue 52](https://github.com/Creuna-Oslo/prop-types-csharp/issues/52) and [issue 53](https://github.com/Creuna-Oslo/prop-types-csharp/issues/53) )
+
 # 0.6.3
 
 - Fixes eslint plugin not respecting `propTypesMeta = 'exclude';` ([issue 50](https://github.com/Creuna-Oslo/prop-types-csharp/issues/50))

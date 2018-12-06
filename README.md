@@ -74,12 +74,16 @@ In general, it's recommended to define as much as possible in `propTypes`. In so
 Supported values for props in `propTypesMeta` are
 
 - `"int"`
+- `"int?"`
 - `"float"`
+- `"float?"`
+- `"double"`
+- `"double?"`
 - `"exclude"`
 - React component
 - `Array(< React component > | Object)`
 
-`"int"` and `"float"` replace `PropTypes.number` if supplied. By default, `PropTypes.number` will result in `int` in C# classes.
+`"int"`, `"float"`, `"double"` and their nullable counterparts replace `PropTypes.number` if supplied. By default, `PropTypes.number` will result in `int` in C# classes.
 
 Functional component:
 
