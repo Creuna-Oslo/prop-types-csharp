@@ -154,3 +154,36 @@ test(
   export default Component;`,
   undefined
 );
+
+test(
+  'String meta types',
+  template,
+  `const Component = () => {};
+  Component.propTypes = {
+    a: PropTypes.number,
+    b: PropTypes.number,
+    c: PropTypes.number,
+    d: PropTypes.number,
+    e: PropTypes.number,
+    f: PropTypes.number
+  };
+  Component.propTypesMeta = {
+    a: 'int',
+    b: 'float',
+    c: 'double',
+    d: 'int?',
+    e: 'float?',
+    f: 'double?'
+  };
+  export default Component;`,
+  `${csharpImports}
+  public class Component
+  {
+    public int A { get; set; }
+    public float B { get; set; }
+    public double C { get; set; }
+    public int? D { get; set; }
+    public float? E { get; set; }
+    public double? F { get; set; }
+  }`
+);

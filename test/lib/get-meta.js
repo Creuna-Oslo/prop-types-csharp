@@ -19,6 +19,27 @@ const throwsTemplate = (t, input, errorMessage) => {
 };
 
 test(
+  'Allowed string types',
+  template,
+  `C.propTypesMeta = {
+    a: 'int',
+    b: 'float',
+    c: 'double',
+    d: 'int?',
+    e: 'float?',
+    f: 'double?'
+  };`,
+  {
+    a: { type: 'int' },
+    b: { type: 'float' },
+    c: { type: 'double' },
+    d: { type: 'int?' },
+    e: { type: 'float?' },
+    f: { type: 'double?' }
+  }
+);
+
+test(
   'String literal "exclude"',
   template,
   'C.propTypesMeta = "exclude"',
@@ -90,7 +111,7 @@ test(
   'Throws on misspelled string',
   throwsTemplate,
   'C.propTypesMeta = { a: "exclud" };',
-  "Invalid meta type 'exclud' for 'a'. Expected one of [exclude,float,int]"
+  "Invalid meta type 'exclud' for 'a'. Expected one of [exclude,double,double?,float,float?,int,int?]"
 );
 
 test(
