@@ -130,7 +130,7 @@ test(
 );
 
 test(
-  'Array of object',
+  'Array of shape',
   template,
   {
     a: {
@@ -162,6 +162,69 @@ test(
       properties: {
         type: 'shape',
         argument: { b: { type: 'string' } }
+      }
+    }
+  ]
+);
+
+test(
+  'Array with nested shapes and oneOf',
+  template,
+  {
+    a: {
+      type: 'arrayOf',
+      argument: {
+        type: 'shape',
+        argument: {
+          b: { type: 'shape', argument: { c: { type: 'string' } } },
+          d: { type: 'oneOf', argument: ['a', 'b'] }
+        }
+      }
+    }
+  },
+  [
+    {
+      name: 'Component',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        isComponentClass: true,
+        argument: {
+          a: {
+            type: 'arrayOf',
+            argument: {
+              type: 'aItem',
+              hasClassDefinition: true
+            }
+          }
+        }
+      }
+    },
+    {
+      name: 'aItem',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        argument: {
+          b: { type: 'b', hasClassDefinition: true },
+          d: { type: 'd', hasClassDefinition: true }
+        }
+      }
+    },
+    {
+      name: 'b',
+      parent: { name: 'aItem', parent: { name: 'Component' } },
+      properties: {
+        type: 'shape',
+        argument: { c: { type: 'string' } }
+      }
+    },
+    {
+      name: 'd',
+      parent: { name: 'aItem', parent: { name: 'Component' } },
+      properties: {
+        type: 'oneOf',
+        argument: ['a', 'b']
       }
     }
   ]
@@ -299,6 +362,41 @@ test(
       properties: {
         type: 'oneOf',
         argument: ['value-1', 'value-2']
+      }
+    }
+  ]
+);
+
+test(
+  'Array of enum',
+  template,
+  {
+    a: {
+      type: 'arrayOf',
+      argument: { type: 'oneOf', argument: [1, 2] }
+    }
+  },
+  [
+    {
+      name: 'Component',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'shape',
+        isComponentClass: true,
+        argument: {
+          a: {
+            type: 'arrayOf',
+            argument: { type: 'aItem', hasClassDefinition: true }
+          }
+        }
+      }
+    },
+    {
+      name: 'aItem',
+      parent: { name: 'Component' },
+      properties: {
+        type: 'oneOf',
+        argument: [1, 2]
       }
     }
   ]
