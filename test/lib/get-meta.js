@@ -1,7 +1,7 @@
 const { parse } = require('@babel/parser');
 const test = require('ava');
 
-const getMeta = require('../../lib/parse/javascript/get-meta');
+const getMeta = require('../../lib/parse/common/get-meta');
 const metaTypes = require('../../lib/meta-types');
 
 const template = (t, input, expected) => {
