@@ -16,10 +16,12 @@ type TypeLiteralArray<Elements> = {
   [E in keyof Elements]: PropTypesMeta<Elements[E]>
 };
 
-export type PropTypesMeta<Props> = {
-  [P in keyof Props]?: Props[P] extends TypeLiteral | TypeLiteral[]
-    ? Props[P] extends TypeLiteral[]
-      ? TypeLiteralArray<Props[P]>
-      : PropTypesMeta<Props[P]>
-    : keyof typeof metaTypes | (keyof typeof metaTypes)[]
-};
+export type PropTypesMeta<Props> =
+  | 'exclude'
+  | {
+      [P in keyof Props]?: Props[P] extends TypeLiteral | TypeLiteral[]
+        ? Props[P] extends TypeLiteral[]
+          ? TypeLiteralArray<Props[P]>
+          : PropTypesMeta<Props[P]>
+        : keyof typeof metaTypes | (keyof typeof metaTypes)[]
+    };
