@@ -70,9 +70,9 @@ FunctionalComponent.propTypesMeta = {
   nestedExclude: {
     a: 'exclude'
   },
-  objectArray: Array(Link),
+  objectArray: [Link],
   linkMeta: Link,
-  linkListMeta: Array(Link)
+  linkListMeta: [Link]
 };
 
 export default FunctionalComponent;

@@ -91,14 +91,14 @@ test(
 test(
   'Transforms Array',
   template,
-  'C.propTypesMeta = { a: Array(SomeComponent) };',
+  'C.propTypesMeta = { a: [SomeComponent] };',
   { a: { type: 'arrayOf', argument: { type: 'SomeComponent' } } }
 );
 
 test(
   'Array with object literal',
   template,
-  'C.propTypesMeta = { a: Array({ b: "float" }) };',
+  'C.propTypesMeta = { a: [{ b: "float" }] };',
   {
     a: {
       type: 'arrayOf',
@@ -115,27 +115,27 @@ test(
 );
 
 test(
-  'Throws on calls other than Array',
+  'Throws on function',
   throwsTemplate,
   'C.propTypesMeta = { a: Object.keys(obj) };',
-  "Unsupported function call in meta type for 'a'"
+  "Unsupported meta type for 'a'"
 );
 
 test(
   'Throws on empty Array',
   throwsTemplate,
-  'C.propTypesMeta = { a: Array() };',
-  "Missing value in 'Array' in meta type for 'a'"
+  'C.propTypesMeta = { a: [] };',
+  "Missing value in meta type for 'a'"
 );
 
 test(
   'Throws when argument to Array is not an Identifier',
   throwsTemplate,
-  'C.propTypesMeta = { a: Array(Component.propTypes) };',
-  "Unsupported value in Array() in meta type for 'a'"
+  'C.propTypesMeta = { a: [Component.propTypes] };',
+  "Unsupported value in meta type for 'a'"
 );
 
-const unsupportedTypes = ['null', 'false', 'true', '[]'];
+const unsupportedTypes = ['null', 'false', 'true', 'Array()'];
 
 test('Throws on unsupported meta types', t => {
   unsupportedTypes.forEach(type => {

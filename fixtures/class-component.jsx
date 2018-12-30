@@ -72,9 +72,9 @@ class ClassComponent extends React.Component {
     nestedExclude: {
       a: 'exclude'
     },
-    objectArray: Array(Link),
+    objectArray: [Link],
     linkMeta: Link,
-    linkListMeta: Array(Link)
+    linkListMeta: [Link]
   };
 
   render() {
