@@ -66,17 +66,14 @@ module.exports = ({
   }
 
   Object.values(metaTypes).forEach(node => {
-    if (t.isLiteral(node) && !allowedMetaTypes.strings[node.value]) {
+    if (t.isLiteral(node) && !allowedMetaTypes[node.value]) {
       context.report({
         node,
         message: messages.badStringLiteral(node.value)
       });
     }
 
-    if (
-      t.isCallExpression(node) &&
-      !allowedMetaTypes.functions[node.callee.name]
-    ) {
+    if (t.isCallExpression(node) && node.callee.name !== 'Array') {
       context.report({
         node,
         message: messages.badFunctionCall(node.value)

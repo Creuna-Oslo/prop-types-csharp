@@ -72,7 +72,7 @@ test('Nested', template, 'C.propTypesMeta = { a: { b: "exclude" } };', {
 
 test('No meta', template, 'const C = () => <div />;', {});
 
-Object.values(metaTypes.strings).forEach(stringType => {
+Object.values(metaTypes).forEach(stringType => {
   test(
     `Extracts '${stringType}'`,
     template,

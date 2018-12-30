@@ -4,12 +4,9 @@ module.exports = {
   array: () =>
     'Unsupported type "array". Replace with "arrayOf" or add meta type',
   badExclude: value => `Expected 'exclude' but got '${value}'`,
-  badFunctionCall: value =>
-    `Expected one of [${Object.values(
-      metaTypes.functions
-    )}] but got '${value}'.`,
+  badFunctionCall: value => `Expected one of [Array] but got '${value}'.`,
   badStringLiteral: value =>
-    `Expected one of [${Object.values(metaTypes.strings)}] but got '${value}'.`,
+    `Expected one of [${Object.values(metaTypes)}] but got '${value}'.`,
   illegalFunctionCall: () => `Illegal function call`,
   illegalIdentifier: () => `Illegal identifier`,
   importedArrayReference: () => `Imported arrays are not supported.`,
