@@ -2,6 +2,7 @@ const t = require('@babel/types');
 
 const allowedMetaTypes = require('../lib/meta-types');
 const getInvalidPropTypes = require('./get-invalid-prop-types');
+const matchNode = require('../lib/utils/match-node');
 const messages = require('./messages');
 
 module.exports = ({
@@ -65,19 +66,39 @@ module.exports = ({
     recursiveValidatePropTypes(invalidPropTypes, metaTypes);
   }
 
-  Object.values(metaTypes).forEach(node => {
-    if (t.isLiteral(node) && !allowedMetaTypes[node.value]) {
-      context.report({
-        node,
-        message: messages.badStringLiteral(node.value)
-      });
-    }
+  if (!t.isLiteral(metaTypes)) {
+    Object.values(metaTypes).forEach(node => {
+      const onNoMatch = () => {
+        context.report({
+          node,
+          message: messages.badMeta()
+        });
+      };
 
-    if (t.isCallExpression(node) && node.callee.name !== 'Array') {
-      context.report({
+      matchNode(
         node,
-        message: messages.badFunctionCall(node.value)
-      });
-    }
-  });
+        {
+          Literal: () => {
+            if (!allowedMetaTypes[node.value]) {
+              context.report({
+                node,
+                message: messages.badStringLiteral(node.value)
+              });
+            }
+          },
+          ArrayExpression: () => {
+            const [element] = node.elements;
+            if (t.isLiteral(element) && !allowedMetaTypes[element]) {
+              context.report({
+                node,
+                message: messages.badStringLiteral(node.value)
+              });
+            }
+          },
+          ObjectExpression: () => {}
+        },
+        onNoMatch
+      );
+    });
+  }
 };
