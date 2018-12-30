@@ -1,11 +1,11 @@
 const test = require('ava');
 const bt = require('@babel/types');
 
-const getNodeOfType = require('../../lib/utils/get-node-of-type');
+const matchNode = require('../../lib/utils/match-node');
 
 test('Finds Identifier', t => {
   const node = bt.identifier('hello');
-  const value = getNodeOfType(node, {
+  const value = matchNode(node, {
     Identifier: node => node.name
   });
 
@@ -14,7 +14,7 @@ test('Finds Identifier', t => {
 
 test('Returns value from no-match callback when no match was found', t => {
   const node = bt.identifier('hello');
-  const value = getNodeOfType(
+  const value = matchNode(
     node,
     {
       MemberExpression: node => node.object.name
@@ -27,7 +27,7 @@ test('Returns value from no-match callback when no match was found', t => {
 
 test('Runs undefined when no no-match callback is provided', t => {
   const node = bt.identifier('hello');
-  const value = getNodeOfType(node, {
+  const value = matchNode(node, {
     MemberExpression: node => node.object.name
   });
 
