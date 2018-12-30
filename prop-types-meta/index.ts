@@ -16,9 +16,9 @@ type TypeLiteralArray<Elements> = {
   [E in keyof Elements]: PropTypesMeta<Elements[E]>
 };
 
-export type PropTypesMeta<Props> =
-  | 'exclude'
-  | {
+export type PropTypesMeta<Props> = Props extends string
+  ? 'exclude'
+  : {
       [P in keyof Props]?: Props[P] extends TypeLiteral | TypeLiteral[]
         ? Props[P] extends TypeLiteral[]
           ? TypeLiteralArray<Props[P]>
