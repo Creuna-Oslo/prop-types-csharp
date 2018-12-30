@@ -1,6 +1,6 @@
 const test = require('ava');
 
-const transformPropTypes = require('../../lib/transforms/transform-prop-types');
+const transformPropTypes = require('../../lib/transform-prop-types');
 
 const template = (t, input, propTypesMeta = {}, expected) => {
   t.deepEqual(expected, transformPropTypes(input, propTypesMeta));
