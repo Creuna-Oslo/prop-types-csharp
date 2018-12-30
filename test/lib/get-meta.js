@@ -129,10 +129,10 @@ test(
 );
 
 test(
-  'Throws when argument to Array is not an Identifier',
+  'Throws on invalid array element',
   throwsTemplate,
   'C.propTypesMeta = { a: [Component.propTypes] };',
-  "Unsupported value in meta type for 'a'"
+  "Unsupported meta type for 'a'"
 );
 
 const unsupportedTypes = ['null', 'false', 'true', 'Array()'];
