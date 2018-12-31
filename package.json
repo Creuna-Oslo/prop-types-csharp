@@ -24,7 +24,8 @@
     "test:eslint": "ava ./test/eslint-plugin",
     "test:lib": "ava ./test/lib",
     "test:webpack": "ava --verbose ./test/webpack-plugin",
-    "test:e2e": "ava ./test/lib/lib.js"
+    "test:e2e": "ava ./test/lib/lib.js",
+    "test:ts": "ava ./test/lib/typescript"
   },
   "repository": {
     "type": "git",
