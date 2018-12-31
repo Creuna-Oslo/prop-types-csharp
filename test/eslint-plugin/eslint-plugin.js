@@ -214,7 +214,13 @@ const invalidCases = [
   ['A.propTypesMeta = { b: "exclud" };', messages.badStringLiteral('exclud')],
 
   // Invalid meta (function)
-  ['A.propTypesMeta = { b: Arr(B) };', messages.badMeta()],
+  ['A.propTypesMeta = { b: someFunc(B) };', messages.badMeta()],
+
+  // Invalid meta in array
+  [
+    'A.propTypesMeta = { b: ["abcdefg"] };',
+    messages.badStringLiteral('abcdefg')
+  ],
 
   // Imported object in Object.keys
   [
