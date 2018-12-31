@@ -30,7 +30,7 @@ type ComponentProps = {
   nestedShape?: {
     a?: {
       b?: {
-        c?: string;
+        c?: number;
       };
     };
   };
@@ -59,7 +59,14 @@ class Component extends React.Component<ComponentProps> {
     nestedExclude: {
       a: 'exclude'
     },
-    nestedNumber: [[['float']]]
+    nestedNumber: [[['float']]],
+    nestedShape: {
+      a: {
+        b: {
+          c: 'float'
+        }
+      }
+    }
   };
 
   render() {

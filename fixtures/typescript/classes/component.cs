@@ -57,7 +57,7 @@ public class ComponentProps_NestedShape_A
 
 public class ComponentProps_NestedShape_A_B
 {
-  public string C { get; set; }
+  public float C { get; set; }
 }
 
 public enum ComponentProps_RequiredEnum

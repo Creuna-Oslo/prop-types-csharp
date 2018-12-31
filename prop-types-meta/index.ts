@@ -7,7 +7,7 @@ type metaType =
   | 'int'
   | 'int?';
 
-type primitive = string | number | boolean;
+type primitive = string | number | boolean | undefined;
 
 type TypeLiteral = {
   [key: string]: primitive | TypeLiteral;
