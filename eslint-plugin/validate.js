@@ -91,7 +91,7 @@ module.exports = ({
             if (t.isLiteral(element) && !allowedMetaTypes[element]) {
               context.report({
                 node,
-                message: messages.badStringLiteral(node.value)
+                message: messages.badStringLiteral(element.value)
               });
             }
           },
