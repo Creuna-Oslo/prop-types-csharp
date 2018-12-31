@@ -165,9 +165,21 @@ ReactSiteConfiguration.Configuration
 
 ## <a id="node"></a>Node.js API
 
-The Node API exports one function that takes an option object.
+The Node API exports an object:
 
-### Returns
+```ts
+{
+  generate: function(options){} // Generates a class string,
+  parsers: {
+    javascript: function(){},
+    typescript: function(){}
+  }
+}
+```
+
+### generate(_options_)
+
+#### Returns
 
 Returns an `object` containing:
 
@@ -177,7 +189,7 @@ Name of React component (derived from export declaration).
 **code**: `String`
 Source code for new C# class.
 
-### Options
+#### Options
 
 **baseClass**: `String`
 
@@ -193,17 +205,31 @@ Number of spaces of indentation in generated C# file
 **namespace**: `String`
 Optional namespace to wrap around generated C# class
 
+**parser**: `Function` = javascript parser
+What input language to parse. Javascript and typescript parsers are provided
+
 **sourceCode**: `String`
 Source code of a React component as string.
 
 ### Example
 
 ```js
-const generateCSharp = require("@creuna/prop-types-csharp");
+const { generate } = require("@creuna/prop-types-csharp");
 
-const { componentName, code } = generateCSharp({
+const { componentName, code } = generate({
   indent: 4,
   namespace: "Some.Awesome.Namespace",
+  sourceCode: "" // Insert actual React component source code
+});
+```
+
+### Typescript example
+
+```js
+const { generate, parsers } = require("@creuna/prop-types-csharp");
+
+const { componentName, code } = generate({
+  parser: parsers.typescript,
   sourceCode: "" // Insert actual React component source code
 });
 ```
