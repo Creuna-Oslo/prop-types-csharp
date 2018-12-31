@@ -1,6 +1,6 @@
 const test = require('ava');
 
-const parentPrefixedName = require('../../lib/stringify/parent-prefixed-name');
+const parentPrefixedName = require('../../../lib/stringify/parent-prefixed-name');
 
 test('Prefixes name with parents', t => {
   const prefixedName = parentPrefixedName('C', {

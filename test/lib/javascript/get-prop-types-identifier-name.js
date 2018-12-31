@@ -1,7 +1,7 @@
 const { parse } = require('@babel/parser');
 const test = require('ava');
 
-const getPropTypesIdentifierName = require('../../lib/parse/javascript/get-prop-types-identifier-name');
+const getPropTypesIdentifierName = require('../../../lib/parse/javascript/get-prop-types-identifier-name');
 
 test('With PropTypes import', t => {
   const syntaxTree = parse('import pt from "prop-types";', {

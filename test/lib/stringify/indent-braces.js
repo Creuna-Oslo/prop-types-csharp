@@ -1,6 +1,6 @@
 const test = require('ava');
 
-const indentBraces = require('../../lib/stringify/indent-braces');
+const indentBraces = require('../../../lib/stringify/indent-braces');
 
 test('Adds indentation', t => {
   const string = `

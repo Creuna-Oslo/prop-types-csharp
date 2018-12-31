@@ -1,7 +1,7 @@
 const { parse } = require('@babel/parser');
 const test = require('ava');
 
-const parseAST = require('../../lib/parse/javascript/parse-ast');
+const parseAST = require('../../../lib/parse/javascript/parse-ast');
 
 const template = (t, input, propTypeMeta, expected) => {
   const ast = parse(input);
