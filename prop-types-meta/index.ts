@@ -32,6 +32,6 @@ export type PropTypesMeta<Props> = Props extends string
         | undefined
         ? Props[P] extends TypeLiteral[] | undefined
           ? TypeLiteralArray<Props[P]>
-          : PropTypesMeta<Props[P]>
+          : PropTypesMeta<Props[P]> | 'exclude'
         : MetaTypeArray<Props[P]>
     };
