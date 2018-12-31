@@ -5,9 +5,9 @@ const tempy = require('tempy');
 const test = require('ava');
 const webpack = require('webpack');
 
-const { classes } = require('../../fixtures/source-code');
+const { classes } = require('../../fixtures/javascript/source-code');
 const normalize = require('../utils/_normalize-string');
-const webpackConfig = require('../../fixtures/webpack.config');
+const webpackConfig = require('../../fixtures/javascript/webpack.config');
 
 test.cb('Writes C# files to disk', t => {
   t.plan(3);
@@ -62,7 +62,7 @@ test.cb('Adds base class', t => {
   webpack(
     webpackConfig(
       {
-        entry: './fixtures/app-baseclass.js',
+        entry: './fixtures/javascript/app-baseclass.js',
         path: tempy.directory(),
         baseClass: 'BaseClass'
       },
@@ -138,17 +138,17 @@ const throwsTemplate = (t, entry, expectedErrorMessage) => {
 
 const duplicateComponent1Path = path.resolve(
   __dirname,
-  '../../fixtures/func-component.jsx'
+  '../../fixtures/javascript/func-component.jsx'
 );
 const duplicateComponent2Path = path.resolve(
   __dirname,
-  '../../fixtures/nested-component/func-component.jsx'
+  '../../fixtures/javascript/nested-component/func-component.jsx'
 );
 
 test.cb(
   'Aborts when duplicate names exist',
   throwsTemplate,
-  './fixtures/app-duplicate-component.js',
+  './fixtures/javascript/app-duplicate-component.js',
   `C# class generator plugin
 Found duplicate component names in:
 FunctionalComponent (${duplicateComponent1Path})
@@ -157,13 +157,13 @@ FunctionalComponent (${duplicateComponent2Path})`
 
 const errorComponentPath = path.resolve(
   __dirname,
-  '../../fixtures/error-component.jsx'
+  '../../fixtures/javascript/error-component.jsx'
 );
 
 test.cb(
   'Aborts when class generation fails',
   throwsTemplate,
-  './fixtures/app-error-component.js',
+  './fixtures/javascript/app-error-component.js',
   `C# class generator plugin
 ${errorComponentPath}
 Invalid type 'object' for prop 'a'.

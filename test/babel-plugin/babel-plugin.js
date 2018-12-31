@@ -6,7 +6,7 @@ const tempy = require('tempy');
 const test = require('ava');
 const webpack = require('webpack');
 
-const webpackConfig = require('../../fixtures/webpack.config');
+const webpackConfig = require('../../fixtures/javascript/webpack.config');
 
 const babelPlugin = require('../../babel-plugin');
 

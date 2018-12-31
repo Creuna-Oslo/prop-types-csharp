@@ -1,10 +1,10 @@
 const path = require('path');
 
-const PropTypesCSharpPlugin = require('../webpack-plugin');
+const PropTypesCSharpPlugin = require('../../webpack-plugin');
 
 module.exports = function(env = {}, options = {}) {
   return {
-    entry: env.entry || './fixtures/app.js',
+    entry: env.entry || './fixtures/javascript/app.js',
     output: {
       path: env.path || path.resolve(__dirname, '..', 'dist'),
       filename: '[name].js'
@@ -21,7 +21,7 @@ module.exports = function(env = {}, options = {}) {
               options: {
                 plugins: [].concat(
                   env.babelPlugin
-                    ? [path.join(__dirname, '../babel-plugin')]
+                    ? [path.join(__dirname, '../../babel-plugin')]
                     : [],
                   '@babel/proposal-class-properties'
                 )

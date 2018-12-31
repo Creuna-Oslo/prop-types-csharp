@@ -8,8 +8,8 @@ test('Generates classes', t => {
 
   const { classes, error } = generateClasses({
     modulePaths: [
-      path.join(__dirname, '../../fixtures/class-component.jsx'),
-      path.join(__dirname, '../../fixtures/func-component.jsx')
+      path.join(__dirname, '../../fixtures/javascript/class-component.jsx'),
+      path.join(__dirname, '../../fixtures/javascript/func-component.jsx')
     ]
   });
 
@@ -20,11 +20,11 @@ test('Generates classes', t => {
 test('Returns error on duplicate component names', t => {
   const component1Path = path.resolve(
     __dirname,
-    '../../fixtures/func-component.jsx'
+    '../../fixtures/javascript/func-component.jsx'
   );
   const component2Path = path.resolve(
     __dirname,
-    '../../fixtures/nested-component/func-component.jsx'
+    '../../fixtures/javascript/nested-component/func-component.jsx'
   );
 
   const { error } = generateClasses({
@@ -41,7 +41,7 @@ FunctionalComponent (${component2Path})`;
 test('Returns class generation error', t => {
   const modulePath = path.resolve(
     __dirname,
-    '../../fixtures/error-component.jsx'
+    '../../fixtures/javascript/error-component.jsx'
   );
   const { classes } = generateClasses({ modulePaths: [modulePath] });
   const expectedError = `

@@ -25,7 +25,7 @@ module.exports = {
     (accum, [key, filename]) =>
       Object.assign(accum, {
         [key]: fs.readFileSync(
-          path.join(__dirname, 'classes', filename),
+          path.resolve(__dirname, '..', 'classes', filename),
           'utf-8'
         )
       }),

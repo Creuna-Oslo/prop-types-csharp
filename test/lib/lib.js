@@ -3,7 +3,10 @@ const test = require('ava');
 const { generate } = require('../../index');
 const normalize = require('../utils/_normalize-string');
 
-const { classes, components } = require('../../fixtures/source-code');
+const {
+  classes,
+  components
+} = require('../../fixtures/javascript/source-code');
 
 const template = (t, input, expected, options) => {
   const transformedSource = generate(
