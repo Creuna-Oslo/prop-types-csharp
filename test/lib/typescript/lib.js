@@ -42,6 +42,56 @@ test(
 `
 );
 
+test(
+  'With type definition',
+  template,
+  `type A = { b?: string };
+  export const C = (p: A) => null;`,
+  `${csharpImports}
+  public class A
+  {
+    public string B { get; set; }
+  }
+  `
+);
+
+test(
+  'With interface definition',
+  template,
+  `interface A { b?: string }
+  export const C = (p: A) => null;`,
+  `${csharpImports}
+  public class A
+  {
+    public string B { get; set; }
+  }`
+);
+
+test(
+  'Type literal',
+  template,
+  `export class C extends React.Component<{ b?: string }> {}`,
+  `${csharpImports}
+  public class C
+  {
+    public string B { get; set; }
+  }`
+);
+
+test('Throws on multiple exports', t => {
+  const sourceCode = `
+  export const Component = (props: {}) => null,
+  A = true;`;
+  const error = t.throws(() => {
+    generate({ sourceCode, parser: parsers.typescript });
+  });
+
+  t.is(
+    "Couldn't get component name because of multiple exports.",
+    error.message
+  );
+});
+
 test('Throws on name collisions', t => {
   const sourceCode = `
   const Component = (props: { component: string }) => <div>{props.component}</div>;
