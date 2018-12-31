@@ -80,10 +80,10 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
       const { classes, error } = result;
 
       if (!error) {
-        classes.forEach(({ code, componentName }) => {
-          if (code && componentName) {
+        classes.forEach(({ code, className }) => {
+          if (code && className) {
             compilation.assets[
-              path.join(this.outputPath, `${componentName}.cs`)
+              path.join(this.outputPath, `${className}.cs`)
             ] = {
               source: () => code,
               size: () => code.length
@@ -110,11 +110,11 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
 
       // Write files to disk since webpack dev server doesn't do so
       if (!error) {
-        classes.forEach(({ code, componentName }) => {
-          if (code && componentName) {
+        classes.forEach(({ code, className }) => {
+          if (code && className) {
             const basePath = path.join(compiler.outputPath, this.outputPath);
             fsExtra.ensureDirSync(basePath);
-            fs.writeFileSync(path.join(basePath, `${componentName}.cs`), code);
+            fs.writeFileSync(path.join(basePath, `${className}.cs`), code);
           }
         });
       }

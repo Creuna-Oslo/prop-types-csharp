@@ -183,7 +183,7 @@ The Node API exports an object:
 
 Returns an `object` containing:
 
-**componentName**: `String`
+**className**: `String`
 Name of React component (derived from export declaration).
 
 **code**: `String`

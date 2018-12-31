@@ -107,7 +107,7 @@ test(
     `public class Component : BaseClass
   {
   }`,
-  { baseClass: 'BaseClass', componentName: 'Component' }
+  { baseClass: 'BaseClass', className: 'Component' }
 );
 
 // Base class should only be applied to the class where 'isComponentClass' === true
@@ -133,7 +133,7 @@ test(
     public class Component_ComponentProperty
     {
     }`,
-  { baseClass: 'BaseClass', componentName: 'Component' }
+  { baseClass: 'BaseClass', className: 'Component' }
 );
 
 test(
@@ -375,7 +375,7 @@ test(
 public class Component : AnotherComponent
 {
 }`,
-  { componentName: 'Component' },
+  { className: 'Component' },
   false
 );
 
@@ -391,7 +391,7 @@ namespace Namespace
   {
   }
 }`,
-  { componentName: 'Component', namespace: 'Namespace' },
+  { className: 'Component', namespace: 'Namespace' },
   false
 );
 
@@ -404,7 +404,7 @@ test(
 public class Component : AnotherComponent
 {
 }`,
-  { componentName: 'Component', baseClass: 'BaseClass' },
+  { className: 'Component', baseClass: 'BaseClass' },
   false
 );
 
@@ -431,5 +431,5 @@ public class Component
 {
   public string Type { get; set; }
 }`,
-  { componentName: 'Component' }
+  { className: 'Component' }
 );
