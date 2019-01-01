@@ -70,7 +70,30 @@ test(
 );
 
 test(
-  'Type literal',
+  'With react type',
+  template,
+  `type A = { b?: string };
+  export const C: React.FunctionComponent<A> = props => null;`,
+  `${csharpImports}
+  public class A
+  {
+    public string B { get; set; }
+  }`
+);
+
+test(
+  'With react type literal',
+  template,
+  `export const C: React.FunctionComponent<{ b?: string }> = props => null;`,
+  `${csharpImports}
+  public class C
+  {
+    public string B { get; set; }
+  }`
+);
+
+test(
+  'Type literal (class)',
   template,
   `export class C extends React.Component<{ b?: string }> {}`,
   `${csharpImports}
