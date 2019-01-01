@@ -1,4 +1,4 @@
-# 1.0.0-beta
+# 1.0.0
 
 - Breaking: `Array` in propTypesMeta is no longer supported. Use array literals instead.
 - Breaking: Node.js API now exports an object instead of a function.
