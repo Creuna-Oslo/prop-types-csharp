@@ -68,15 +68,15 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
       this.options.exclude
     );
 
-    const generateClassesOptions = {
+    const options = {
       baseClass: this.options.baseClass,
       indent: this.options.indent,
-      modulePaths,
-      namespace: this.options.namespace
+      namespace: this.options.namespace,
+      parser: this.options.parser
     };
 
     if (!isAsync) {
-      const result = generateClasses(generateClassesOptions);
+      const result = generateClasses({ modulePaths, options });
       const { classes, error } = result;
 
       if (!error) {
@@ -95,7 +95,7 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
       log(this.options, isAsync, compilation, result);
     } else {
       // Run class generation in parallel
-      generateClassesAsync.send(generateClassesOptions);
+      generateClassesAsync.send({ modulePaths, options });
     }
   };
 

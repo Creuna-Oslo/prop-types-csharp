@@ -206,7 +206,7 @@ Number of spaces of indentation in generated C# file
 Optional namespace to wrap around generated C# class
 
 **parser**: `Function` = javascript parser
-What input language to parse. Javascript and typescript parsers are provided
+What input language to parse. Javascript and typescript parsers are exported from the main library.
 
 **sourceCode**: `String`
 Source code of a React component as string.
@@ -242,6 +242,7 @@ The plugin will extract PropType definitions from `.jsx` files and convert them 
 
 ```js
 const PropTypesCSharpPlugin = require('@creuna/prop-types-csharp/webpack-plugin');
+const { parsers } = require('@creua/prop-types-csharp');
 
 module.exports = function(env, options = {}) {
   return {
@@ -250,7 +251,8 @@ module.exports = function(env, options = {}) {
     module: { ... },
     plugins: [
       new PropTypesCSharpPlugin({
-        exclude: ['node_modules', 'some/path/to/exclude']
+        exclude: ['node_modules', 'some/path/to/exclude'],
+        parser: parsers.typescript
       })
     ]
   };
@@ -285,6 +287,9 @@ Use this to choose what files to include when generating classes. Default is rep
 **namespace**: `String`
 
 If supplied, all generated classes will be wrapped in this namespace.
+
+**parser**: `Function` = Javascript parser
+What input language to parse. Javascript and typescript parsers are exported from the main library. See config example above.
 
 **path**: `String`
 

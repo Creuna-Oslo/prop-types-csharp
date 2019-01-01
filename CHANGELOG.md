@@ -1,10 +1,10 @@
 # 1.0.0-beta
 
-- Breaking: `Array` in propTypesMeta is no longer supported. Use array literals instead
+- Breaking: `Array` in propTypesMeta is no longer supported. Use array literals instead.
 - Breaking: Node.js API now exports an object instead of a function.
-- Breaking: Node.js generator now returns `className` instead of `componentName`
-- Adds support for `parser` option in Node.js API
-- Adds typescript parser
+- Breaking: Node.js generator now returns `className` instead of `componentName`.
+- Adds support for `parser` option in Node.js API and Webpack plugin.
+- Adds typescript parser.
 
 # 0.6.5
 
