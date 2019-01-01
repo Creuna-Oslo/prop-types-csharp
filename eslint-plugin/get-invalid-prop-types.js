@@ -1,3 +1,4 @@
+const get = require('lodash/get');
 const t = require('@babel/types');
 
 const messages = require('./messages');
@@ -9,10 +10,8 @@ const illegalTypes = {
 };
 
 const getInvalidPropTypes = (objectExpression, scope) => {
-  const variablesInScope =
-    scope.childScopes.length &&
-    scope.childScopes[0].type === 'module' &&
-    scope.childScopes[0].variables;
+  const childScope = get(scope, 'childScopes[0]', {});
+  const variablesInScope = childScope.type === 'module' && childScope.variables;
 
   if (!objectExpression || !objectExpression.properties) {
     return {};
