@@ -1,6 +1,6 @@
 const generateClass = require('../lib');
 
-const { components } = require('../fixtures/source-code');
+const { components } = require('../fixtures/javascript/source-code');
 
 console.log(
   generateClass({

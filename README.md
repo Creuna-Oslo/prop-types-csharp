@@ -4,11 +4,12 @@
 [![Travis status](https://travis-ci.org/Creuna-Oslo/prop-types-csharp.svg?branch=master)](https://travis-ci.org/Creuna-Oslo/prop-types-csharp)
 [![Coverage Status](https://coveralls.io/repos/github/Creuna-Oslo/prop-types-csharp/badge.svg?branch=master)](https://coveralls.io/github/Creuna-Oslo/prop-types-csharp?branch=master)
 
-This package has tools for generating C# classes from React components using propTypes.
+This package has tools for generating C# classes from React components using propTypes. Supports javascript and typescript.
 
 ## Table of contents
 
 - [General concepts](#general)
+- [Typescript](#typescript)
 - [About generated classes](#classes)
 - [Node.js API](#node)
 - [Webpack plugin](#webpack)
@@ -81,7 +82,7 @@ Supported values for props in `propTypesMeta` are
 - `"double?"`
 - `"exclude"`
 - React component
-- `Array(< React component > | Object)`
+- `(< React component > | Object)[]`
 
 `"int"`, `"float"`, `"double"` and their nullable counterparts replace `PropTypes.number` if supplied. By default, `PropTypes.number` will result in `int` in C# classes.
 
@@ -106,8 +107,8 @@ Component.propTypesMeta = {
   someProp: "float",
   anotherProp: "exclude",
   someComponent: SomeComponent,
-  items: Array(AnotherComponent),
-  numbers: Array({ number: "float" })
+  items: [AnotherComponent],
+  numbers: [{ number: "float" }]
 };
 ```
 
@@ -131,10 +132,68 @@ class Component extends React.Component {
     someProp: "float",
     anotherProp: "exclude",
     someComponent: SomeComponent,
-    items: Array(AnotherComponent),
-    numbers: Array({ number: "float" })
+    items: [AnotherComponent],
+    numbers: [{ number "float" }]
   };
 }
+```
+
+## <a id="typescript"></a> Typescript
+
+The class generator will determine the name of the generated class based on how prop types are defined:
+
+- the component name if a type literal is used
+- the name of the interface/type alias if used
+
+If type parameters are used the generator will attempt to use the first parameter as the type definition for the component. Keep in mind that using something other than the prop types as the first argument, class generation might succeed but the generated class will not have the right properties.
+
+### Illegal types
+
+As with the javascript parser, some types are not allowed because they cannot be easily converted to C#, like `object`, `any`, intersection and union types.
+
+```tsx
+const A = (props: { b: string }) => null; // Class name: A
+const A: React.FunctionComponent<{ b: string }> = props => null; // Class name: A
+
+type BProps = { c: string };
+const B = (props: BProps) => null; // Class name: BProps
+const B: React.FunctionComponent<BProps> = props => null; // Class name: BProps
+
+const CProps = { d: string };
+const C: SomeType<any, CProps> = props => null; // Error.
+```
+
+### PropTypesMeta
+
+`propTypesMeta` works in mostly the same way as for javascript components, the only notable expection being the lack of support for referencing other components.
+
+Two type aliases are exported that can be used to validate `propTypesMeta`:
+
+```tsx
+import {
+  PropTypesMeta,
+  WithPropTypesMeta
+} from "@prop-types-csharp/prop-types-meta";
+
+type AProps = { a: string; b: number };
+class A extends React.Component<AProps> {
+  static propTypesMeta: PropTypesMeta<AProps> = {
+    a: "exclude",
+    b: "int?"
+  };
+}
+
+type BProps = { a: string; b: number };
+const B: WithPropTypesMeta<BProps> = props => null;
+B.propTypesMeta = { a: "exclude", b: "int?" };
+```
+
+`WithPropTypesMeta` accepts a second type parameter that can be used if stuff like `React.FunctionComponent` is needed. Usage is quite verbose so adding your own type alias might be useful.
+
+```tsx
+type BProps = { a: string; b: number };
+const B: WithPropTypesMeta<BProps, React.FunctionComponent<BProps>> = props =>
+  null;
 ```
 
 ## <a id="classes"></a> About generated classes
@@ -165,19 +224,31 @@ ReactSiteConfiguration.Configuration
 
 ## <a id="node"></a>Node.js API
 
-The Node API exports one function that takes an option object.
+The Node API exports an object:
 
-### Returns
+```ts
+{
+  generate: function(options){} // Generates a class string,
+  parsers: {
+    javascript: function(){},
+    typescript: function(){}
+  }
+}
+```
+
+### generate(_options_)
+
+#### Returns
 
 Returns an `object` containing:
 
-**componentName**: `String`
+**className**: `String`
 Name of React component (derived from export declaration).
 
 **code**: `String`
 Source code for new C# class.
 
-### Options
+#### Options
 
 **baseClass**: `String`
 
@@ -193,17 +264,31 @@ Number of spaces of indentation in generated C# file
 **namespace**: `String`
 Optional namespace to wrap around generated C# class
 
+**parser**: `Function` = javascript parser
+What input language to parse. Javascript and typescript parsers are exported from the main library.
+
 **sourceCode**: `String`
 Source code of a React component as string.
 
 ### Example
 
 ```js
-const generateCSharp = require("@creuna/prop-types-csharp");
+const { generate } = require("@creuna/prop-types-csharp");
 
-const { componentName, code } = generateCSharp({
+const { componentName, code } = generate({
   indent: 4,
   namespace: "Some.Awesome.Namespace",
+  sourceCode: "" // Insert actual React component source code
+});
+```
+
+### Typescript example
+
+```js
+const { generate, parsers } = require("@creuna/prop-types-csharp");
+
+const { componentName, code } = generate({
+  parser: parsers.typescript,
   sourceCode: "" // Insert actual React component source code
 });
 ```
@@ -216,6 +301,7 @@ The plugin will extract PropType definitions from `.jsx` files and convert them 
 
 ```js
 const PropTypesCSharpPlugin = require('@creuna/prop-types-csharp/webpack-plugin');
+const { parsers } = require('@creua/prop-types-csharp');
 
 module.exports = function(env, options = {}) {
   return {
@@ -224,7 +310,8 @@ module.exports = function(env, options = {}) {
     module: { ... },
     plugins: [
       new PropTypesCSharpPlugin({
-        exclude: ['node_modules', 'some/path/to/exclude']
+        exclude: ['node_modules', 'some/path/to/exclude'],
+        parser: parsers.typescript
       })
     ]
   };
@@ -259,6 +346,9 @@ Use this to choose what files to include when generating classes. Default is rep
 **namespace**: `String`
 
 If supplied, all generated classes will be wrapped in this namespace.
+
+**parser**: `Function` = Javascript parser
+What input language to parse. Javascript and typescript parsers are exported from the main library. See config example above.
 
 **path**: `String`
 

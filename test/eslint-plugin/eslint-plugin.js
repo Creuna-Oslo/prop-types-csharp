@@ -88,11 +88,14 @@ const validCases = [
   // Invalid function call with meta type (class component)
   'class A { static propTypes = { b: someFunc() }; static propTypesMeta = { b: "exclude" }; }',
 
-  // Valid meta type Array()
-  'A.propTypesMeta = { b: Array(B) };',
+  // Valid meta type component reference
+  'A.propTypesMeta = { b: B };',
 
-  // Valid meta type Array() (class component)
-  'class A { static propTypesMeta = { b: Array(B) }; }',
+  // Valid meta type array
+  'A.propTypesMeta = { b: [B] };',
+
+  // Valid meta type array (class component)
+  'class A { static propTypesMeta = { b: [B] }; }',
 
   // Valid meta type 'exclude'
   'A.propTypesMeta = { b: "exclude" };',
@@ -213,8 +216,14 @@ const invalidCases = [
   // Typos in string literals
   ['A.propTypesMeta = { b: "exclud" };', messages.badStringLiteral('exclud')],
 
-  // Bad function call
-  ['A.propTypesMeta = { b: Arr(B) };', messages.badFunctionCall()],
+  // Invalid meta (function)
+  ['A.propTypesMeta = { b: someFunc(B) };', messages.badMeta()],
+
+  // Invalid meta in array
+  [
+    'A.propTypesMeta = { b: ["abcdefg"] };',
+    messages.badStringLiteral('abcdefg')
+  ],
 
   // Imported object in Object.keys
   [

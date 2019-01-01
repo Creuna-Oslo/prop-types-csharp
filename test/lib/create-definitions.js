@@ -1,6 +1,6 @@
 const test = require('ava');
 
-const createNewDefinitions = require('../../lib/transforms/create-definitions');
+const createNewDefinitions = require('../../lib/create-definitions');
 
 const template = (t, input, expected) => {
   const definitions = createNewDefinitions(input, 'Component');

@@ -1,3 +1,13 @@
+# 1.0.0
+
+[https://github.com/Creuna-Oslo/prop-types-csharp/pull/57]()
+
+- Breaking: `Array` in propTypesMeta is no longer supported. Use array literals instead.
+- Breaking: Node.js API now exports an object instead of a function.
+- Breaking: Node.js generator now returns `className` instead of `componentName`.
+- Adds support for `parser` option in Node.js API and Webpack plugin.
+- Adds typescript parser.
+
 # 0.6.5
 
 - Fixes [issue 54](https://github.com/Creuna-Oslo/prop-types-csharp/issues/54): incorrect C# generated from nested `PropTypes.shape` in `PropTypes.arrayOf`
