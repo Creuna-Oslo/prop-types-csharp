@@ -9,11 +9,11 @@ const rootPath = path.resolve(__dirname, '..', '..', '..');
 const fixturesPath = path.join(rootPath, 'fixtures', 'typescript');
 
 const componentContent = fs.readFileSync(
-  path.join(fixturesPath, 'component.tsx'),
+  path.join(fixturesPath, 'class-component.tsx'),
   'utf8'
 );
 const classContent = fs.readFileSync(
-  path.join(fixturesPath, 'classes', 'component.cs'),
+  path.join(fixturesPath, 'classes', 'class-component.cs'),
   'utf8'
 );
 

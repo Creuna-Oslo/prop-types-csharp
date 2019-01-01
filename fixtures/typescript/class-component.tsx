@@ -10,7 +10,7 @@ enum EnumObject {
   ValueB = 'value-b'
 }
 
-type ComponentProps = {
+type ClassComponentProps = {
   text: string;
   isSomething?: boolean;
   number?: number;
@@ -48,10 +48,10 @@ type ComponentProps = {
   shapeExclude?: { a: string };
 };
 
-class Component extends React.Component<ComponentProps> {
+class ClassComponent extends React.Component<ClassComponentProps> {
   static propTypes = {};
 
-  static propTypesMeta: PropTypesMeta<ComponentProps> = {
+  static propTypesMeta: PropTypesMeta<ClassComponentProps> = {
     intNumber: 'int',
     floatNumber: 'float',
     excludeMe: 'exclude',
@@ -74,4 +74,4 @@ class Component extends React.Component<ComponentProps> {
   }
 }
 
-export default Component;
+export default ClassComponent;

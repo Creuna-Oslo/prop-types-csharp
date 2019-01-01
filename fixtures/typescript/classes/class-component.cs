@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
-public class ComponentProps
+public class ClassComponentProps
 {
   [Required]
   public string Text { get; set; }
@@ -11,56 +11,56 @@ public class ComponentProps
   public int IntNumber { get; set; }
   public float FloatNumber { get; set; }
   public IList<string> Texts { get; set; }
-  public ComponentProps_SingleObject SingleObject { get; set; }
+  public ClassComponentProps_SingleObject SingleObject { get; set; }
   [Required]
-  public IList<ComponentProps_ObjectsItem> Objects { get; set; }
+  public IList<ClassComponentProps_ObjectsItem> Objects { get; set; }
   [Required]
   public IList<Link> ObjectArray { get; set; }
   public IList<IList<IList<string>>> NestedList { get; set; }
-  public ComponentProps_NestedExclude NestedExclude { get; set; }
+  public ClassComponentProps_NestedExclude NestedExclude { get; set; }
   public IList<IList<IList<float>>> NestedNumber { get; set; }
-  public ComponentProps_NestedShape NestedShape { get; set; }
+  public ClassComponentProps_NestedShape NestedShape { get; set; }
   public Link Link { get; set; }
   public IList<Link> LinkList { get; set; }
   public Link LinkMeta { get; set; }
   public IList<Link> LinkListMeta { get; set; }
   [Required]
-  public ComponentProps_RequiredEnum RequiredEnum { get; set; }
-  public ComponentProps_OptionalEnum OptionalEnum { get; set; }
+  public ClassComponentProps_RequiredEnum RequiredEnum { get; set; }
+  public ClassComponentProps_OptionalEnum OptionalEnum { get; set; }
 }
 
-public class ComponentProps_SingleObject 
+public class ClassComponentProps_SingleObject 
 {
   [Required]
   public string PropertyA { get; set; }
 }
 
-public class ComponentProps_ObjectsItem 
+public class ClassComponentProps_ObjectsItem 
 {
   [Required]
   public string PropertyB { get; set; }
 }
 
-public class ComponentProps_NestedExclude
+public class ClassComponentProps_NestedExclude
 {
 }
 
-public class ComponentProps_NestedShape
+public class ClassComponentProps_NestedShape
 {
-  public ComponentProps_NestedShape_A A { get; set; }
+  public ClassComponentProps_NestedShape_A A { get; set; }
 }
 
-public class ComponentProps_NestedShape_A
+public class ClassComponentProps_NestedShape_A
 {
-  public ComponentProps_NestedShape_A_B B { get; set; }
+  public ClassComponentProps_NestedShape_A_B B { get; set; }
 }
 
-public class ComponentProps_NestedShape_A_B
+public class ClassComponentProps_NestedShape_A_B
 {
   public float C { get; set; }
 }
 
-public enum ComponentProps_RequiredEnum
+public enum ClassComponentProps_RequiredEnum
 {
   [EnumMember(Value = "value-a")]
   ValueA = 0,
@@ -68,7 +68,7 @@ public enum ComponentProps_RequiredEnum
   ValueB = 1,
 }
 
-public enum ComponentProps_OptionalEnum
+public enum ClassComponentProps_OptionalEnum
 {
   [EnumMember(Value = "")]
   None = 0,
