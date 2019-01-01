@@ -35,3 +35,7 @@ export type PropTypesMeta<Props> = Props extends string
           : PropTypesMeta<Props[P]> | 'exclude'
         : MetaTypeArray<Props[P]>
     };
+
+export type WithPropTypesMeta<T, U = { (props: T): any }> = U & {
+  propTypesMeta: PropTypesMeta<T>;
+};
