@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unused-prop-types */
 /* eslint-disable react/prefer-stateless-function */
-import React from 'react';
+import * as React from 'react';
 import { PropTypesMeta } from '../../prop-types-meta';
 
 import { Link } from './link';
