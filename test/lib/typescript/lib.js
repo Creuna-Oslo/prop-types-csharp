@@ -1,21 +1,11 @@
-const fs = require('fs');
 const test = require('ava');
-const path = require('path');
 
 const { generate, parsers } = require('../../../index');
 const normalize = require('../../utils/_normalize-string');
-
-const rootPath = path.resolve(__dirname, '..', '..', '..');
-const fixturesPath = path.join(rootPath, 'fixtures', 'typescript');
-
-const componentContent = fs.readFileSync(
-  path.join(fixturesPath, 'class-component.tsx'),
-  'utf8'
-);
-const classContent = fs.readFileSync(
-  path.join(fixturesPath, 'classes', 'class-component.cs'),
-  'utf8'
-);
+const {
+  components,
+  classes
+} = require('../../../fixtures/typescript/source-code');
 
 const template = (t, sourceCode, expected, options) => {
   const transformedSource = generate(
@@ -28,7 +18,19 @@ const csharpImports = `using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;`;
 
-test('Fixture component', template, componentContent, classContent);
+test(
+  'Class component',
+  template,
+  components.classComponent,
+  classes.classComponent
+);
+
+test(
+  'Functional component',
+  template,
+  components.funcComponent,
+  classes.funcComponent
+);
 
 test(
   'Empty component',
