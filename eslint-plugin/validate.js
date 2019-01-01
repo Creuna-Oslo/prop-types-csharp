@@ -78,6 +78,9 @@ module.exports = ({
       matchNode(
         node,
         {
+          // NOTE: Although empty the 'Identifier' and 'ObjectExpression' matchers ensure that these types are considered valid
+          Identifier: () => {},
+          ObjectExpression: () => {},
           Literal: () => {
             if (!allowedMetaTypes[node.value]) {
               context.report({
@@ -94,8 +97,7 @@ module.exports = ({
                 message: messages.badStringLiteral(element.value)
               });
             }
-          },
-          ObjectExpression: () => {}
+          }
         },
         onNoMatch
       );

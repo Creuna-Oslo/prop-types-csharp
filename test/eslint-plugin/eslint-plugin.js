@@ -88,6 +88,9 @@ const validCases = [
   // Invalid function call with meta type (class component)
   'class A { static propTypes = { b: someFunc() }; static propTypesMeta = { b: "exclude" }; }',
 
+  // Valid meta type component reference
+  'A.propTypesMeta = { b: B };',
+
   // Valid meta type array
   'A.propTypesMeta = { b: [B] };',
 
