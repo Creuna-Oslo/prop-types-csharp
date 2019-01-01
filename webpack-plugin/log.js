@@ -20,13 +20,13 @@ const log = (options, isAsync, compilation, { classes, duration, error }) => {
   if (!classes || !duration) return;
 
   const numberOfClasses = classes
-    .map(({ error, code, componentName }) => {
+    .map(({ error, code, className }) => {
       if (error) {
         errorLogger(error);
         return false;
       }
 
-      return !!code && !!componentName;
+      return !!code && !!className;
     })
     .reduce((accum, didGenerate) => accum + (didGenerate ? 1 : 0), 0);
 
