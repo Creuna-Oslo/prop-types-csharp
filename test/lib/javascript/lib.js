@@ -190,3 +190,17 @@ test(
     public double? F { get; set; }
   }`
 );
+
+test(
+  'PropTypes.exact with component reference',
+  template,
+  `import Link from '../link';
+  const Component = () => {};
+  Component.propTypes = { a: PropTypes.exact(Link.propTypes) };
+  export default Component;`,
+  `${csharpImports}
+  public class Component
+  {
+    public Link A { get; set; }
+  }`
+);

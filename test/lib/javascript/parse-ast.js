@@ -172,6 +172,18 @@ test(
 );
 
 test(
+  'Exact with component reference',
+  template,
+  `Component.propTypes = { a: exact(OtherComponent.propTypes) }`,
+  {},
+  {
+    a: {
+      type: 'OtherComponent'
+    }
+  }
+);
+
+test(
   'arrayOf string',
   template,
   `Component.propTypes = { a: arrayOf(string) }`,

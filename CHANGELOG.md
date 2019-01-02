@@ -1,3 +1,7 @@
+# 1.0.1
+
+- Fixes component references in `PropTypes.exact` not working
+
 # 1.0.0
 
 [https://github.com/Creuna-Oslo/prop-types-csharp/pull/57]()
