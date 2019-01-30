@@ -43,7 +43,7 @@
     "@babel/traverse": "^7.1.0",
     "@babel/types": "^7.1.2",
     "fs-extra": "^7.0.1",
-    "kompis": "^0.1.2",
+    "kompis": "^0.2.0",
     "lodash": "^4.17.11"
   },
   "devDependencies": {
