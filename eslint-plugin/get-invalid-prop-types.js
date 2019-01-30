@@ -1,4 +1,4 @@
-const get = require('lodash/get');
+const { get } = require('kompis');
 const t = require('@babel/types');
 
 const messages = require('./messages');
@@ -10,7 +10,7 @@ const illegalTypes = {
 };
 
 const getInvalidPropTypes = (objectExpression, scope) => {
-  const childScope = get(scope, 'childScopes[0]', {});
+  const childScope = get('childScopes[0]', {})(scope);
   const variablesInScope = childScope.type === 'module' && childScope.variables;
 
   if (!objectExpression || !objectExpression.properties) {
