@@ -4527,10 +4527,10 @@ kind-of@^6.0.0, kind-of@^6.0.2:
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.2.tgz#01146b36a6218e64e58f3a8d66de5d7fc6f6d051"
   integrity sha512-s5kLOcnH0XqDO+FvuaLX8DDjZ18CGFk7VygH40QoKPUQhW4e2rvM0rwUq0t8IQDOwYSeLK01U90OjzBTme2QqA==
 
-kompis@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/kompis/-/kompis-0.3.0.tgz#6f2851e75fb89920dda537c648012ba8a01b5c38"
-  integrity sha512-Uh4WKp6lL4BlYmcw1jfqm/O3XnF0M+vqyUA9j/SqpZABRBg5IFuOy0Y04u4gqLn6+renGTdstnFOgQ8tiIkC5A==
+kompis@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/kompis/-/kompis-0.3.1.tgz#0cc8434a9f61c2b768e318aa9295a9a8afb840c9"
+  integrity sha512-E1ZyxqbEEC8F/wY2OEDixI4AQ0dsHEy0GvlpoURrqYbbdZ4ssQgxj7m1TjMNAiA0qzSgU8HAXhHapGNgZlt/AQ==
 
 last-line-stream@^1.0.0:
   version "1.0.0"
