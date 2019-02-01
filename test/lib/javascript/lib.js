@@ -204,3 +204,22 @@ test(
     public Link A { get; set; }
   }`
 );
+
+test(
+  'Nested shape',
+  template,
+  `import Link from '../link';
+  const Component = () => {};
+  Component.propTypes = { a: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.shape({ b: PropTypes.string }))) };
+  export default Component;`,
+  `${csharpImports}
+  public class Component
+  {
+    public IList<IList<Component_A>> A { get; set; }
+  }
+  
+  public class Component_A
+  {
+    public string B { get; set; }
+  }`
+);
