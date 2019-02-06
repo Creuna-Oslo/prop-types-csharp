@@ -1,6 +1,7 @@
 const { get } = require('kompis');
 const t = require('@babel/types');
 
+const isObjectMethod = require('../lib/parse/javascript/is-object-method');
 const messages = require('./messages');
 
 const illegalTypes = {
@@ -89,8 +90,7 @@ const getInvalidPropTypes = (objectExpression, scope) => {
       // Check references to objects in Object.keys and Object.values
       if (
         t.isCallExpression(argument) &&
-        t.isMemberExpression(argument.callee) &&
-        argument.callee.object.name === 'Object' &&
+        isObjectMethod(argument) &&
         ['keys', 'values'].includes(argument.callee.property.name)
       ) {
         const [objectMethodArgument] = argument.arguments;
