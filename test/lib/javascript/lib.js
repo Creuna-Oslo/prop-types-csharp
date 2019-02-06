@@ -204,3 +204,12 @@ test(
     public Link A { get; set; }
   }`
 );
+
+test(
+  'Without propTypes literal and with exclude meta',
+  template,
+  `const Component = () => {};
+  Component.propTypesMeta = "exclude";
+  export default Component;`,
+  undefined
+);
