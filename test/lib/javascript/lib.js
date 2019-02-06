@@ -206,19 +206,28 @@ test(
 );
 
 test(
+  'Without propTypes literal and with exclude meta',
+  template,
+  `const Component = () => {};
+  Component.propTypesMeta = "exclude";
+  export default Component;`,
+  undefined
+);
+
+test(
   'Nested shape',
   template,
   `import Link from '../link';
   const Component = () => {};
-  Component.propTypes = { a: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.shape({ b: PropTypes.string }))) };
+  Component.propTypes = { a: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.shape({ b: PropTypes.string })))) };
   export default Component;`,
   `${csharpImports}
   public class Component
   {
-    public IList<IList<Component_A>> A { get; set; }
+    public IList<IList<IList<Component_AItem>>> A { get; set; }
   }
   
-  public class Component_A
+  public class Component_AItem
   {
     public string B { get; set; }
   }`

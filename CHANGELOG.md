@@ -1,3 +1,11 @@
+# 1.0.3
+
+- Fixes `shape` and `oneOf` in deeply nested `arrayOf` not working
+
+# 1.0.2
+
+- Fixes issue where `Component.propTypesMeta = "exclude";` would be ignored for components with multiple exports or missing propTypes.
+
 # 1.0.1
 
 - Fixes component references in `PropTypes.exact` not working
