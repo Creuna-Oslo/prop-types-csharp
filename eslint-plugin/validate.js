@@ -2,6 +2,7 @@ const t = require('@babel/types');
 
 const allowedMetaTypes = require('../lib/meta-types');
 const getInvalidPropTypes = require('./get-invalid-prop-types');
+const isEquivalent = require('../lib/utils/is-equivalent-string');
 const matchNode = require('../lib/utils/match-node');
 const messages = require('./messages');
 
@@ -37,7 +38,7 @@ module.exports = ({
   } else {
     const componentName = exportDeclarations[0].name;
     propNames.forEach(prop => {
-      if (prop.name.toLowerCase() === componentName.toLowerCase()) {
+      if (isEquivalent(prop.name)(componentName)) {
         context.report({
           node: prop,
           message: messages.propNameCollision()
