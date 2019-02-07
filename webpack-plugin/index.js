@@ -5,7 +5,7 @@ const path = require('path');
 
 const filterPaths = require('./filter-paths');
 const generateClasses = require('./generate-classes');
-const log = require('./log');
+const { log, logError } = require('./log');
 
 function PropTypesCSharpPlugin(options) {
   this.options = Object.assign(
@@ -22,6 +22,9 @@ function PropTypesCSharpPlugin(options) {
     options
   );
 }
+
+const badArrayOption = key =>
+  `Bad configuration: options.${key} is not an array`;
 
 // This function defines a lot of things before actually calling them.
 // Reading this from the bottom is probably the easiest.
@@ -44,17 +47,14 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
       return;
     }
 
-    if (!Array.isArray(this.options.exclude)) {
-      log(this.options, isAsync, compilation, {
-        error: 'Bad configuration: options.exclude is not an array'
-      });
+    const assertArray = (arr, message) =>
+      Array.isArray(arr) || logError(isAsync, compilation, message);
+
+    if (!assertArray(this.options.exclude, badArrayOption('exclude'))) {
       return;
     }
 
-    if (!Array.isArray(this.options.match)) {
-      log(this.options, isAsync, compilation, {
-        error: 'Bad configuration: options.match is not an array'
-      });
+    if (!assertArray(this.options.match, badArrayOption('match'))) {
       return;
     }
 
@@ -77,17 +77,13 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
 
     if (!isAsync) {
       const result = generateClasses({ modulePaths, options });
-      const { classes, error } = result;
 
-      if (!error) {
-        classes.forEach(({ code, className }) => {
+      if (!result.error) {
+        result.classes.forEach(({ code, className }) => {
           if (code && className) {
-            compilation.assets[
-              path.join(this.outputPath, `${className}.cs`)
-            ] = {
-              source: () => code,
-              size: () => code.length
-            };
+            const filePath = path.join(this.outputPath, `${className}.cs`);
+            const asset = { source: () => code, size: () => code.length };
+            compilation.assets[filePath] = asset;
           }
         });
       }
@@ -102,15 +98,13 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
   // Attach async class generation
   if (isAsync) {
     generateClassesAsync.on('message', result => {
-      const { classes, error } = result;
-
       if (!this.compilation) {
         return;
       }
 
       // Write files to disk since webpack dev server doesn't do so
-      if (!error) {
-        classes.forEach(({ code, className }) => {
+      if (!result.error) {
+        result.classes.forEach(({ code, className }) => {
           if (code && className) {
             const basePath = path.join(compiler.outputPath, this.outputPath);
             fsExtra.ensureDirSync(basePath);
