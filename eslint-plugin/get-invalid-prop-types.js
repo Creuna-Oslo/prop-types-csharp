@@ -10,9 +10,17 @@ const illegalTypes = {
   oneOfType: messages.oneOfType()
 };
 
+const makeHasLiteral = variablesInScope => (node, babelValidator) =>
+  variablesInScope.some(
+    variable =>
+      variable.name === node.name &&
+      babelValidator(variable.references[0].writeExpr)
+  );
+
 const getInvalidPropTypes = (objectExpression, scope) => {
   const childScope = get('childScopes[0]', {})(scope);
   const variablesInScope = childScope.type === 'module' && childScope.variables;
+  const hasLiteral = makeHasLiteral(variablesInScope);
 
   if (!objectExpression || !objectExpression.properties) {
     return {};
@@ -73,13 +81,7 @@ const getInvalidPropTypes = (objectExpression, scope) => {
 
       // Check references to arrays
       if (t.isIdentifier(argument)) {
-        const hasLiteral = variablesInScope.some(
-          variable =>
-            variable.name === argument.name &&
-            t.isArrayExpression(variable.references[0].writeExpr)
-        );
-
-        if (!hasLiteral) {
+        if (!hasLiteral(argument, t.isArrayExpression)) {
           accum[key] = {
             node: argument,
             message: messages.importedArrayReference()
@@ -96,13 +98,7 @@ const getInvalidPropTypes = (objectExpression, scope) => {
         const [objectMethodArgument] = argument.arguments;
 
         if (objectMethodArgument) {
-          const hasLiteral = variablesInScope.some(
-            variable =>
-              variable.name === objectMethodArgument.name &&
-              t.isObjectExpression(variable.references[0].writeExpr)
-          );
-
-          if (!hasLiteral) {
+          if (!hasLiteral(objectMethodArgument, t.isObjectExpression)) {
             accum[key] = {
               node: objectMethodArgument,
               message: messages.importedObjectReference()
