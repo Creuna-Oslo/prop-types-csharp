@@ -10,20 +10,20 @@ test(
   "Converts 'exact' to 'shape'",
   template,
   {
-    a: { type: 'exact', argument: {} }
+    a: { type: 'exact', children: {} }
   },
   {},
-  { a: { type: 'shape', argument: {} } }
+  { a: { type: 'shape', children: {} } }
 );
 
 test(
   "Converts 'exact' to 'shape' in 'arrayOf'",
   template,
   {
-    a: { type: 'arrayOf', argument: { type: 'exact', argument: {} } }
+    a: { type: 'arrayOf', children: { type: 'exact', children: {} } }
   },
   {},
-  { a: { type: 'arrayOf', argument: { type: 'shape', argument: {} } } }
+  { a: { type: 'arrayOf', children: { type: 'shape', children: {} } } }
 );
 
 test(
@@ -43,8 +43,8 @@ test(
   'Removes client-only props in arrayOf',
   template,
   {
-    a: { type: 'arrayOf', argument: { type: 'node' } },
-    b: { type: 'arrayOf', argument: { type: 'func' } }
+    a: { type: 'arrayOf', children: { type: 'node' } },
+    b: { type: 'arrayOf', children: { type: 'func' } }
   },
   {},
   {}
@@ -61,9 +61,9 @@ test(
 test(
   'Removes excluded props with nesting',
   template,
-  { a: { type: 'shape', argument: { b: { type: 'object' } } } },
-  { a: { type: 'shape', argument: { b: { type: 'exclude' } } } },
-  { a: { type: 'shape', argument: {} } }
+  { a: { type: 'shape', children: { b: { type: 'object' } } } },
+  { a: { type: 'shape', children: { b: { type: 'exclude' } } } },
+  { a: { type: 'shape', children: {} } }
 );
 
 test(
@@ -79,12 +79,12 @@ test(
   template,
   {
     a: { type: 'number' },
-    b: { type: 'shape', argument: { c: { type: 'number' } } }
+    b: { type: 'shape', children: { c: { type: 'number' } } }
   },
   {},
   {
     a: { type: 'int' },
-    b: { type: 'shape', argument: { c: { type: 'int' } } }
+    b: { type: 'shape', children: { c: { type: 'int' } } }
   }
 );
 
@@ -99,17 +99,17 @@ test(
 test(
   'Replaces nested meta types',
   template,
-  { a: { type: 'shape', argument: { b: { type: 'object' } } } },
-  { a: { type: 'shape', argument: { b: { type: 'Link' } } } },
-  { a: { type: 'shape', argument: { b: { type: 'Link' } } } }
+  { a: { type: 'shape', children: { b: { type: 'object' } } } },
+  { a: { type: 'shape', children: { b: { type: 'Link' } } } },
+  { a: { type: 'shape', children: { b: { type: 'Link' } } } }
 );
 
 test(
   'Array meta',
   template,
   { a: { type: 'array' } },
-  { a: { type: 'arrayOf', argument: { type: 'Link' } } },
-  { a: { type: 'arrayOf', argument: { type: 'Link' } } }
+  { a: { type: 'arrayOf', children: { type: 'Link' } } },
+  { a: { type: 'arrayOf', children: { type: 'Link' } } }
 );
 
 test(
@@ -118,27 +118,27 @@ test(
   {
     a: {
       type: 'arrayOf',
-      argument: {
+      children: {
         type: 'shape',
-        argument: { b: { type: 'number' }, c: { type: 'string' } }
+        children: { b: { type: 'number' }, c: { type: 'string' } }
       }
     }
   },
   {
     a: {
       type: 'arrayOf',
-      argument: {
+      children: {
         type: 'shape',
-        argument: { b: { type: 'float' } }
+        children: { b: { type: 'float' } }
       }
     }
   },
   {
     a: {
       type: 'arrayOf',
-      argument: {
+      children: {
         type: 'shape',
-        argument: { b: { type: 'float' }, c: { type: 'string' } }
+        children: { b: { type: 'float' }, c: { type: 'string' } }
       }
     }
   }

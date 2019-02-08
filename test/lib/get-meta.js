@@ -67,7 +67,7 @@ test(
 );
 
 test('Nested', template, 'C.propTypesMeta = { a: { b: "exclude" } };', {
-  a: { type: 'shape', argument: { b: { type: 'exclude' } } }
+  a: { type: 'shape', children: { b: { type: 'exclude' } } }
 });
 
 test('No meta', template, 'const C = () => <div />;', {});
@@ -92,7 +92,7 @@ test(
   'Transforms Array',
   template,
   'C.propTypesMeta = { a: [SomeComponent] };',
-  { a: { type: 'arrayOf', argument: { type: 'SomeComponent' } } }
+  { a: { type: 'arrayOf', children: { type: 'SomeComponent' } } }
 );
 
 test(
@@ -102,7 +102,7 @@ test(
   {
     a: {
       type: 'arrayOf',
-      argument: { type: 'shape', argument: { b: { type: 'float' } } }
+      children: { type: 'shape', children: { b: { type: 'float' } } }
     }
   }
 );

@@ -48,7 +48,7 @@ test(
   template,
   `Component.propTypes = { a: oneOf([1,2]) }`,
   {},
-  { a: { type: 'oneOf', argument: [1, 2] } }
+  { a: { type: 'oneOf', children: [1, 2] } }
 );
 
 test(
@@ -56,7 +56,7 @@ test(
   template,
   `Component.propTypes = { a: oneOf(['a','b']) }`,
   {},
-  { a: { type: 'oneOf', argument: ['a', 'b'] } }
+  { a: { type: 'oneOf', children: ['a', 'b'] } }
 );
 
 test(
@@ -64,7 +64,7 @@ test(
   template,
   `Component.propTypes = { a: oneOf(Object.keys({a:'b',c:'d'})) }`,
   {},
-  { a: { type: 'oneOf', argument: ['a', 'c'] } }
+  { a: { type: 'oneOf', children: ['a', 'c'] } }
 );
 
 test(
@@ -75,7 +75,7 @@ test(
   {
     a: {
       type: 'oneOf',
-      argument: [{ key: 'a', value: 'b' }, { key: 'c', value: 'd' }]
+      children: [{ key: 'a', value: 'b' }, { key: 'c', value: 'd' }]
     }
   }
 );
@@ -94,7 +94,7 @@ test(
   "Unsupported method 'Object.entries'."
 );
 
-test("Doesn't throw on Object method call without arguments", t => {
+test("Doesn't throw on Object method call without childrens", t => {
   const ast = parse(`Component.propTypes = { a: oneOf(Object.values()) };`);
 
   t.notThrows(() => {
@@ -122,7 +122,7 @@ test(
   template,
   `Component.propTypes = { a: oneOf([1]).isRequired }`,
   {},
-  { a: { type: 'oneOf', argument: [1], isRequired: true } }
+  { a: { type: 'oneOf', children: [1], isRequired: true } }
 );
 
 test(
@@ -141,7 +141,7 @@ test(
   {
     a: {
       type: 'shape',
-      argument: { b: { type: 'shape', argument: { c: { type: 'string' } } } }
+      children: { b: { type: 'shape', children: { c: { type: 'string' } } } }
     }
   }
 );
@@ -154,7 +154,7 @@ test(
   {
     a: {
       type: 'exact',
-      argument: { b: { type: 'exact', argument: { c: { type: 'string' } } } }
+      children: { b: { type: 'exact', children: { c: { type: 'string' } } } }
     }
   }
 );
@@ -191,7 +191,7 @@ test(
   {
     a: {
       type: 'arrayOf',
-      argument: { type: 'string' }
+      children: { type: 'string' }
     }
   }
 );
@@ -204,7 +204,7 @@ test(
   {
     a: {
       type: 'arrayOf',
-      argument: { type: 'shape', argument: { b: { type: 'string' } } }
+      children: { type: 'shape', children: { b: { type: 'string' } } }
     }
   }
 );
@@ -256,6 +256,6 @@ test(
   `Component.propTypes = { type: (shape({ b: type })) }`,
   {},
   {
-    type: { type: 'shape', argument: { b: { type: 'type' } } }
+    type: { type: 'shape', children: { b: { type: 'type' } } }
   }
 );

@@ -5,7 +5,7 @@ const nestedArrayString = require('../../../lib/stringify/lang/csharp/nested-arr
 test('With external class', t => {
   const arrayString = nestedArrayString({
     type: 'arrayOf',
-    argument: { type: 'arrayOf', argument: { type: 'Link' } }
+    children: { type: 'arrayOf', children: { type: 'Link' } }
   });
 
   t.is('IList<IList<Link>>', arrayString);
@@ -15,9 +15,9 @@ test('With reference to class defined in the current file', t => {
   const arrayString = nestedArrayString(
     {
       type: 'arrayOf',
-      argument: {
+      children: {
         type: 'arrayOf',
-        argument: { type: 'someProp', hasClassDefinition: true }
+        children: { type: 'someProp', hasClassDefinition: true }
       }
     },
     { name: 'Component' }
