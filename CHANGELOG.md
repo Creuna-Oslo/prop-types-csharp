@@ -1,3 +1,7 @@
+# 1.0.4
+
+- Refactor
+
 # 1.0.3
 
 - Fixes `shape` and `oneOf` in deeply nested `arrayOf` not working
