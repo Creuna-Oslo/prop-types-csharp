@@ -111,28 +111,28 @@ test(
   'Throws on misspelled string',
   throwsTemplate,
   'C.propTypesMeta = { a: "exclud" };',
-  "Invalid meta type 'exclud' for 'a'. Expected one of [exclude,double,double?,float,float?,int,int?]"
+  "Invalid meta type for 'a': expected one of [exclude,double,double?,float,float?,int,int?] but got 'exclud'"
 );
 
 test(
   'Throws on function',
   throwsTemplate,
   'C.propTypesMeta = { a: Object.keys(obj) };',
-  "Unsupported meta type for 'a'"
+  "Invalid meta type for 'a': unsupported type"
 );
 
 test(
   'Throws on empty Array',
   throwsTemplate,
   'C.propTypesMeta = { a: [] };',
-  "Missing value in meta type for 'a'"
+  "Invalid meta type for 'a': missing value"
 );
 
 test(
   'Throws on invalid array element',
   throwsTemplate,
   'C.propTypesMeta = { a: [Component.propTypes] };',
-  "Unsupported meta type for 'a'"
+  "Invalid meta type for 'a': unsupported type"
 );
 
 const unsupportedTypes = ['null', 'false', 'true', 'Array()'];
@@ -144,6 +144,6 @@ test('Throws on unsupported meta types', t => {
       getMeta({ syntaxTree });
     });
 
-    t.is("Unsupported meta type for 'a'", error.message);
+    t.is(error.message, "Invalid meta type for 'a': unsupported type");
   });
 });

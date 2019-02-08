@@ -1,3 +1,4 @@
+const { get, isString, map, Pipe } = require('kompis');
 const t = require('@babel/types');
 
 const validate = require('./validate');
@@ -5,19 +6,16 @@ const validate = require('./validate');
 const getPropTypesMeta = node => {
   if (!node) return {};
   // Manual type check for string because ESTree has no concept of StringLiteral:
-  if (t.isLiteral(node) && typeof node.value === 'string') return node;
+  if (t.isLiteral(node) && isString(node.value)) return node;
   if (!node.properties) return {};
 
   return node.properties.reduce(
-    (accum, property) =>
-      Object.assign(accum, { [property.key.name]: property.value }),
+    (accum, property) => ({ ...accum, [property.key.name]: property.value }),
     {}
   );
 };
 
-const getPropNames = objectExpression => {
-  return objectExpression.properties.map(property => property.key);
-};
+const getPropNames = Pipe(get('properties'), map(get('key')));
 
 module.exports = {
   rules: {
@@ -49,7 +47,7 @@ module.exports = {
           },
           ExportNamedDeclaration: node => {
             exportDeclarations = exportDeclarations.concat(
-              node.specifiers.map(specifier => specifier.exported)
+              node.specifiers.map(get('exported'))
             );
           },
           ClassProperty: node => {

@@ -16,6 +16,7 @@
   ],
   "license": "MIT",
   "scripts": {
+    "dev": "ava ./test/lib --watch",
     "build": "webpack --config=fixtures/javascript/webpack.config --mode=production",
     "lint": "eslint lib eslint-plugin babel-plugin webpack-plugin test",
     "test": "nyc --reporter=html --reporter=text ava --verbose",
@@ -42,7 +43,7 @@
     "@babel/traverse": "^7.1.0",
     "@babel/types": "^7.1.2",
     "fs-extra": "^7.0.1",
-    "lodash": "^4.17.11"
+    "kompis": "^0.3.3"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",

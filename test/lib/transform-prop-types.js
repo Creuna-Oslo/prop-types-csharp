@@ -155,7 +155,7 @@ test(
   'Throws on array',
   throwsTemplate,
   { a: { type: 'array' } },
-  `Invalid type 'array' for prop 'a'.
+  `Invalid type for prop 'a' ('array').
 Replace with 'PropTypes.arrayOf' or provide a meta type`
 );
 
@@ -163,7 +163,7 @@ test(
   'Throws on object',
   throwsTemplate,
   { a: { type: 'object' } },
-  `Invalid type 'object' for prop 'a'.
+  `Invalid type for prop 'a' ('object').
 Replace with 'PropTypes.shape' or provide a meta type`
 );
 
@@ -171,7 +171,7 @@ test(
   'Throws on oneOfType',
   throwsTemplate,
   { a: { type: 'oneOfType' } },
-  `Invalid type 'oneOfType' for prop 'a'.
+  `Invalid type for prop 'a' ('oneOfType').
 'PropTypes.oneOfType' is not yet supported`
 );
 

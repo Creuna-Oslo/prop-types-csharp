@@ -48,4 +48,6 @@ test(
   ['\\\\root\\\\one\\\\one.jsx']
 );
 
+test('Empty path', template, [undefined], matchPatterns, excludePatterns, []);
+
 test('Without arguments', template, undefined, undefined, undefined, []);

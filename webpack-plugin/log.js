@@ -19,16 +19,13 @@ const log = (options, isAsync, compilation, { classes, duration, error }) => {
 
   if (!classes || !duration) return;
 
-  const numberOfClasses = classes
-    .map(({ error, code, className }) => {
-      if (error) {
-        errorLogger(error);
-        return false;
-      }
+  classes.forEach(({ error }) => error && errorLogger(error));
 
-      return !!code && !!className;
-    })
-    .reduce((accum, didGenerate) => accum + (didGenerate ? 1 : 0), 0);
+  const numberOfClasses = classes.reduce(
+    (accum, { error, code, className }) =>
+      accum + (!error && !!code && !!className ? 1 : 0),
+    0
+  );
 
   if (options.log) {
     process.stdout.write(
@@ -37,4 +34,4 @@ const log = (options, isAsync, compilation, { classes, duration, error }) => {
   }
 };
 
-module.exports = log;
+module.exports = { log, logError };

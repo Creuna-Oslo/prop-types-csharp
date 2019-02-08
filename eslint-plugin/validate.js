@@ -1,9 +1,12 @@
+const { match, noop, otherwise } = require('kompis');
 const t = require('@babel/types');
 
 const allowedMetaTypes = require('../lib/meta-types');
 const getInvalidPropTypes = require('./get-invalid-prop-types');
-const matchNode = require('../lib/utils/match-node');
+const isEquivalent = require('../lib/utils/is-equivalent-string');
 const messages = require('./messages');
+
+const isAllowed = string => allowedMetaTypes[string];
 
 module.exports = ({
   bodyNode,
@@ -13,35 +16,25 @@ module.exports = ({
   propTypes,
   propNames
 }) => {
+  const report = (node, message) => context.report({ node, message });
+
   if (t.isLiteral(metaTypes, { value: 'exclude' })) return;
 
   if (t.isLiteral(metaTypes)) {
-    context.report({
-      node: metaTypes,
-      message: messages.badExclude(metaTypes.value)
-    });
+    report(metaTypes, messages.badExclude(metaTypes.value));
   }
 
   if (exportDeclarations.length > 1) {
     exportDeclarations.forEach(declaration => {
-      context.report({
-        node: declaration,
-        message: messages.tooManyExports()
-      });
+      report(declaration, messages.tooManyExports());
     });
   } else if (!exportDeclarations.length) {
-    context.report({
-      node: bodyNode,
-      message: messages.noExport()
-    });
+    report(bodyNode, messages.noExport());
   } else {
     const componentName = exportDeclarations[0].name;
     propNames.forEach(prop => {
-      if (prop.name.toLowerCase() === componentName.toLowerCase()) {
-        context.report({
-          node: prop,
-          message: messages.propNameCollision()
-        });
+      if (isEquivalent(prop.name)(componentName)) {
+        report(prop, messages.propNameCollision());
       }
     });
   }
@@ -59,7 +52,7 @@ module.exports = ({
             return;
           }
 
-          context.report({ node, message });
+          report(node, message);
         });
     };
 
@@ -68,39 +61,27 @@ module.exports = ({
 
   if (!t.isLiteral(metaTypes)) {
     Object.values(metaTypes).forEach(node => {
-      const onNoMatch = () => {
-        context.report({
-          node,
-          message: messages.badMeta()
-        });
+      const handleLiteral = () => {
+        if (!isAllowed(node.value)) {
+          report(node, messages.badStringLiteral(node.value));
+        }
       };
 
-      matchNode(
-        node,
-        {
-          // NOTE: Although empty the 'Identifier' and 'ObjectExpression' matchers ensure that these types are considered valid
-          Identifier: () => {},
-          ObjectExpression: () => {},
-          Literal: () => {
-            if (!allowedMetaTypes[node.value]) {
-              context.report({
-                node,
-                message: messages.badStringLiteral(node.value)
-              });
-            }
-          },
-          ArrayExpression: () => {
-            const [element] = node.elements;
-            if (t.isLiteral(element) && !allowedMetaTypes[element]) {
-              context.report({
-                node,
-                message: messages.badStringLiteral(element.value)
-              });
-            }
-          }
-        },
-        onNoMatch
-      );
+      const handleArray = () => {
+        const [element] = node.elements;
+        if (t.isLiteral(element) && !isAllowed(element)) {
+          report(node, messages.badStringLiteral(element.value));
+        }
+      };
+
+      // NOTE: Although using noop the 'Identifier' and 'ObjectExpression' matchers ensure that these types are considered valid
+      match(
+        [t.isIdentifier, noop],
+        [t.isObjectExpression, noop],
+        [t.isLiteral, handleLiteral],
+        [t.isArrayExpression, handleArray],
+        [otherwise, () => report(node, messages.badMeta())]
+      )(node);
     });
   }
 };

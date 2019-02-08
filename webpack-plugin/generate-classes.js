@@ -2,38 +2,28 @@ const fs = require('fs');
 
 const generateClass = require('../lib');
 
-const attemptGenerateClass = (modulePath, options) => {
+const attemptGenerateClass = options => modulePath => {
   try {
     const sourceCode = fs.readFileSync(modulePath, 'utf-8');
-    const { code, className } = generateClass(
-      Object.assign({}, options, { sourceCode })
-    );
-
-    return { code, className };
+    return generateClass({ ...options, sourceCode });
   } catch (error) {
-    return {
-      error: `\n${modulePath}\n${error.message}\n`
-    };
+    return { error: `\n${modulePath}\n${error.message}\n` };
   }
 };
 
 const generateClasses = ({ modulePaths, options }) => {
   const startTime = new Date().getTime();
-  const classes = modulePaths.map(modulePath =>
-    attemptGenerateClass(modulePath, options)
-  );
+  const classes = modulePaths.map(attemptGenerateClass(options));
   const duplicates = classes.reduce((accum, { className }, index) => {
-    if (className) {
-      const duplicateIndex = classes
-        .slice(index + 1)
-        .findIndex(c => c.className === className);
+    const indexOfDuplicate = classes
+      .slice(index + 1) // Ensures that the same pair of duplicates doesn't get reported twice
+      .findIndex(c => c.className === className);
 
-      if (duplicateIndex !== -1) {
-        return accum.concat(
-          `${className} (${modulePaths[index]})`,
-          `${className} (${modulePaths[duplicateIndex + 1]})`
-        );
-      }
+    if (className && indexOfDuplicate !== -1) {
+      return accum.concat(
+        `${className} (${modulePaths[index]})`,
+        `${className} (${modulePaths[indexOfDuplicate + 1]})`
+      );
     }
 
     return accum;
@@ -43,10 +33,7 @@ const generateClasses = ({ modulePaths, options }) => {
     classes,
     duration: new Date().getTime() - startTime,
     error: duplicates.length
-      ? `Found duplicate component names in:${duplicates.reduce(
-          (accum, path) => `${accum}\n${path}`,
-          ''
-        )}`
+      ? `Found duplicate component names in:\n${duplicates.join('\n')}`
       : null
   };
 };

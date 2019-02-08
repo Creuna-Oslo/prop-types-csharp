@@ -166,6 +166,6 @@ test.cb(
   './fixtures/javascript/app-error-component.js',
   `C# class generator plugin
 ${errorComponentPath}
-Invalid type 'object' for prop 'a'.
+Invalid type for prop 'a' ('object').
 Replace with 'PropTypes.shape' or provide a meta type`
 );

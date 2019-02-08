@@ -1,12 +1,14 @@
+const { not } = require('kompis');
+
 module.exports = function({ types: t }) {
+  const isPropTypesMeta = key => node =>
+    t.isIdentifier(node[key], { name: 'propTypesMeta' });
+
   return {
     visitor: {
       AssignmentExpression(path) {
-        const left = path.get('left');
-        if (
-          t.isMemberExpression(left) &&
-          left.get('property').isIdentifier({ name: 'propTypesMeta' })
-        ) {
+        const value = path.node.left;
+        if (t.isMemberExpression(value) && isPropTypesMeta('property')(value)) {
           path.remove();
         }
 
@@ -14,11 +16,8 @@ module.exports = function({ types: t }) {
       },
       ClassDeclaration(path) {
         // For some reason, with Babel >= 7, the 'ClassProperty' visitor isn't executed as it was in previous versions of Babel. This slightly less clean approach is needed for the plugin to work in v7 and greater.
-        const body = path.get('body');
-        const newBody = path.node.body.body.filter(
-          property => !t.isIdentifier(property.key, { name: 'propTypesMeta' })
-        );
-        body.replaceWith(t.classBody(newBody));
+        const newBody = path.node.body.body.filter(not(isPropTypesMeta('key')));
+        path.get('body').replaceWith(t.classBody(newBody));
       }
     }
   };

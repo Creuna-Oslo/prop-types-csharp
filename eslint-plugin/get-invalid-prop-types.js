@@ -1,6 +1,7 @@
-const get = require('lodash/get');
+const { get } = require('kompis');
 const t = require('@babel/types');
 
+const isObjectMethod = require('../lib/parse/javascript/is-object-method');
 const messages = require('./messages');
 
 const illegalTypes = {
@@ -9,9 +10,17 @@ const illegalTypes = {
   oneOfType: messages.oneOfType()
 };
 
+const makeHasLiteral = variablesInScope => (node, babelValidator) =>
+  variablesInScope.some(
+    variable =>
+      variable.name === node.name &&
+      babelValidator(variable.references[0].writeExpr)
+  );
+
 const getInvalidPropTypes = (objectExpression, scope) => {
-  const childScope = get(scope, 'childScopes[0]', {});
+  const childScope = get('childScopes[0]', {})(scope);
   const variablesInScope = childScope.type === 'module' && childScope.variables;
+  const hasLiteral = makeHasLiteral(variablesInScope);
 
   if (!objectExpression || !objectExpression.properties) {
     return {};
@@ -72,13 +81,7 @@ const getInvalidPropTypes = (objectExpression, scope) => {
 
       // Check references to arrays
       if (t.isIdentifier(argument)) {
-        const hasLiteral = variablesInScope.some(
-          variable =>
-            variable.name === argument.name &&
-            t.isArrayExpression(variable.references[0].writeExpr)
-        );
-
-        if (!hasLiteral) {
+        if (!hasLiteral(argument, t.isArrayExpression)) {
           accum[key] = {
             node: argument,
             message: messages.importedArrayReference()
@@ -89,20 +92,13 @@ const getInvalidPropTypes = (objectExpression, scope) => {
       // Check references to objects in Object.keys and Object.values
       if (
         t.isCallExpression(argument) &&
-        t.isMemberExpression(argument.callee) &&
-        argument.callee.object.name === 'Object' &&
+        isObjectMethod(argument) &&
         ['keys', 'values'].includes(argument.callee.property.name)
       ) {
         const [objectMethodArgument] = argument.arguments;
 
         if (objectMethodArgument) {
-          const hasLiteral = variablesInScope.some(
-            variable =>
-              variable.name === objectMethodArgument.name &&
-              t.isObjectExpression(variable.references[0].writeExpr)
-          );
-
-          if (!hasLiteral) {
+          if (!hasLiteral(objectMethodArgument, t.isObjectExpression)) {
             accum[key] = {
               node: objectMethodArgument,
               message: messages.importedObjectReference()
