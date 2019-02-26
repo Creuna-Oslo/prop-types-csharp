@@ -8,7 +8,7 @@ test('Functional component', t => {
   t.plan(3);
 
   const syntaxTree = parse('C.propTypes = { a: string };');
-  const { propTypesAST } = getPropTypes({ componentName: 'C', syntaxTree });
+  const propTypesAST = getPropTypes({ componentName: 'C', syntaxTree });
   const { left, right } = propTypesAST.expression;
   const [property] = right.properties;
 
@@ -23,7 +23,7 @@ test('Class component', t => {
   const syntaxTree = parse('class C { static propTypes = { a: string }; }', {
     plugins: ['classProperties']
   });
-  const { propTypesAST } = getPropTypes({ componentName: 'C', syntaxTree });
+  const propTypesAST = getPropTypes({ componentName: 'C', syntaxTree });
   const { left, right } = propTypesAST.expression;
   const [property] = right.properties;
 
