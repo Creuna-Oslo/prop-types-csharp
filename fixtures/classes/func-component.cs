@@ -30,6 +30,7 @@ public class FunctionalComponent
   public FunctionalComponent_EnumArray EnumArray { get; set; }
   public FunctionalComponent_EnumInline EnumInline { get; set; }
   public FunctionalComponent_EnumObject EnumObject { get; set; }
+  public string MutationProp { get; set; }
 }
 
 public class FunctionalComponent_SingleObject 

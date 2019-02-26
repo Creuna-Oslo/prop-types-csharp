@@ -59,6 +59,8 @@ FunctionalComponent.propTypes = {
   function: pt.func
 };
 
+FunctionalComponent.propTypes.mutationProp = pt.string;
+
 FunctionalComponent.propTypesMeta = {
   intNumber: 'int',
   floatNumber: 'float',

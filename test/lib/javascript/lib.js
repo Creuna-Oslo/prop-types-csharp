@@ -215,6 +215,21 @@ test(
 );
 
 test(
+  'Mutation of propTypes',
+  template,
+  `const Component = () => {};
+  Component.propTypes = { a: PropTypes.number };
+  Component.propTypes.b = PropTypes.string;
+  export default Component;`,
+  `${csharpImports}
+  public class Component
+  {
+    public int A { get; set; }
+    public string B { get; set; }
+  }`
+);
+
+test(
   'Nested shape',
   template,
   `import Link from '../link';
