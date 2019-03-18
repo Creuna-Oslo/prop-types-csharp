@@ -295,7 +295,7 @@ const { componentName, code } = generate({
 
 ## <a id="webpack"></a>Webpack plugin
 
-The plugin will extract PropType definitions from `.jsx` files and convert them into C# class files. If the build already has errors when this plugin runs, it aborts immediately.
+The plugin will extract PropType definitions from `.jsx` files (configurable) and convert them into C# class files. If the build already has errors when this plugin runs, it aborts immediately.
 
 ### Config example
 
@@ -324,12 +324,12 @@ module.exports = function(env, options = {}) {
 
 It's recommended to set this to true when running with webpack dev server for these reasons:
 
-- The build can finish before class generation is complete, meaning faster hot reloading of the browser
-- Classes are written to disk by the plugin (Webpack dev server only writes to memory)
+- The build can finish before class generation is done, meaning faster hot reloading of the browser.
+- Classes are written to disk by the plugin (Webpack dev server only writes to memory). Handy if you have generated classes in version control and don't want to do a production build before each commit.
 
 **exclude**: `Array` of `String | RegExp` = `['node-modules']`
 
-Use this to exclude paths or files from class generation. Default is replaced when setting this.
+A file is excluded if its path matches any of the exclude patterns. Default is replaced when setting this.
 
 **indent**: `Number` = `2`
 
@@ -337,11 +337,11 @@ Number of spaces of indentation in generated classes.
 
 **log**: `Boolean` = `false`
 
-If set to true, will output some information about the plugin to the shell.
+If set to true, will output some meta information from the plugin.
 
 **match**: `Array` of `String | RegExp` = `[/\.jsx$/]`
 
-Use this to choose what files to include when generating classes. Default is replaced when setting this.
+A file is included if its path matches any of the matching patterns (unless it matches an exclude pattern). Default is replaced when setting this.
 
 **namespace**: `String`
 
