@@ -256,7 +256,7 @@ Optional base class that generated classes will extend
 
 **generator**: `Function` = `lib/stringify/lang/csharp`
 
-Optional generator. Use this if you want to generate something other than C#. The Node.js API options are passed to the generator, in addition to `componentName` (`string`) and `definitions` – an `array` with abstract representations of the component class and any child classes.
+Optional generator. Use this if you want to generate something other than C#. The Node.js API options are passed to the generator, in addition to `className` (`string`) and `definitions` – an `array` with abstract representations of the component class and any child classes.
 
 **indent**: `Number` = `2`
 Number of spaces of indentation in generated C# file
@@ -275,7 +275,7 @@ Source code of a React component as string.
 ```js
 const { generate } = require("@creuna/prop-types-csharp");
 
-const { componentName, code } = generate({
+const { className, code } = generate({
   indent: 4,
   namespace: "Some.Awesome.Namespace",
   sourceCode: "" // Insert actual React component source code
@@ -287,7 +287,7 @@ const { componentName, code } = generate({
 ```js
 const { generate, parsers } = require("@creuna/prop-types-csharp");
 
-const { componentName, code } = generate({
+const { className, code } = generate({
   parser: parsers.typescript,
   sourceCode: "" // Insert actual React component source code
 });
