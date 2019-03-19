@@ -1,3 +1,7 @@
+# 1.1.1
+
+- Adds new wording for error message when using imported refefences in `PropTypes.oneOf`
+
 # 1.1.0
 
 - Adds support for mutating propTypes in functional components

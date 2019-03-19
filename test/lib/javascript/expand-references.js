@@ -82,21 +82,21 @@ test(
   'Class component: throws on missing literal',
   throwsTemplate,
   'import array from ".";class Component{static propTypes={prop:oneOf(array)};}',
-  "Couldn't resolve 'oneOf' value for prop 'prop'. Make sure 'array' is defined in the above file."
+  "Couldn't resolve 'oneOf' value for prop 'prop'. Make sure that 'array' is defined in the above file and that it's not imported."
 );
 
 test(
   'Func component: throws on missing literal',
   throwsTemplate,
   'import array from ".";Component.propTypes={prop:oneOf(array)};',
-  "Couldn't resolve 'oneOf' value for prop 'prop'. Make sure 'array' is defined in the above file."
+  "Couldn't resolve 'oneOf' value for prop 'prop'. Make sure that 'array' is defined in the above file and that it's not imported."
 );
 
 test(
   'Throws on undefined literal',
   throwsTemplate,
   'Component.propTypes={prop:oneOf(array)};',
-  "Couldn't resolve 'oneOf' value for prop 'prop'. Make sure 'array' is defined in the above file."
+  "Couldn't resolve 'oneOf' value for prop 'prop'. Make sure that 'array' is defined in the above file and that it's not imported."
 );
 
 test(
@@ -117,12 +117,12 @@ test(
   'Throws on missing object literal',
   throwsTemplate,
   'Component.propTypes={prop:oneOf(Object.keys(obj))}',
-  "Couldn't resolve 'oneOf' value for prop 'prop'. Make sure 'obj' is defined in the above file."
+  "Couldn't resolve 'oneOf' value for prop 'prop'. Make sure that 'obj' is defined in the above file and that it's not imported."
 );
 
 test(
   'Throws on undefined object value',
   throwsTemplate,
   'let obj; Component.propTypes={prop:oneOf(Object.keys(obj))}',
-  "Couldn't resolve 'oneOf' value for prop 'prop'. Make sure 'obj' is defined in the above file."
+  "Couldn't resolve 'oneOf' value for prop 'prop'. Make sure that 'obj' is defined in the above file and that it's not imported."
 );
