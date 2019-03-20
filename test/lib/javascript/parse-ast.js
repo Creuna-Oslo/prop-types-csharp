@@ -5,36 +5,30 @@ const parseAST = require('../../../lib/parse/javascript/parse-ast');
 
 const template = (t, input, propTypeMeta, expected) => {
   const ast = parse(input);
+  const propTypes = ast.program.body[0].expression;
 
-  t.deepEqual(expected, parseAST(ast, propTypeMeta));
+  t.deepEqual(expected, parseAST(propTypes, propTypeMeta));
 };
 
 const throwsTemplate = (t, input, errorMessage) => {
   const ast = parse(input);
+  const propTypes = ast.program.body[0].expression;
+
   const error = t.throws(() => {
-    parseAST(ast);
+    parseAST(propTypes);
   });
 
   t.is(errorMessage, error.message);
 };
 
 test(
-  'Other component reference',
-  template,
-  'Component.propTypes = AnotherComponent.propTypes',
-  {},
-  'AnotherComponent'
-);
-
-test(
   'Basic types',
   template,
-  `
-Component.propTypes = {
-  a: string.isRequired,
-  b: number,
-  c: bool
-}`,
+  `({
+    a: string.isRequired,
+    b: number,
+    c: bool
+  })`,
   {},
   {
     a: { type: 'string', isRequired: true },
@@ -46,7 +40,7 @@ Component.propTypes = {
 test(
   'oneOf numbers',
   template,
-  `Component.propTypes = { a: oneOf([1,2]) }`,
+  `({ a: oneOf([1,2]) })`,
   {},
   { a: { type: 'oneOf', children: [1, 2] } }
 );
@@ -54,7 +48,7 @@ test(
 test(
   'oneOf strings',
   template,
-  `Component.propTypes = { a: oneOf(['a','b']) }`,
+  `({ a: oneOf(['a','b']) })`,
   {},
   { a: { type: 'oneOf', children: ['a', 'b'] } }
 );
@@ -62,7 +56,7 @@ test(
 test(
   'oneOf Object.keys',
   template,
-  `Component.propTypes = { a: oneOf(Object.keys({a:'b',c:'d'})) }`,
+  `({ a: oneOf(Object.keys({a:'b',c:'d'})) })`,
   {},
   { a: { type: 'oneOf', children: ['a', 'c'] } }
 );
@@ -70,7 +64,7 @@ test(
 test(
   'oneOf Object.values',
   template,
-  `Component.propTypes = { a: oneOf(Object.values({a:'b',c:'d'})) }`,
+  `({ a: oneOf(Object.values({a:'b',c:'d'})) })`,
   {},
   {
     a: {
@@ -83,19 +77,19 @@ test(
 test(
   'Throws on unsupported Object method',
   throwsTemplate,
-  'Component.propTypes={prop:oneOf(Object.entries({a:"b"}))}',
+  '({ prop:oneOf(Object.entries({a:"b"})) })',
   "Unsupported method 'Object.entries'."
 );
 
 test(
   'Throws on unsupported Object method',
   throwsTemplate,
-  'Component.propTypes={prop:oneOf(Object.entries({a:"b"}))}',
+  '({ prop:oneOf(Object.entries({a:"b"})) })',
   "Unsupported method 'Object.entries'."
 );
 
-test("Doesn't throw on Object method call without childrens", t => {
-  const ast = parse(`Component.propTypes = { a: oneOf(Object.values()) };`);
+test("Doesn't throw on Object method call without children", t => {
+  const ast = parse(`({ a: oneOf(Object.values()) })`);
 
   t.notThrows(() => {
     parseAST(ast);
@@ -103,7 +97,7 @@ test("Doesn't throw on Object method call without childrens", t => {
 });
 
 test("Doesn't throw on object without entries", t => {
-  const ast = parse(`Component.propTypes = { a: oneOf(Object.values({})) };`);
+  const ast = parse(`({ a: oneOf(Object.values({})) })`);
 
   t.notThrows(() => {
     parseAST(ast);
@@ -113,14 +107,14 @@ test("Doesn't throw on object without entries", t => {
 test(
   'Invalid oneOf value',
   throwsTemplate,
-  `Component.propTypes = { a: oneOf([true, false]) };`,
+  `({ a: oneOf([true, false]) })`,
   'Unsupported BooleanLiteral in PropTypes.oneOf'
 );
 
 test(
   'oneOf required',
   template,
-  `Component.propTypes = { a: oneOf([1]).isRequired }`,
+  `({ a: oneOf([1]).isRequired })`,
   {},
   { a: { type: 'oneOf', children: [1], isRequired: true } }
 );
@@ -128,7 +122,7 @@ test(
 test(
   'oneOfType with exclude',
   template,
-  `Component.propTypes = { a: oneOf([string, number]) };`,
+  `({ a: oneOf([string, number]) })`,
   { a: { type: 'exclude' } },
   {}
 );
@@ -136,7 +130,7 @@ test(
 test(
   'shape',
   template,
-  `Component.propTypes = { a: shape({ b: shape({ c: string })}) }`,
+  `({ a: shape({ b: shape({ c: string })}) })`,
   {},
   {
     a: {
@@ -149,7 +143,7 @@ test(
 test(
   'exact',
   template,
-  `Component.propTypes = { a: exact({ b: exact({ c: string })}) }`,
+  `({ a: exact({ b: exact({ c: string })}) })`,
   {},
   {
     a: {
@@ -162,7 +156,7 @@ test(
 test(
   'shape with component reference',
   template,
-  `Component.propTypes = { a: shape(OtherComponent.propTypes) }`,
+  `({ a: shape(OtherComponent.propTypes) })`,
   {},
   {
     a: {
@@ -174,7 +168,7 @@ test(
 test(
   'Exact with component reference',
   template,
-  `Component.propTypes = { a: exact(OtherComponent.propTypes) }`,
+  `({ a: exact(OtherComponent.propTypes) })`,
   {},
   {
     a: {
@@ -186,7 +180,7 @@ test(
 test(
   'arrayOf string',
   template,
-  `Component.propTypes = { a: arrayOf(string) }`,
+  `({ a: arrayOf(string) })`,
   {},
   {
     a: {
@@ -199,7 +193,7 @@ test(
 test(
   'arrayOf shape',
   template,
-  `Component.propTypes = { a: arrayOf(shape({ b: string })) }`,
+  `({ a: arrayOf(shape({ b: string })) })`,
   {},
   {
     a: {
@@ -212,12 +206,12 @@ test(
 test(
   'Invalid function call',
   throwsTemplate,
-  'Component.propTypes = { a: someFunc() };',
+  '({ a: someFunc() })',
   "Invalid function call 'someFunc'"
 );
 
 test('Invalid function call with exclude', t => {
-  const ast = parse(`Component.propTypes = { a: someFunc() };`);
+  const ast = parse(`({ a: someFunc() })`);
   const meta = { a: { type: 'exclude' } };
 
   t.notThrows(() => {
@@ -226,9 +220,7 @@ test('Invalid function call with exclude', t => {
 });
 
 test('Invalid function call and object method with exclude', t => {
-  const ast = parse(
-    `Component.propTypes = { a: someFunc(Object.entries({a:1})) };`
-  );
+  const ast = parse(`({ a: someFunc(Object.entries({a:1})) })`);
   const meta = { a: { type: 'exclude' } };
 
   t.notThrows(() => {
@@ -237,12 +229,12 @@ test('Invalid function call and object method with exclude', t => {
 });
 
 test('Allowed function calls', t => {
-  const ast = parse(`Component.propTypes = {
+  const ast = parse(`({
     a: arrayOf(),
     b: oneOf(),
     c: shape(),
     d: instanceOf()
-};`);
+  })`);
 
   t.notThrows(() => {
     parseAST(ast);
@@ -253,7 +245,7 @@ test('Allowed function calls', t => {
 test(
   'Prop named "type"',
   template,
-  `Component.propTypes = { type: (shape({ b: type })) }`,
+  `({ type: (shape({ b: type })) })`,
   {},
   {
     type: { type: 'shape', children: { b: { type: 'type' } } }
