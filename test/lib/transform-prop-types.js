@@ -3,7 +3,7 @@ const test = require('ava');
 const transformPropTypes = require('../../lib/transform-prop-types');
 
 const template = (t, input, propTypesMeta = {}, expected) => {
-  t.deepEqual(expected, transformPropTypes(input, propTypesMeta));
+  t.deepEqual(expected, transformPropTypes(propTypesMeta)(input));
 };
 
 test(
@@ -146,7 +146,7 @@ test(
 
 const throwsTemplate = (t, input, errorMessage) => {
   const error = t.throws(() => {
-    transformPropTypes(input, {});
+    transformPropTypes({})(input);
   });
   t.is(errorMessage, error.message);
 };
@@ -182,7 +182,7 @@ legalTypes.forEach(type => {
   test(`Throws on '${type}'`, t => {
     const propTypes = { a: { type } };
     t.notThrows(() => {
-      transformPropTypes(propTypes, {});
+      transformPropTypes({})(propTypes);
     });
   });
 });
