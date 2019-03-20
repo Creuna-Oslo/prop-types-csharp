@@ -126,6 +126,20 @@ test(
 );
 
 test(
+  'Supports extending with own properties',
+  template,
+  `const Component = () => <div />;
+  Component.propTypes = Object.assign({}, AnotherComponent.propTypes, { foo: PropTypes.string });
+  export default Component;`,
+
+  `${csharpImports}
+  public class Component : AnotherComponent
+  {
+    public string Foo { get; set; }
+  }`
+);
+
+test(
   'Extending overrides base class',
   template,
   `const Component = () => <div />;
