@@ -138,6 +138,26 @@ class Component extends React.Component {
 }
 ```
 
+### Inheritance
+
+Inheritance of propTypes from other components is supported and will result in C# classes with corresponding inheritance. The `baseClass` option will be overridden when inheriting.
+
+Simple:
+
+```js
+MyComponent.propTypes = OtherComponent.propTypes;
+```
+
+With properties:
+
+```js
+// Remember to not mutate other components' propTypes!
+MyComponent.propTypes = Object.assign({}, OtherComponent.propTypes, {
+  foo: PropTypes.string,
+  bar: PropTypes.number
+});
+```
+
 ## <a id="typescript"></a> Typescript
 
 The class generator will determine the name of the generated class based on how prop types are defined:
