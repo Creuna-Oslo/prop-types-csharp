@@ -1,3 +1,7 @@
+# 1.1.2
+
+- Fixes some issues in the readme
+
 # 1.1.1
 
 - Adds new wording for error message when using imported refefences in `PropTypes.oneOf`
