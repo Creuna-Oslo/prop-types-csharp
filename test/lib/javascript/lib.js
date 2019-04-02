@@ -220,6 +220,20 @@ test(
 );
 
 test(
+  'Reference to property of other component',
+  template,
+  `import A from '../a';
+  const Component = () => {};
+  Component.propTypes = { b: PropTypes.arrayOf(A.propTypes.c) };
+  export default Component;`,
+  `${csharpImports}
+  public class Component
+  {
+    public IList<A_C> B { get; set; }
+  }`
+);
+
+test(
   'Without propTypes literal and with exclude meta',
   template,
   `const Component = () => {};
