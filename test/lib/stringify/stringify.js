@@ -8,7 +8,6 @@ const basicDefinitions = [
     name: 'Component',
     properties: {
       type: 'shape',
-      isComponentClass: true,
       children: {
         text: { type: 'string', isRequired: true },
         texts: {
@@ -98,7 +97,7 @@ test(
   [
     {
       name: 'Component',
-      properties: { type: 'shape', children: {}, isComponentClass: true }
+      properties: { type: 'shape', children: {} }
     }
   ],
   imports +
@@ -108,14 +107,14 @@ test(
   { baseClass: 'BaseClass', className: 'Component' }
 );
 
-// Base class should only be applied to the class where 'isComponentClass' === true
+// Base class should only be applied to the class that doesn't have 'parents'
 test(
   'Nested properties with base class',
   template,
   [
     {
       name: 'Component',
-      properties: { type: 'shape', children: {}, isComponentClass: true }
+      properties: { type: 'shape', children: {} }
     },
     {
       name: 'ComponentProperty',
@@ -138,7 +137,7 @@ test(
   [
     {
       name: 'Component',
-      properties: { type: 'shape', children: {}, isComponentClass: true }
+      properties: { type: 'shape', children: {} }
     }
   ],
   imports +
@@ -156,8 +155,7 @@ test(
       name: 'Component',
       properties: {
         type: 'shape',
-        children: { a: { type: 'string' } },
-        isComponentClass: true
+        children: { a: { type: 'string' } }
       }
     }
   ],
@@ -182,8 +180,7 @@ test(
         type: 'shape',
         children: {
           enum: { type: 'enum', parents: ['Component'] }
-        },
-        isComponentClass: true
+        }
       }
     },
     {
@@ -221,8 +218,7 @@ test(
         type: 'shape',
         children: {
           enum: { type: 'enum', parents: ['Component'], isRequired: true }
-        },
-        isComponentClass: true
+        }
       }
     },
     {
@@ -261,8 +257,7 @@ test(
         type: 'shape',
         children: {
           enum: { type: 'enum', parents: ['Component'] }
-        },
-        isComponentClass: true
+        }
       }
     },
     {
@@ -301,7 +296,6 @@ test(
       name: 'Component',
       properties: {
         type: 'shape',
-        isComponentClass: true,
         children: { a: { type: 'b', parents: ['Component'] } }
       }
     },
@@ -338,8 +332,7 @@ test(
         type: 'shape',
         children: {
           property: { type: 'property', parents: ['Component'] }
-        },
-        isComponentClass: true
+        }
       }
     },
     {
@@ -408,7 +401,6 @@ test(
       name: 'Component',
       properties: {
         type: 'shape',
-        isComponentClass: true,
         children: {
           type: { type: 'string' }
         }
