@@ -12,16 +12,16 @@ test('With external class', t => {
 });
 
 test('With reference to class defined in the current file', t => {
-  const arrayString = nestedArrayString(
-    {
+  const arrayString = nestedArrayString({
+    type: 'arrayOf',
+    children: {
       type: 'arrayOf',
       children: {
-        type: 'arrayOf',
-        children: { type: 'someProp', hasClassDefinition: true }
+        type: 'someProp',
+        parents: ['Component']
       }
-    },
-    { name: 'Component' }
-  );
+    }
+  });
 
   t.is('IList<IList<Component_SomeProp>>', arrayString);
 });

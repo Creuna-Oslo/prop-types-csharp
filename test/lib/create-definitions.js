@@ -11,7 +11,6 @@ const template = (t, input, expected) => {
 test('Empty object', template, {}, [
   {
     name: 'Component',
-    parent: { name: 'Component' },
     properties: { type: 'shape', children: {}, isComponentClass: true }
   }
 ]);
@@ -23,18 +22,17 @@ test(
   [
     {
       name: 'Component',
-      parent: { name: 'Component' },
       properties: {
         type: 'shape',
         isComponentClass: true,
-        children: { a: { type: 'a', hasClassDefinition: true } }
+        children: { a: { type: 'a', parents: ['Component'] } }
       }
     },
     {
       name: 'a',
-      parent: { name: 'Component' },
       properties: {
         type: 'shape',
+        parents: ['Component'],
         children: { b: { type: 'string' } }
       }
     }
@@ -53,26 +51,27 @@ test(
   [
     {
       name: 'Component',
-      parent: { name: 'Component' },
       properties: {
         type: 'shape',
         isComponentClass: true,
-        children: { a: { type: 'a', hasClassDefinition: true } }
+        children: { a: { type: 'a', parents: ['Component'] } }
       }
     },
     {
       name: 'a',
-      parent: { name: 'Component' },
       properties: {
         type: 'shape',
-        children: { b: { type: 'b', hasClassDefinition: true } }
+        parents: ['Component'],
+        children: {
+          b: { type: 'b', parents: ['Component', 'a'] }
+        }
       }
     },
     {
       name: 'b',
-      parent: { name: 'a', parent: { name: 'Component' } },
       properties: {
         type: 'shape',
+        parents: ['Component', 'a'],
         children: { c: { type: 'string' } }
       }
     }
@@ -86,7 +85,6 @@ test(
   [
     {
       name: 'Component',
-      parent: { name: 'Component' },
       properties: {
         type: 'shape',
         isComponentClass: true,
@@ -111,7 +109,6 @@ test(
   [
     {
       name: 'Component',
-      parent: { name: 'Component' },
       properties: {
         type: 'shape',
         isComponentClass: true,
@@ -141,7 +138,6 @@ test(
   [
     {
       name: 'Component',
-      parent: { name: 'Component' },
       properties: {
         type: 'shape',
         isComponentClass: true,
@@ -150,7 +146,7 @@ test(
             type: 'arrayOf',
             children: {
               type: 'aItem',
-              hasClassDefinition: true
+              parents: ['Component']
             }
           }
         }
@@ -158,9 +154,9 @@ test(
     },
     {
       name: 'aItem',
-      parent: { name: 'Component' },
       properties: {
         type: 'shape',
+        parents: ['Component'],
         children: { b: { type: 'string' } }
       }
     }
@@ -185,7 +181,6 @@ test(
   [
     {
       name: 'Component',
-      parent: { name: 'Component' },
       properties: {
         type: 'shape',
         isComponentClass: true,
@@ -194,7 +189,7 @@ test(
             type: 'arrayOf',
             children: {
               type: 'aItem',
-              hasClassDefinition: true
+              parents: ['Component']
             }
           }
         }
@@ -202,28 +197,28 @@ test(
     },
     {
       name: 'aItem',
-      parent: { name: 'Component' },
       properties: {
         type: 'shape',
+        parents: ['Component'],
         children: {
-          b: { type: 'b', hasClassDefinition: true },
-          d: { type: 'd', hasClassDefinition: true }
+          b: { type: 'b', parents: ['Component', 'aItem'] },
+          d: { type: 'd', parents: ['Component', 'aItem'] }
         }
       }
     },
     {
       name: 'b',
-      parent: { name: 'aItem', parent: { name: 'Component' } },
       properties: {
         type: 'shape',
+        parents: ['Component', 'aItem'],
         children: { c: { type: 'string' } }
       }
     },
     {
       name: 'd',
-      parent: { name: 'aItem', parent: { name: 'Component' } },
       properties: {
         type: 'oneOf',
+        parents: ['Component', 'aItem'],
         children: ['a', 'b']
       }
     }
@@ -243,21 +238,20 @@ test(
   [
     {
       name: 'Component',
-      parent: { name: 'Component' },
       properties: {
         type: 'shape',
         isComponentClass: true,
         children: {
-          a: { type: 'a', hasClassDefinition: true, isRequired: true }
+          a: { type: 'a', parents: ['Component'], isRequired: true }
         }
       }
     },
     {
       name: 'a',
-      parent: { name: 'Component' },
       properties: {
         type: 'shape',
         isRequired: true,
+        parents: ['Component'],
         children: { b: { type: 'string' } }
       }
     }
@@ -280,7 +274,6 @@ test(
   [
     {
       name: 'Component',
-      parent: { name: 'Component' },
       properties: {
         type: 'shape',
         isComponentClass: true,
@@ -290,7 +283,7 @@ test(
             isRequired: true,
             children: {
               type: 'aItem',
-              hasClassDefinition: true
+              parents: ['Component']
             }
           }
         }
@@ -298,9 +291,9 @@ test(
     },
     {
       name: 'aItem',
-      parent: { name: 'Component' },
       properties: {
         type: 'shape',
+        parents: ['Component'],
         children: {
           b: { type: 'string' }
         }
@@ -318,20 +311,19 @@ test(
   [
     {
       name: 'Component',
-      parent: { name: 'Component' },
       properties: {
         type: 'shape',
         isComponentClass: true,
         children: {
-          a: { type: 'a', hasClassDefinition: true }
+          a: { type: 'a', parents: ['Component'] }
         }
       }
     },
     {
       name: 'a',
-      parent: { name: 'Component' },
       properties: {
         type: 'oneOf',
+        parents: ['Component'],
         children: [1, 2, 3]
       }
     }
@@ -347,20 +339,19 @@ test(
   [
     {
       name: 'Component',
-      parent: { name: 'Component' },
       properties: {
         type: 'shape',
         isComponentClass: true,
         children: {
-          a: { type: 'a', hasClassDefinition: true }
+          a: { type: 'a', parents: ['Component'] }
         }
       }
     },
     {
       name: 'a',
-      parent: { name: 'Component' },
       properties: {
         type: 'oneOf',
+        parents: ['Component'],
         children: ['value-1', 'value-2']
       }
     }
@@ -379,23 +370,22 @@ test(
   [
     {
       name: 'Component',
-      parent: { name: 'Component' },
       properties: {
         type: 'shape',
         isComponentClass: true,
         children: {
           a: {
             type: 'arrayOf',
-            children: { type: 'aItem', hasClassDefinition: true }
+            children: { type: 'aItem', parents: ['Component'] }
           }
         }
       }
     },
     {
       name: 'aItem',
-      parent: { name: 'Component' },
       properties: {
         type: 'oneOf',
+        parents: ['Component'],
         children: [1, 2]
       }
     }
@@ -412,7 +402,6 @@ test(
   [
     {
       name: 'Component',
-      parent: { name: 'Component' },
       properties: {
         type: 'shape',
         isComponentClass: true,
