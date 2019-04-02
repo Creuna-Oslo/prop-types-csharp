@@ -158,6 +158,14 @@ MyComponent.propTypes = Object.assign({}, OtherComponent.propTypes, {
 });
 ```
 
+Referencing a single property:
+
+```js
+MyComponent.propTypes: {
+  items: OtherComponent.propTypes.items
+};
+```
+
 ## <a id="typescript"></a> Typescript
 
 The class generator will determine the name of the generated class based on how prop types are defined:

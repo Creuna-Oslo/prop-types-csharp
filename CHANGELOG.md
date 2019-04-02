@@ -1,3 +1,7 @@
+# 1.3.0
+
+- Fixes [#64](https://github.com/Creuna-Oslo/prop-types-csharp/issues/64): Adds support for referencing other components' propTypes
+
 # 1.2.0
 
 - Fixes [#63](https://github.com/Creuna-Oslo/prop-types-csharp/issues/63): Adds support for inheriting propTypes from other components using `Obejct.assign`
