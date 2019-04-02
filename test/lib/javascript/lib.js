@@ -224,12 +224,16 @@ test(
   template,
   `import A from '../a';
   const Component = () => {};
-  Component.propTypes = { b: PropTypes.arrayOf(A.propTypes.c) };
+  Component.propTypes = {
+    simple: A.propTypes.c,
+    list: PropTypes.arrayOf(A.propTypes.c)
+  };
   export default Component;`,
   `${csharpImports}
   public class Component
   {
-    public IList<A_C> B { get; set; }
+    public A_C Simple { get; set; }
+    public IList<A_C> List { get; set; }
   }`
 );
 
