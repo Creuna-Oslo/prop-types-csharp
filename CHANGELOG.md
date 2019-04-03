@@ -1,3 +1,7 @@
+# 1.4.0
+
+- Fixes [#65](https://github.com/Creuna-Oslo/prop-types-csharp/issues/65): Adds support for `PropTypes.objectOf`
+
 # 1.3.0
 
 - Fixes [#64](https://github.com/Creuna-Oslo/prop-types-csharp/issues/64): Adds support for referencing other components' propTypes
