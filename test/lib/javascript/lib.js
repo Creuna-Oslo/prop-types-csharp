@@ -279,3 +279,29 @@ test(
     public string B { get; set; }
   }`
 );
+
+test(
+  'Supports objectOf',
+  template,
+  `const Component = () => {};
+  Component.propTypes= {
+    a: PropTypes.objectOf(PropTypes.string),
+    b: PropTypes.objectOf(Link.propTypes),
+    c: PropTypes.objectOf(PropTypes.exact({
+      d: PropTypes.string
+    }))
+  };
+  export default Component;`,
+  `${csharpImports}
+  public class Component
+  {
+    public Dictionary<string, string> A { get; set; }
+    public Dictionary<string, Link> B { get; set; }
+    public Dictionary<string, Component_C> C { get; set; }
+  }
+  
+  public class Component_C
+  {
+    public string D { get; set; }
+  }`
+);
