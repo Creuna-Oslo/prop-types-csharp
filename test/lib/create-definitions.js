@@ -140,7 +140,7 @@ test(
           a: {
             type: 'arrayOf',
             children: {
-              type: 'aItem',
+              type: 'a',
               parents: ['Component']
             }
           }
@@ -148,7 +148,7 @@ test(
       }
     },
     {
-      name: 'aItem',
+      name: 'a',
       properties: {
         type: 'shape',
         parents: ['Component'],
@@ -182,7 +182,7 @@ test(
           a: {
             type: 'arrayOf',
             children: {
-              type: 'aItem',
+              type: 'a',
               parents: ['Component']
             }
           }
@@ -190,13 +190,13 @@ test(
       }
     },
     {
-      name: 'aItem',
+      name: 'a',
       properties: {
         type: 'shape',
         parents: ['Component'],
         children: {
-          b: { type: 'b', parents: ['Component', 'aItem'] },
-          d: { type: 'd', parents: ['Component', 'aItem'] }
+          b: { type: 'b', parents: ['Component', 'a'] },
+          d: { type: 'd', parents: ['Component', 'a'] }
         }
       }
     },
@@ -204,7 +204,7 @@ test(
       name: 'b',
       properties: {
         type: 'shape',
-        parents: ['Component', 'aItem'],
+        parents: ['Component', 'a'],
         children: { c: { type: 'string' } }
       }
     },
@@ -212,7 +212,7 @@ test(
       name: 'd',
       properties: {
         type: 'oneOf',
-        parents: ['Component', 'aItem'],
+        parents: ['Component', 'a'],
         children: ['a', 'b']
       }
     }
@@ -274,7 +274,7 @@ test(
             type: 'arrayOf',
             isRequired: true,
             children: {
-              type: 'aItem',
+              type: 'a',
               parents: ['Component']
             }
           }
@@ -282,7 +282,7 @@ test(
       }
     },
     {
-      name: 'aItem',
+      name: 'a',
       properties: {
         type: 'shape',
         parents: ['Component'],
@@ -365,13 +365,13 @@ test(
         children: {
           a: {
             type: 'arrayOf',
-            children: { type: 'aItem', parents: ['Component'] }
+            children: { type: 'a', parents: ['Component'] }
           }
         }
       }
     },
     {
-      name: 'aItem',
+      name: 'a',
       properties: {
         type: 'oneOf',
         parents: ['Component'],

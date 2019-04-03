@@ -13,7 +13,7 @@ public class FuncComponentProps
   public IList<string> Texts { get; set; }
   public FuncComponentProps_SingleObject SingleObject { get; set; }
   [Required]
-  public IList<FuncComponentProps_ObjectsItem> Objects { get; set; }
+  public IList<FuncComponentProps_Objects> Objects { get; set; }
   [Required]
   public IList<Link> ObjectArray { get; set; }
   public IList<IList<IList<string>>> NestedList { get; set; }
@@ -35,7 +35,7 @@ public class FuncComponentProps_SingleObject
   public string PropertyA { get; set; }
 }
 
-public class FuncComponentProps_ObjectsItem 
+public class FuncComponentProps_Objects 
 {
   [Required]
   public string PropertyB { get; set; }

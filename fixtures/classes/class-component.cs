@@ -13,7 +13,7 @@ public class ClassComponent
   public IList<string> Texts { get; set; }
   public ClassComponent_SingleObject SingleObject { get; set; }
   [Required]
-  public IList<ClassComponent_ObjectsItem> Objects { get; set; }
+  public IList<ClassComponent_Objects> Objects { get; set; }
   [Required]
   public ClassComponent_ShapeMeta ShapeMeta { get; set; }
   [Required]
@@ -37,7 +37,7 @@ public class ClassComponent_SingleObject
   public string PropertyA { get; set; }
 }
 
-public class ClassComponent_ObjectsItem 
+public class ClassComponent_Objects 
 {
   [Required]
   public string PropertyB { get; set; }

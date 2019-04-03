@@ -13,7 +13,7 @@ public class ClassComponentProps
   public IList<string> Texts { get; set; }
   public ClassComponentProps_SingleObject SingleObject { get; set; }
   [Required]
-  public IList<ClassComponentProps_ObjectsItem> Objects { get; set; }
+  public IList<ClassComponentProps_Objects> Objects { get; set; }
   [Required]
   public IList<Link> ObjectArray { get; set; }
   public IList<IList<IList<string>>> NestedList { get; set; }
@@ -35,7 +35,7 @@ public class ClassComponentProps_SingleObject
   public string PropertyA { get; set; }
 }
 
-public class ClassComponentProps_ObjectsItem 
+public class ClassComponentProps_Objects 
 {
   [Required]
   public string PropertyB { get; set; }

@@ -14,7 +14,7 @@ public class FunctionalComponent
   public IList<string> Texts { get; set; }
   public FunctionalComponent_SingleObject SingleObject { get; set; }
   [Required]
-  public IList<FunctionalComponent_ObjectsItem> Objects { get; set; }
+  public IList<FunctionalComponent_Objects> Objects { get; set; }
   [Required]
   public FunctionalComponent_ShapeMeta ShapeMeta { get; set; }
   [Required]
@@ -39,7 +39,7 @@ public class FunctionalComponent_SingleObject
   public string PropertyA { get; set; }
 }
 
-public class FunctionalComponent_ObjectsItem 
+public class FunctionalComponent_Objects 
 {
   [Required]
   public string PropertyB { get; set; }

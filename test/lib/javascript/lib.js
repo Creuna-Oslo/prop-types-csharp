@@ -271,10 +271,10 @@ test(
   `${csharpImports}
   public class Component
   {
-    public IList<IList<IList<Component_AItem>>> A { get; set; }
+    public IList<IList<IList<Component_A>>> A { get; set; }
   }
   
-  public class Component_AItem
+  public class Component_A
   {
     public string B { get; set; }
   }`

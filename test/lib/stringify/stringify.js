@@ -21,7 +21,7 @@ const basicDefinitions = [
         objects: {
           type: 'arrayOf',
           isRequired: true,
-          children: { type: 'objectsItem', parents: ['Component'] }
+          children: { type: 'objects', parents: ['Component'] }
         }
       }
     }
@@ -37,7 +37,7 @@ const basicDefinitions = [
     }
   },
   {
-    name: 'objectsItem',
+    name: 'objects',
     properties: {
       type: 'shape',
       parents: ['Component'],
@@ -58,14 +58,14 @@ public class Component
   public IList<IList<IList<string>>> Texts { get; set; }
   public Component_SingleObject SingleObject { get; set; }
   [Required]
-  public IList<Component_ObjectsItem> Objects { get; set; }
+  public IList<Component_Objects> Objects { get; set; }
 }
 public class Component_SingleObject
 {
   [Required]
   public string PropertyA { get; set; }
 }
-public class Component_ObjectsItem
+public class Component_Objects
 {
   public string PropertyB { get; set; }
 }
