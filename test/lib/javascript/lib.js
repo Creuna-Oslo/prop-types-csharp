@@ -286,7 +286,7 @@ test(
   `const Component = () => {};
   Component.propTypes= {
     a: PropTypes.objectOf(PropTypes.string),
-    b: PropTypes.objectOf(Link.propTypes),
+    b: PropTypes.objectOf(PropTypes.exact(Link.propTypes)),
     c: PropTypes.objectOf(PropTypes.exact({
       d: PropTypes.string
     }))
