@@ -38,7 +38,7 @@ const getInvalidPropTypes = (objectExpression, scope) => {
     }
 
     // propTypeNode might be a CallExpression node (like in 'PropTypes.arrayOf()'), in which case the propType node will be accessible in obectProperty.value.callee. If not, the node is a MemberExpression, and the node is accessible in objectProperty.value.
-    const propTypeNode = objectProperty.value.callee || objectProperty.value;
+    const propTypeNode = value.callee || value;
 
     if (!t.isMemberExpression(propTypeNode)) {
       return Object.assign(accum, {
@@ -60,6 +60,18 @@ const getInvalidPropTypes = (objectExpression, scope) => {
         node: propTypeNode.property,
         message: illegalTypes[propTypeName]
       };
+    }
+
+    if (t.isCallExpression(value)) {
+      value.arguments.filter(t.isMemberExpression).forEach(argument => {
+        const typeName = argument.property.name;
+        if (illegalTypes[typeName]) {
+          accum[key] = {
+            node: argument.property,
+            message: illegalTypes[typeName]
+          };
+        }
+      });
     }
 
     // Recursively check object literals inside PropTypes.shape

@@ -1,3 +1,7 @@
+# 2.0.1
+
+- Fixes [#68](https://github.com/Creuna-Oslo/prop-types-csharp/issues/68): Fixes invalid propTypes being included in generated classes when used inside `PropTypes.arrayOf`
+
 # 2.0.0
 
 - Fixes [#66](https://github.com/Creuna-Oslo/prop-types-csharp/issues/66): BREAKING: Removes `Item` postfix from generated classes that use `IList`

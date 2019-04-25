@@ -175,6 +175,14 @@ test(
 'PropTypes.oneOfType' is not yet supported`
 );
 
+test(
+  'Throws on object in arrayOf',
+  throwsTemplate,
+  { a: { type: 'arrayOf', children: { type: 'object' } } },
+  `Invalid type for prop 'a' ('object').
+Replace with 'PropTypes.shape' or provide a meta type`
+);
+
 // Also test legal types to avoid false positive
 const legalTypes = ['string', 'int', 'float'];
 

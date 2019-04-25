@@ -168,6 +168,12 @@ const invalidCases = [
   // PropTypes.object.isRequired
   ['A.propTypes = { b: PropTypes.object.isRequired };', messages.object()],
 
+  // Object in arrayOf
+  [
+    'A.propTypes = { b: PropTypes.arrayOf(PropTypes.object) };',
+    messages.object()
+  ],
+
   // PropTypes.object.isRequired (class component)
   [
     'class A { static propTypes = { b: PropTypes.object.isRequired }; }',
