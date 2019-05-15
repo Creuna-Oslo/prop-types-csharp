@@ -261,11 +261,15 @@ const invalidCases = [
     ['const A = () => {};', messages.noExport()],
 
     // Too many exports
-    ['export { A, B };', messages.tooManyExports(), messages.tooManyExports()],
+    [
+      'const A = {}, B = {}; export { A, B };',
+      messages.tooManyExports(),
+      messages.tooManyExports()
+    ],
 
     // Too many exports
     [
-      'export default A; export { B, C };',
+      'const A = {}, B = {}, C = {}; export default A; export { B, C };',
       messages.tooManyExports(),
       messages.tooManyExports(),
       messages.tooManyExports()

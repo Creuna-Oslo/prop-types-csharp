@@ -27,7 +27,7 @@ test(
 test(
   'Export default (end of file)',
   template,
-  'export default Component;',
+  'const Component = {}; export default Component;',
   'Component'
 );
 
@@ -36,21 +36,22 @@ test('Named export', template, 'export class Component {};', 'Component');
 test(
   'With variable exports',
   template,
-  'export const a = "haha"; export default Component;',
+  'export const a = "haha"; const Component = {}; export default Component;',
   'Component'
 );
 
 test(
   'Named export (end of file)',
   template,
-  'export { Component };',
+  'const Component = {}; export { Component };',
   'Component'
 );
 
 test(
   'Named and default export',
   template,
-  'export { SomeComponent }; export default Component;',
+  `const SomeComponent = {}, Component = {};
+  export { SomeComponent }; export default Component;`,
   'Component'
 );
 
@@ -77,13 +78,14 @@ test(
 test(
   'Throws on multiple named exports',
   throwsTemplate,
-  'export { Component, OtherComponent };',
+  `const Component = {}; const OtherComponent = {};
+  export { Component, OtherComponent };`,
   multipleExportsError
 );
 
 test(
   'Throws on multiple named exports',
   throwsTemplate,
-  'export const a = "a"; export { Component };',
+  'export const a = "a"; const Component = {}; export { Component };',
   multipleExportsError
 );
