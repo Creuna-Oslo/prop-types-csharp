@@ -42,8 +42,8 @@
     "@babel/parser": "^7.1.2",
     "@babel/traverse": "^7.1.0",
     "@babel/types": "^7.1.2",
-    "fs-extra": "^7.0.1",
-    "kompis": "^0.3.3"
+    "fs-extra": "^8.0.1",
+    "kompis": "^0.5.0"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",

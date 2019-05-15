@@ -3471,10 +3471,10 @@ from2@^2.1.0:
     inherits "^2.0.1"
     readable-stream "^2.0.0"
 
-fs-extra@^7.0.1:
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-7.0.1.tgz#4f189c44aa123b895f722804f55ea23eadc348e9"
-  integrity sha512-YJDaCJZEnBmcbw13fvdAM9AwNOJwOzrE4pqMqBq5nFiEqXUqHwlK4B+3pUw6JNvfSPtX05xFHtYy/1ni01eGCw==
+fs-extra@^8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-8.0.1.tgz#90294081f978b1f182f347a440a209154344285b"
+  integrity sha512-W+XLrggcDzlle47X/XnS7FXrXu9sDo+Ze9zpndeBxdgv88FHLm1HtmkhEwavruS6koanBjp098rUpHs65EmG7A==
   dependencies:
     graceful-fs "^4.1.2"
     jsonfile "^4.0.0"
@@ -4635,10 +4635,10 @@ kind-of@^6.0.0, kind-of@^6.0.2:
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.2.tgz#01146b36a6218e64e58f3a8d66de5d7fc6f6d051"
   integrity sha512-s5kLOcnH0XqDO+FvuaLX8DDjZ18CGFk7VygH40QoKPUQhW4e2rvM0rwUq0t8IQDOwYSeLK01U90OjzBTme2QqA==
 
-kompis@^0.3.3:
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/kompis/-/kompis-0.3.3.tgz#b76fd4761187eee152388870302f982eb0ec1015"
-  integrity sha512-rKY6kcErnj3nSJlNiqAvIp3gNjwb1Eh8/L9Riq5uUl7tAzMEeAXM8zt9nP2dY4tPfeV0xBIYVEncnaqGe/9EDA==
+kompis@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/kompis/-/kompis-0.5.0.tgz#b6e6be2a5acbef461ab46f71e71777604ffb68f2"
+  integrity sha512-LHAt83RUCS88R1EHIHu29P2oIH1x6MgWdomppPvu6FETUI41XR5znErDAvbA88SynUK9EcRjMkwlteDo7tVuJA==
 
 last-line-stream@^1.0.0:
   version "1.0.0"
