@@ -294,6 +294,10 @@ Use this if you want to generate something other than C#. The function is passed
 
 Number of spaces of indentation in generated C# file
 
+**instantiateProperties**: `Boolean` = `false`
+
+Whether class properties should be instantiated or not. Does not apply to basic types like `string`, `int` or `bool`.
+
 **namespace**: `String`
 
 Namespace to wrap around generated C# class

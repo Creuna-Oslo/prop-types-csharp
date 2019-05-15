@@ -293,9 +293,9 @@ test(
   `${csharpImports}
   public class Component
   {
-    public Dictionary<string, string> A { get; set; }
-    public Dictionary<string, Link> B { get; set; }
-    public Dictionary<string, Component_C> C { get; set; }
+    public IDictionary<string, string> A { get; set; }
+    public IDictionary<string, Link> B { get; set; }
+    public IDictionary<string, Component_C> C { get; set; }
   }
   
   public class Component_C
@@ -326,7 +326,7 @@ test(
     public IList<IList<string>> C { get; set; } = new List<List<string>>();
     public int D { get; set; }
     public Link E { get; set; } = new Link();
-    public Dictionary<string, Link> F { get; set; } = new Dictionary<string, Link>();
+    public IDictionary<string, Link> F { get; set; } = new Dictionary<string, Link>();
     public Component_G G { get; set; } = new Component_G();
   }
   
