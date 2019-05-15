@@ -72,7 +72,7 @@ test(
 );
 
 test(
-  'Func component: object values',
+  'Class component: object values',
   template,
   'const object={a:1,b:2};class Component{static propTypes={prop:oneOf(Object.values(object))}}',
   'const object={a:1,b:2};class Component{static propTypes={prop:oneOf(Object.values({a:1,b:2}))}}'

@@ -84,7 +84,7 @@ test(
 );
 
 test(
-  'Throws on multiple named exports',
+  'Throws on multiple named exports alternative',
   throwsTemplate,
   'export const a = "a"; const Component = {}; export { Component };',
   multipleExportsError

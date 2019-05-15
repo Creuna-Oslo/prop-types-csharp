@@ -81,13 +81,6 @@ test(
   "Unsupported method 'Object.entries'."
 );
 
-test(
-  'Throws on unsupported Object method',
-  throwsTemplate,
-  '({ prop:oneOf(Object.entries({a:"b"})) })',
-  "Unsupported method 'Object.entries'."
-);
-
 test("Doesn't throw on Object method call without children", t => {
   const ast = parse(`({ a: oneOf(Object.values()) })`);
 
