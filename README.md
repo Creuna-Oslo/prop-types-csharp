@@ -288,7 +288,7 @@ Base class that generated classes will extend
 
 **generator**: `Function` = `lib/stringify/lang/csharp`
 
-Use this if you want to generate something other than C#. The Node.js API options are passed to the generator, in addition to `className` (`string`) and `definitions` – an `array` with abstract representations of the component class and any child classes.
+Use this if you want to generate something other than C#. The function is passed `definitions` (a list of objects describing classes to generate), `className` (the name of the class to generate) and an options object. It is expected to return a `string`. The easiest way of adding a new language is probably to clone `lib/stringify/lang/csharp` and work from there. If you do make a generator for another language, please consider submitting a PR!
 
 **indent**: `Number` = `2`
 

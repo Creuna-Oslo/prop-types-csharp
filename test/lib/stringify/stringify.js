@@ -71,13 +71,17 @@ public class Component_Objects
 }
 `;
 
-const template = (t, input, expected, options, removeIndentation) => {
+const template = (
+  t,
+  input,
+  expected,
+  options,
+  className,
+  removeIndentation
+) => {
   t.is(
     normalize(expected, removeIndentation),
-    normalize(
-      stringify(Object.assign({}, options, { definitions: input })),
-      removeIndentation
-    )
+    normalize(stringify(input, className, options), removeIndentation)
   );
 };
 
@@ -167,6 +171,7 @@ public class Component
 }
   `,
   { indent: 6 },
+  'Component',
   false
 );
 
@@ -359,7 +364,8 @@ test(
 public class Component : AnotherComponent
 {
 }`,
-  { className: 'Component' },
+  {},
+  'Component',
   false
 );
 
@@ -375,7 +381,8 @@ namespace Namespace
   {
   }
 }`,
-  { className: 'Component', namespace: 'Namespace' },
+  { namespace: 'Namespace' },
+  'Component',
   false
 );
 
@@ -388,7 +395,8 @@ test(
 public class Component : AnotherComponent
 {
 }`,
-  { className: 'Component', baseClass: 'BaseClass' },
+  { baseClass: 'BaseClass' },
+  'Component',
   false
 );
 
