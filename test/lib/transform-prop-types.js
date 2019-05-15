@@ -79,12 +79,20 @@ test(
   template,
   {
     a: { type: 'number' },
-    b: { type: 'shape', children: { c: { type: 'number' } } }
+    b: { type: 'shape', children: { c: { type: 'number' } } },
+    d: {
+      type: 'arrayOf',
+      children: { type: 'arrayOf', children: { type: 'number' } }
+    }
   },
   {},
   {
     a: { type: 'int' },
-    b: { type: 'shape', children: { c: { type: 'int' } } }
+    b: { type: 'shape', children: { c: { type: 'int' } } },
+    d: {
+      type: 'arrayOf',
+      children: { type: 'arrayOf', children: { type: 'int' } }
+    }
   }
 );
 
