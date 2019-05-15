@@ -5,7 +5,7 @@ const generateClass = require('../lib');
 const attemptGenerateClass = options => modulePath => {
   try {
     const sourceCode = fs.readFileSync(modulePath, 'utf-8');
-    return generateClass({ ...options, sourceCode });
+    return generateClass(sourceCode, options);
   } catch (error) {
     return { error: `\n${modulePath}\n${error.message}\n` };
   }

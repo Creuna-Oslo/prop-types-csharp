@@ -9,9 +9,7 @@ const {
 } = require('../../../fixtures/javascript/source-code');
 
 const template = (t, input, expected, options) => {
-  const transformedSource = generate(
-    Object.assign({}, options, { sourceCode: input })
-  );
+  const transformedSource = generate(input, options);
   t.is(normalize(expected), normalize(transformedSource.code));
 };
 
@@ -59,7 +57,7 @@ test('Throws on name collisions', t => {
   Component.propTypes = { component: PropTypes.string };
   export default Component;`;
   const error = t.throws(() => {
-    generate({ sourceCode });
+    generate(sourceCode);
   });
 
   t.is(

@@ -9,7 +9,8 @@ const {
 
 const template = (t, sourceCode, expected, options) => {
   const transformedSource = generate(
-    Object.assign({}, options, { sourceCode, parser: parsers.typescript })
+    sourceCode,
+    Object.assign({}, options, { parser: parsers.typescript })
   );
   t.is(normalize(expected), normalize(transformedSource.code));
 };
@@ -108,7 +109,7 @@ test('Throws on multiple exports', t => {
   export const Component = (props: {}) => null,
   A = true;`;
   const error = t.throws(() => {
-    generate({ sourceCode, parser: parsers.typescript });
+    generate(sourceCode, { parser: parsers.typescript });
   });
 
   t.is(
@@ -122,7 +123,7 @@ test('Throws on name collisions', t => {
   const Component = (props: { component: string }) => <div>{props.component}</div>;
   export default Component;`;
   const error = t.throws(() => {
-    generate({ sourceCode, parser: parsers.typescript });
+    generate(sourceCode, { parser: parsers.typescript });
   });
 
   t.is(

@@ -256,7 +256,7 @@ The Node API exports an object:
 
 ```ts
 {
-  generate: function(options){} // Generates a class string,
+  generate: function(sourceCode, options){} // Generates a class string,
   parsers: {
     javascript: function(){},
     typescript: function(){}
@@ -264,7 +264,7 @@ The Node API exports an object:
 }
 ```
 
-### generate(_options_)
+### generate(_sourceCode, options_)
 
 #### Returns
 
@@ -276,7 +276,11 @@ Name of React component (derived from export declaration).
 **code**: `String`
 Source code for new C# class.
 
-#### Options
+#### sourceCode: _String_
+
+Source code of a React component as string.
+
+#### options: _Object_
 
 **baseClass**: `String`
 
@@ -294,9 +298,6 @@ Optional namespace to wrap around generated C# class
 
 **parser**: `Function` = javascript parser
 What input language to parse. Javascript and typescript parsers are exported from the main library.
-
-**sourceCode**: `String`
-Source code of a React component as string.
 
 ### Example
 
