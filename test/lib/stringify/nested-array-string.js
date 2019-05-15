@@ -25,3 +25,15 @@ test('With reference to class defined in the current file', t => {
 
   t.is('IList<IList<Component_SomeProp>>', arrayString);
 });
+
+test('Supports other list types', t => {
+  const arrayString = nestedArrayString(
+    {
+      type: 'arrayOf',
+      children: { type: 'arrayOf', children: { type: 'Link' } }
+    },
+    'List'
+  );
+
+  t.is('List<List<Link>>', arrayString);
+});
