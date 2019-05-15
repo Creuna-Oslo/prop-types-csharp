@@ -11,12 +11,10 @@ function PropTypesCSharpPlugin(options) {
   this.options = Object.assign(
     {
       async: false, // Fallback is webpackConfig.mode === 'production'
-      baseClass: '',
+      compilerOptions: {},
       exclude: ['node_modules'],
-      indent: 2,
       log: false,
       match: [/\.jsx$/],
-      namespace: '',
       path: ''
     },
     options
@@ -68,15 +66,10 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
       this.options.exclude
     );
 
-    const options = {
-      baseClass: this.options.baseClass,
-      indent: this.options.indent,
-      namespace: this.options.namespace,
-      parser: this.options.parser
-    };
+    const { compilerOptions } = this.options;
 
     if (!isAsync) {
-      const result = generateClasses({ modulePaths, options });
+      const result = generateClasses({ modulePaths, compilerOptions });
 
       if (!result.error) {
         result.classes.forEach(({ code, className }) => {
@@ -91,7 +84,7 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
       log(this.options, isAsync, compilation, result);
     } else {
       // Run class generation in parallel
-      generateClassesAsync.send({ modulePaths, options });
+      generateClassesAsync.send({ modulePaths, compilerOptions });
     }
   };
 

@@ -64,7 +64,10 @@ test.cb('Adds base class', t => {
       {
         entry: './fixtures/javascript/app-baseclass.js',
         path: tempy.directory(),
-        baseClass: 'BaseClass'
+        compilerOptions: {
+          namespace: 'Namespace',
+          baseClass: 'BaseClass'
+        }
       },
       { mode: 'production' }
     ),

@@ -280,23 +280,26 @@ Source code for new C# class.
 
 Source code of a React component as string.
 
-#### options: _Object_
+#### <a id="compiler-options"></a>options: _Object_
 
 **baseClass**: `String`
 
-Optional base class that generated classes will extend
+Base class that generated classes will extend
 
 **generator**: `Function` = `lib/stringify/lang/csharp`
 
-Optional generator. Use this if you want to generate something other than C#. The Node.js API options are passed to the generator, in addition to `className` (`string`) and `definitions` – an `array` with abstract representations of the component class and any child classes.
+Use this if you want to generate something other than C#. The Node.js API options are passed to the generator, in addition to `className` (`string`) and `definitions` – an `array` with abstract representations of the component class and any child classes.
 
 **indent**: `Number` = `2`
+
 Number of spaces of indentation in generated C# file
 
 **namespace**: `String`
-Optional namespace to wrap around generated C# class
+
+Namespace to wrap around generated C# class
 
 **parser**: `Function` = javascript parser
+
 What input language to parse. Javascript and typescript parsers are exported from the main library.
 
 ### Example
@@ -304,10 +307,9 @@ What input language to parse. Javascript and typescript parsers are exported fro
 ```js
 const { generate } = require("@creuna/prop-types-csharp");
 
-const { className, code } = generate({
+const { className, code } = generate(sourceCode, {
   indent: 4,
-  namespace: "Some.Awesome.Namespace",
-  sourceCode: "" // Insert actual React component source code
+  namespace: "Some.Awesome.Namespace"
 });
 ```
 
@@ -316,9 +318,8 @@ const { className, code } = generate({
 ```js
 const { generate, parsers } = require("@creuna/prop-types-csharp");
 
-const { className, code } = generate({
-  parser: parsers.typescript,
-  sourceCode: "" // Insert actual React component source code
+const { className, code } = generate(sourceCode, {
+  parser: parsers.typescript
 });
 ```
 
@@ -340,7 +341,9 @@ module.exports = function(env, options = {}) {
     plugins: [
       new PropTypesCSharpPlugin({
         exclude: ['node_modules', 'some/path/to/exclude'],
-        parser: parsers.typescript
+        compilerOptions: {
+          parser: parsers.typescript
+        }
       })
     ]
   };
@@ -360,9 +363,9 @@ It's recommended to set this to true when running with webpack dev server for th
 
 A file is excluded if its path matches any of the exclude patterns. Default is replaced when setting this.
 
-**indent**: `Number` = `2`
+**compilerOptions**: `Object`
 
-Number of spaces of indentation in generated classes.
+Options passed to the compiler, such as input language and formatting choices. Supported options are listed in the [Node.js API options](#compiler-options)
 
 **log**: `Boolean` = `false`
 
@@ -371,13 +374,6 @@ If set to true, will output some meta information from the plugin.
 **match**: `Array` of `String | RegExp` = `[/\.jsx$/]`
 
 A file is included if its path matches any of the matching patterns (unless it matches an exclude pattern). Default is replaced when setting this.
-
-**namespace**: `String`
-
-If supplied, all generated classes will be wrapped in this namespace.
-
-**parser**: `Function` = Javascript parser
-What input language to parse. Javascript and typescript parsers are exported from the main library. See config example above.
 
 **path**: `String`
 

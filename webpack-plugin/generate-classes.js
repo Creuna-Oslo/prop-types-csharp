@@ -2,18 +2,18 @@ const fs = require('fs');
 
 const generateClass = require('../lib');
 
-const attemptGenerateClass = options => modulePath => {
+const attemptGenerateClass = compilerOptions => modulePath => {
   try {
     const sourceCode = fs.readFileSync(modulePath, 'utf-8');
-    return generateClass(sourceCode, options);
+    return generateClass(sourceCode, compilerOptions);
   } catch (error) {
     return { error: `\n${modulePath}\n${error.message}\n` };
   }
 };
 
-const generateClasses = ({ modulePaths, options }) => {
+const generateClasses = ({ modulePaths, compilerOptions }) => {
   const startTime = new Date().getTime();
-  const classes = modulePaths.map(attemptGenerateClass(options));
+  const classes = modulePaths.map(attemptGenerateClass(compilerOptions));
   const duplicates = classes.reduce((accum, { className }, index) => {
     const indexOfDuplicate = classes
       .slice(index + 1) // Ensures that the same pair of duplicates doesn't get reported twice
@@ -39,9 +39,9 @@ const generateClasses = ({ modulePaths, options }) => {
 };
 
 // Hook for running in parallel with child_process. Expects the same arguments as 'generateClasses' above.
-process.on('message', ({ modulePaths, options }) => {
+process.on('message', ({ modulePaths, compilerOptions }) => {
   if (modulePaths) {
-    process.send(generateClasses({ modulePaths, options }));
+    process.send(generateClasses({ modulePaths, compilerOptions }));
   }
 });
 

@@ -37,10 +37,8 @@ module.exports = function(env = {}, options = {}) {
     },
     plugins: [
       new PropTypesCSharpPlugin({
-        baseClass: env.baseClass,
-        path: 'classes',
-        namespace: env.namespace,
-        indent: env.indent
+        compilerOptions: env.compilerOptions,
+        path: 'classes'
       })
     ]
   };
