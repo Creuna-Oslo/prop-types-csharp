@@ -1,3 +1,12 @@
+# 3.0.0
+
+- BREAKING (Node.js API): The exported `generate` function now expects two arguments instead of a single options object (`generate(sourceCode, options)`). The source code is now provided as the first argument.
+- BREAKING (Webpack plugin): Formatting options (like `namespace` and `indent`) are now wrapped under `options.compilerOptions`. Consult the README.
+- BREAKING (generator API): Generators are now passed three arguments instead of one (`definitions`, `className` and `options`)
+- Fixes [#69](https://github.com/Creuna-Oslo/prop-types-csharp/issues/69): Adds `instantiateProperties` option to Node.js API and `compilerOptions` in webpack plugin.
+- Fixes [#70](https://github.com/Creuna-Oslo/prop-types-csharp/issues/70): Fixes `PropTypes.number` not defaulting to `int` in lists.
+- Fixes [#71](https://github.com/Creuna-Oslo/prop-types-csharp/issues/71): Dictionaries now have type `IDictionary` instead of `Dictionary`
+
 # 2.0.1
 
 - Fixes [#68](https://github.com/Creuna-Oslo/prop-types-csharp/issues/68): Fixes invalid propTypes being included in generated classes when used inside `PropTypes.arrayOf`
