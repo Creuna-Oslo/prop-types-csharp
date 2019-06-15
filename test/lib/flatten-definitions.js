@@ -1,9 +1,9 @@
 const test = require('ava');
 
-const createNewDefinitions = require('../../lib/utils/create-definitions');
+const flattenDefinitions = require('../../lib/utils/flatten-definitions');
 
 const template = (t, input, expected) => {
-  const definitions = createNewDefinitions(input, 'Component');
+  const definitions = flattenDefinitions(input, 'Component');
 
   t.deepEqual(expected, definitions);
 };

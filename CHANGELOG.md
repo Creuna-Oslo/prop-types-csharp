@@ -1,3 +1,7 @@
+# 4.0.0
+
+- BREAKING (generator API): Generators are now passed the `propTypes` object instead of a `definitions` array, and must call `utils/flatten-definitions.js` manually if needed.
+
 # 3.0.0
 
 - BREAKING (Node.js API): The exported `generate` function now expects two arguments instead of a single options object (`generate(sourceCode, options)`). The source code is now provided as the first argument.
