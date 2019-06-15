@@ -1,9 +1,9 @@
 const test = require('ava');
 
-const createNewDefinitions = require('../../lib/create-definitions');
+const createNewDefinitions = require('../../lib/utils/create-definitions');
 
 const template = (t, input, expected) => {
-  const definitions = createNewDefinitions('Component')(input);
+  const definitions = createNewDefinitions(input, 'Component');
 
   t.deepEqual(expected, definitions);
 };

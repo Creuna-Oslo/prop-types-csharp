@@ -3,48 +3,30 @@ const test = require('ava');
 const stringify = require('../../../lib/stringify/lang/csharp');
 const normalize = require('../../utils/_normalize-string');
 
-const basicDefinitions = [
-  {
-    name: 'Component',
-    properties: {
-      type: 'shape',
-      children: {
-        text: { type: 'string', isRequired: true },
-        texts: {
-          type: 'arrayOf',
-          children: {
-            type: 'arrayOf',
-            children: { type: 'arrayOf', children: { type: 'string' } }
-          }
-        },
-        singleObject: { type: 'singleObject', parents: ['Component'] },
-        objects: {
-          type: 'arrayOf',
-          isRequired: true,
-          children: { type: 'objects', parents: ['Component'] }
-        }
-      }
+const basicDefinition = {
+  text: { type: 'string', isRequired: true },
+  texts: {
+    type: 'arrayOf',
+    children: {
+      type: 'arrayOf',
+      children: { type: 'arrayOf', children: { type: 'string' } }
     }
   },
-  {
-    name: 'singleObject',
-    properties: {
-      type: 'shape',
-      parents: ['Component'],
-      children: {
-        propertyA: { type: 'string', isRequired: true }
-      }
+  singleObject: {
+    type: 'shape',
+    children: {
+      propertyA: { type: 'string', isRequired: true }
     }
   },
-  {
-    name: 'objects',
-    properties: {
+  objects: {
+    type: 'arrayOf',
+    isRequired: true,
+    children: {
       type: 'shape',
-      parents: ['Component'],
       children: { propertyB: { type: 'string' } }
     }
   }
-];
+};
 
 const imports = `using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -76,7 +58,7 @@ const template = (
   input,
   expected,
   options,
-  className,
+  className = 'Component',
   removeIndentation
 ) => {
   t.is(
@@ -85,12 +67,12 @@ const template = (
   );
 };
 
-test('Basic propTypes', template, basicDefinitions, imports + basicClass);
+test('Basic propTypes', template, basicDefinition, imports + basicClass);
 
 test(
   'With namespace',
   template,
-  basicDefinitions,
+  basicDefinition,
   `${imports}\n` + `namespace Something.SomethingElse\n{\n${basicClass}\n}`,
   { namespace: 'Something.SomethingElse' }
 );
@@ -98,12 +80,7 @@ test(
 test(
   'With base class',
   template,
-  [
-    {
-      name: 'Component',
-      properties: { type: 'shape', children: {} }
-    }
-  ],
+  {},
   imports +
     `public class Component : BaseClass
   {
@@ -115,19 +92,16 @@ test(
 test(
   'Nested properties with base class',
   template,
-  [
-    {
-      name: 'Component',
-      properties: { type: 'shape', children: {} }
-    },
-    {
-      name: 'ComponentProperty',
-      properties: { type: 'shape', parents: ['Component'], children: {} }
+  {
+    componentProperty: {
+      type: 'shape',
+      children: {}
     }
-  ],
+  },
   imports +
     `public class Component : BaseClass
     {
+      public Component_ComponentProperty ComponentProperty { get; set; }
     }
     public class Component_ComponentProperty
     {
@@ -138,12 +112,7 @@ test(
 test(
   'With name collision between class name and base class',
   template,
-  [
-    {
-      name: 'Component',
-      properties: { type: 'shape', children: {} }
-    }
-  ],
+  {},
   imports +
     `public class Component
   {
@@ -154,15 +123,7 @@ test(
 test(
   'With different indentation',
   template,
-  [
-    {
-      name: 'Component',
-      properties: {
-        type: 'shape',
-        children: { a: { type: 'string' } }
-      }
-    }
-  ],
+  { a: { type: 'string' } },
   imports +
     `
 public class Component
@@ -178,25 +139,13 @@ public class Component
 test(
   'Optional enum',
   template,
-  [
-    {
-      name: 'Component',
-      properties: {
-        type: 'shape',
-        children: {
-          enum: { type: 'enum', parents: ['Component'] }
-        }
-      }
-    },
-    {
-      name: 'enum',
-      properties: {
-        type: 'oneOf',
-        parents: ['Component'],
-        children: ['value-1', 'value-2']
-      }
+  {
+    enum: {
+      type: 'oneOf',
+      parents: ['Component'],
+      children: ['value-1', 'value-2']
     }
-  ],
+  },
   imports +
     `public class Component
     {
@@ -216,26 +165,14 @@ test(
 test(
   'Required enum',
   template,
-  [
-    {
-      name: 'Component',
-      properties: {
-        type: 'shape',
-        children: {
-          enum: { type: 'enum', parents: ['Component'], isRequired: true }
-        }
-      }
-    },
-    {
-      name: 'enum',
-      properties: {
-        type: 'oneOf',
-        isRequired: true,
-        parents: ['Component'],
-        children: ['value-1', 'value-2']
-      }
+  {
+    enum: {
+      type: 'oneOf',
+      isRequired: true,
+      parents: ['Component'],
+      children: ['value-1', 'value-2']
     }
-  ],
+  },
   imports +
     `public class Component
       {
@@ -255,25 +192,12 @@ test(
 test(
   'Enum with name starting with non-letter',
   template,
-  [
-    {
-      name: 'Component',
-      properties: {
-        type: 'shape',
-        children: {
-          enum: { type: 'enum', parents: ['Component'] }
-        }
-      }
-    },
-    {
-      name: 'enum',
-      properties: {
-        type: 'oneOf',
-        parents: ['Component'],
-        children: ['-value-1', '.value-2', '#value-3']
-      }
+  {
+    enum: {
+      type: 'oneOf',
+      children: ['-value-1', '.value-2', '#value-3']
     }
-  ],
+  },
   imports +
     `public class Component
       {
@@ -296,29 +220,18 @@ test(
 test(
   'Enum from Object.values',
   template,
-  [
-    {
-      name: 'Component',
-      properties: {
-        type: 'shape',
-        children: { a: { type: 'b', parents: ['Component'] } }
-      }
-    },
-    {
-      name: 'b',
-      properties: {
-        type: 'oneOf',
-        parents: ['Component'],
-        children: [{ key: 'a', value: 'b' }]
-      }
+  {
+    a: {
+      type: 'oneOf',
+      children: [{ key: 'a', value: 'b' }]
     }
-  ],
+  },
   imports +
     `public class Component
     {
-      public Component_B A { get; set; }
+      public Component_A A { get; set; }
     }
-    public enum Component_B
+    public enum Component_A
     {
       [EnumMember(Value = "")]
       None = 0,
@@ -330,21 +243,12 @@ test(
 test(
   'Empty definition',
   template,
-  [
-    {
-      name: 'Component',
-      properties: {
-        type: 'shape',
-        children: {
-          property: { type: 'property', parents: ['Component'] }
-        }
-      }
-    },
-    {
-      name: 'property',
-      properties: { type: 'shape', parents: ['Component'], children: {} }
+  {
+    property: {
+      type: 'shape',
+      children: {}
     }
-  ],
+  },
   imports +
     `public class Component
     {
@@ -404,17 +308,7 @@ public class Component : AnotherComponent
 test(
   'Prop named "type"',
   template,
-  [
-    {
-      name: 'Component',
-      properties: {
-        type: 'shape',
-        children: {
-          type: { type: 'string' }
-        }
-      }
-    }
-  ],
+  { type: { type: 'string' } },
   imports +
     `
 public class Component
