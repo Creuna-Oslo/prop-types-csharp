@@ -1,6 +1,6 @@
 const test = require('ava');
 
-const { generate } = require('../../../index');
+const { generate, generators } = require('../../../index');
 const normalize = require('../../utils/_normalize-string');
 
 const {

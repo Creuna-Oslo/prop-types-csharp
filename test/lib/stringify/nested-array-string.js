@@ -1,6 +1,6 @@
 const test = require('ava');
 
-const nestedArrayString = require('../../../lib/stringify/lang/csharp/nested-array-string');
+const nestedArrayString = require('../../../lib/stringify/csharp/nested-array-string');
 
 test('With external class', t => {
   const arrayString = nestedArrayString({
