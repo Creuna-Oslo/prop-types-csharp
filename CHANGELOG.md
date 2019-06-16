@@ -2,6 +2,7 @@
 
 - BREAKING (generator API): Generators are now passed the `propTypes` object instead of a `definitions` array, and must call `utils/flatten-definitions.js` manually if needed.
 - BREAKING (Node.js API): The exported `generate` function has been renamed to `compile`
+- Adds support for `imports` in compiler options. Use to add extra import statements.
 - Adds support for generating classes in `Kotlin`. The `Kotlin` generator is exposed via the main export of this package (`require('@creuna/prop-types-csharp').generators.kotlin`)
 
 # 3.0.0

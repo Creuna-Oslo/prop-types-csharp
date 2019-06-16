@@ -346,7 +346,7 @@ test(
   `,
   `package Component
 
-  data class Component(
+  open class Component(
     val a: String? = null
   )
   `,

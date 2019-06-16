@@ -154,12 +154,30 @@ test(
   { namespace: 'ViewModels' }
 );
 
-test('Extending other component', t => {
-  const expected = `
-package Component
-typealias Component = OtherComponent`;
-  t.is(
-    normalize(expected),
-    normalize(stringify('OtherComponent', 'Component'))
+test(
+  'Extending other component',
+  template,
+  'OtherComponent',
+  `package Component
+  typealias Component = OtherComponent`
 );
-});
+
+test(
+  'With baseClass, namespace and import',
+  template,
+  { a: { type: 'Link' } },
+  `package ViewModels.Component
+
+  import Some.Import
+  import Some.Other.Import
+  import ViewModels.Link.*
+
+  open class Component(
+    val a: Link? = null
+  ) : BaseClass()`,
+  {
+    baseClass: 'BaseClass',
+    imports: ['Some.Import', 'Some.Other.Import'],
+    namespace: 'ViewModels'
+  }
+);

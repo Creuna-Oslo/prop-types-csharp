@@ -314,6 +314,19 @@ test(
 public class Component
 {
   public string Type { get; set; }
-}`,
-  { className: 'Component' }
+}`
+);
+
+test(
+  'With extra imports',
+  template,
+  {},
+  imports +
+    `using Some.Import;
+    using Some.Other.Import;
+
+    public class Component
+    {
+    }`,
+  { imports: ['Some.Import', 'Some.Other.Import'] }
 );
