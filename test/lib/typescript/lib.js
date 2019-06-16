@@ -1,6 +1,6 @@
 const test = require('ava');
 
-const { generate, parsers } = require('../../../index');
+const { compile, parsers } = require('../../../index');
 const normalize = require('../../utils/_normalize-string');
 const {
   components,
@@ -8,7 +8,7 @@ const {
 } = require('../../../fixtures/typescript/source-code');
 
 const template = (t, sourceCode, expected, options) => {
-  const transformedSource = generate(
+  const transformedSource = compile(
     sourceCode,
     Object.assign({}, options, { parser: parsers.typescript })
   );
@@ -109,7 +109,7 @@ test('Throws on multiple exports', t => {
   export const Component = (props: {}) => null,
   A = true;`;
   const error = t.throws(() => {
-    generate(sourceCode, { parser: parsers.typescript });
+    compile(sourceCode, { parser: parsers.typescript });
   });
 
   t.is(
@@ -123,7 +123,7 @@ test('Throws on name collisions', t => {
   const Component = (props: { component: string }) => <div>{props.component}</div>;
   export default Component;`;
   const error = t.throws(() => {
-    generate(sourceCode, { parser: parsers.typescript });
+    compile(sourceCode, { parser: parsers.typescript });
   });
 
   t.is(

@@ -1,5 +1,5 @@
 module.exports = {
-  generate: require('./lib'),
+  compile: require('./lib'),
   generators: {
     csharp: require('./lib/stringify/csharp'),
     kotlin: require('./lib/stringify/kotlin')

@@ -254,9 +254,9 @@ ReactSiteConfiguration.Configuration
 
 The Node API exports an object:
 
-```ts
+```js
 {
-  generate: function(sourceCode, options){} // Generates a class string,
+  compile: function(sourceCode, options){} // Creates a class string,
   generators: {
     csharp: function(){},
     kotlin: function(){}
@@ -268,7 +268,7 @@ The Node API exports an object:
 }
 ```
 
-### generate(_sourceCode, options_)
+### compile(_sourceCode, options_)
 
 #### Returns
 

@@ -1,6 +1,6 @@
 const test = require('ava');
 
-const { generate, generators } = require('../../../index');
+const { compile, generators } = require('../../../index');
 const normalize = require('../../utils/_normalize-string');
 
 const {
@@ -9,7 +9,7 @@ const {
 } = require('../../../fixtures/javascript/source-code');
 
 const template = (t, input, expected, options) => {
-  const transformedSource = generate(input, options);
+  const transformedSource = compile(input, options);
   t.is(normalize(expected), normalize(transformedSource.code));
 };
 
@@ -57,7 +57,7 @@ test('Throws on name collisions', t => {
   Component.propTypes = { component: PropTypes.string };
   export default Component;`;
   const error = t.throws(() => {
-    generate(sourceCode);
+    compile(sourceCode);
   });
 
   t.is(
