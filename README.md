@@ -250,6 +250,14 @@ ReactSiteConfiguration.Configuration
   });
 ```
 
+## About generated classes (Kotlin)
+
+Since Kotlin doesn't have a `namespace` keyword, the `namespace` compiler option is used to prefix package names (both for imports and package definitions).
+
+With the Kotlin generator, components can only extend other components if they have no required props. This also applies to the `baseClass` option. This is due to the fact that this compiler does static analysis of one react component at a time and therefore doesn't know what arguments to pass the constructors of other classes.
+
+Inheriting the entire `propTypes` of another component will result in a `typealias` being created.
+
 ## <a id="node"></a>Node.js API
 
 The Node API exports an object:
