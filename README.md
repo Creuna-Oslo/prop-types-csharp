@@ -1,10 +1,10 @@
-# PropTypes to C# class generator
+# PropTypes to class generator
 
 [![npm version](https://img.shields.io/npm/v/@creuna/prop-types-csharp.svg)](https://npmjs.com/package/@creuna/prop-types-csharp)
 [![Travis status](https://travis-ci.org/Creuna-Oslo/prop-types-csharp.svg?branch=master)](https://travis-ci.org/Creuna-Oslo/prop-types-csharp)
 [![Coverage Status](https://coveralls.io/repos/github/Creuna-Oslo/prop-types-csharp/badge.svg?branch=master)](https://coveralls.io/github/Creuna-Oslo/prop-types-csharp?branch=master)
 
-This package has tools for generating C# classes from React components using propTypes. Supports javascript and typescript.
+This package has tools for generating classes from React components using propTypes. Curently supports javascript or typescript source and C# or Kotlin output.
 
 ## Table of contents
 
@@ -26,11 +26,11 @@ yarn add @creuna/prop-types-csharp
 
 ### Ignored props
 
-Props of type `func`, `element`, `node` and `instanceOf` are ignored when creating classes because they make no sense in C#-land.
+Props of type `func`, `element`, `node` and `instanceOf` are ignored when creating classes because they make no sense in server-land.
 
 ### Illegal propTypes
 
-Props of type `object` and `array` are ambiguous and cannot be included in C# classes as-is.
+Props of type `object` and `array` are ambiguous and cannot be included in classes as-is.
 
 **object**
 
@@ -44,7 +44,7 @@ Compontent.propTypes = {
 };
 ```
 
-The above example will result in a C# class that has a reference to the C# class for `Link`, which means the definition of `Link` is now re-used which is nice:
+The above example will result in a class that has a reference to the class for `Link`, which means the definition of `Link` is now re-used which is nice:
 
 ```cs
 public class Component {
@@ -70,7 +70,7 @@ The only supported string value for `propTypesmeta` is `'exclude'`. When `Compon
 
 In general, it's recommended to define as much as possible in `propTypes`. In some cases however, that might be difficult, and in those cases `propTypesMeta` can be helpful.
 
-`propTypesMeta` can be used to exclude some props from C# classes or to provide type hints for ambiguous types.
+`propTypesMeta` can be used to exclude some props from classes or to provide type hints for ambiguous types.
 
 Supported values for props in `propTypesMeta` are
 
@@ -84,7 +84,7 @@ Supported values for props in `propTypesMeta` are
 - React component
 - `(< React component > | Object)[]`
 
-`"int"`, `"float"`, `"double"` and their nullable counterparts replace `PropTypes.number` if supplied. By default, `PropTypes.number` will result in `int` in C# classes.
+`"int"`, `"float"`, `"double"` and their nullable counterparts replace `PropTypes.number` if supplied. By default, `PropTypes.number` will result in `int` in classes.
 
 Functional component:
 
@@ -140,7 +140,7 @@ class Component extends React.Component {
 
 ### Inheritance
 
-Inheritance of propTypes from other components is supported and will result in C# classes with corresponding inheritance. The `baseClass` option will be overridden when inheriting.
+Inheritance of propTypes from other components is supported for C#. This will result in C# classes with corresponding inheritance. The `baseClass` option will be overridden when inheriting.
 
 Simple:
 
@@ -177,7 +177,7 @@ If type parameters are used the generator will attempt to use the first paramete
 
 ### Illegal types
 
-As with the javascript parser, some types are not allowed because they cannot be easily converted to C#, like `object`, `any`, intersection and union types.
+As with the javascript parser, some types are not allowed because they are too ambiguous, like `object`, `any`, intersection and union types.
 
 ```tsx
 const A = (props: { b: string }) => null; // Class name: A
@@ -224,7 +224,7 @@ const B: WithPropTypesMeta<BProps, React.FunctionComponent<BProps>> = props =>
   null;
 ```
 
-## <a id="classes"></a> About generated classes
+## <a id="classes"></a> About generated classes (C#)
 
 ### Enums
 
@@ -278,7 +278,7 @@ Returns an `object` containing:
 Name of React component (derived from export declaration).
 
 **code**: `String`
-Source code for new C# class.
+Source code to generate class from.
 
 #### sourceCode: _String_
 
@@ -292,11 +292,11 @@ Base class that generated classes will extend
 
 **generator**: `Function` = `generators.csharp`
 
-Set output language. Curently, `C#` and `Kotlin` are supported out of the box but new ones can be added. A generator is a function that takes `propTypes` (an object describing the classes to generate), `className` (the name of the react component) and an options object. It is expected to return a `string`. The easiest way of adding a new language is probably to clone `lib/stringify/csharp` and work from there. If you do make a generator for another language, please consider submitting a PR!
+Set output language. Curently, `C#` and `Kotlin` are supported out of the box but new ones can be added. A generator is a function that takes `propTypes` (an object describing the classes to create), `className` (the name of the react component) and an options object. It is expected to return a `string`. The easiest way of adding a new language is probably to clone `lib/stringify/csharp` and work from there. If you do make a generator for another language, please consider submitting a PR!
 
 **indent**: `Number` = `2`
 
-Number of spaces of indentation in generated C# file
+Number of spaces of indentation in generated class
 
 **instantiateProperties**: `Boolean` = `false`
 
@@ -304,7 +304,7 @@ Whether class properties should be instantiated or not. Does not apply to basic 
 
 **namespace**: `String`
 
-Namespace to wrap around generated C# class
+Namespace to wrap around generated class
 
 **parser**: `Function` = javascript parser
 
@@ -313,9 +313,9 @@ What input language to parse. Javascript and typescript parsers are exported fro
 ### Example
 
 ```js
-const { generate } = require("@creuna/prop-types-csharp");
+const { compile } = require("@creuna/prop-types-csharp");
 
-const { className, code } = generate(sourceCode, {
+const { className, code } = compile(sourceCode, {
   indent: 4,
   namespace: "Some.Awesome.Namespace"
 });
@@ -324,16 +324,17 @@ const { className, code } = generate(sourceCode, {
 ### Typescript example
 
 ```js
-const { generate, parsers } = require("@creuna/prop-types-csharp");
+const { compile, generators, parsers } = require("@creuna/prop-types-csharp");
 
-const { className, code } = generate(sourceCode, {
-  parser: parsers.typescript
+const { className, code } = compile(sourceCode, {
+  parser: parsers.typescript,
+  generator: generators.kotlin
 });
 ```
 
 ## <a id="webpack"></a>Webpack plugin
 
-The plugin will extract PropType definitions from `.jsx` files (configurable) and convert them into C# class files. If the build already has errors when this plugin runs, it aborts immediately.
+The plugin will extract PropType definitions from `.jsx` files (configurable) and convert them into `.cs` class files (also configurable). If the build already has errors when this plugin runs, it aborts immediately.
 
 ### Config example
 
