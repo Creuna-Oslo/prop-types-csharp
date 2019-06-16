@@ -1,6 +1,7 @@
 # 4.0.0
 
 - BREAKING (generator API): Generators are now passed the `propTypes` object instead of a `definitions` array, and must call `utils/flatten-definitions.js` manually if needed.
+- Adds support for generating classes in `Kotlin`. The `Kotlin` generator is exposed via the main export of this package (`require('@creuna/prop-types-csharp').generators.kotlin`)
 
 # 3.0.0
 

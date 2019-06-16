@@ -336,3 +336,21 @@ test(
   }`,
   { instantiateProperties: true }
 );
+
+test(
+  'Supports setting different generator',
+  template,
+  `const Component = {};
+  Component.propTypes = { a: PropTypes.string };
+  export default Component;
+  `,
+  `package Component
+
+  data class Component(
+    val a: String? = null
+  )
+  `,
+  {
+    generator: generators.kotlin
+  }
+);
