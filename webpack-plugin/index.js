@@ -14,6 +14,7 @@ function PropTypesCSharpPlugin(options) {
       async: false, // Fallback is webpackConfig.mode === 'production'
       compilerOptions: {},
       exclude: ['node_modules'],
+      fileExtension: undefined,
       log: false,
       match: [/\.jsx$/],
       path: ''
@@ -31,7 +32,9 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
   const isAsync = this.options.async;
 
   const fileExtension =
-    getFileExtension(this.options.compilerOptions.generator) || 'cs';
+    this.options.fileExtension ||
+    getFileExtension(this.options.compilerOptions.generator) ||
+    'cs';
 
   // In 'development' mode the class generation runs in parallel (using child_process.fork) in order to not degrade developer experience.
   const generateClassesAsync = isAsync

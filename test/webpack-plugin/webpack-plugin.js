@@ -122,6 +122,19 @@ runWebpackAndTest(
   }
 );
 
+runWebpackAndTest(
+  'Prefers "fileExtension" option over derived file extension',
+  './fixtures/javascript/app.js',
+  { compilerOptions: { generator: generators.csharp }, fileExtension: 'yolo' },
+  (t, compilation) => {
+    const tsFilePaths = compilation.assets.filter(asset =>
+      asset.name.endsWith('.yolo')
+    );
+
+    t.is(2, tsFilePaths.length);
+  }
+);
+
 const duplicate1Path = path.resolve(
   __dirname,
   '../../fixtures/javascript/func-component.jsx'

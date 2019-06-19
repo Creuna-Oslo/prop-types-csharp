@@ -377,13 +377,17 @@ It's recommended to set this to true when running with webpack dev server for th
 - The build can finish before class generation is done, meaning faster hot reloading of the browser.
 - Classes are written to disk by the plugin (Webpack dev server only writes to memory). Handy if you have generated classes in version control and don't want to do a production build before each commit.
 
+**compilerOptions**: `Object`
+
+Options passed to the compiler, such as input language and formatting choices. Supported options are listed in the [Node.js API options](#compiler-options)
+
 **exclude**: `Array` of `String | RegExp` = `['node-modules']`
 
 A file is excluded if its path matches any of the exclude patterns. Default is replaced when setting this.
 
-**compilerOptions**: `Object`
+**fileExtension**: `String`
 
-Options passed to the compiler, such as input language and formatting choices. Supported options are listed in the [Node.js API options](#compiler-options)
+Set the file extension of generated classes. If you use the default `csharp` generator or one of the other bundled generators you can ignore this option.
 
 **log**: `Boolean` = `false`
 
