@@ -163,13 +163,12 @@ test(
 );
 
 test(
-  'With baseClass, namespace and import',
+  'With baseClass and namespace',
   template,
   { a: { type: 'Link' } },
   `package ViewModels.Component
 
-  import Some.Import
-  import Some.Other.Import
+  import ViewModels.BaseClass.*
   import ViewModels.Link.*
 
   open class Component(
@@ -177,7 +176,6 @@ test(
   ) : BaseClass()`,
   {
     baseClass: 'BaseClass',
-    imports: ['Some.Import', 'Some.Other.Import'],
     namespace: 'ViewModels'
   }
 );
