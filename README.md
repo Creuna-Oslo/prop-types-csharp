@@ -4,7 +4,7 @@
 [![Travis status](https://travis-ci.org/Creuna-Oslo/prop-types-csharp.svg?branch=master)](https://travis-ci.org/Creuna-Oslo/prop-types-csharp)
 [![Coverage Status](https://coveralls.io/repos/github/Creuna-Oslo/prop-types-csharp/badge.svg?branch=master)](https://coveralls.io/github/Creuna-Oslo/prop-types-csharp?branch=master)
 
-This package has tools for generating classes from React components using propTypes. Curently supports javascript or typescript source and C# or Kotlin output.
+This package has tools for generating classes from React components using propTypes. Curently supports javascript or typescript source and C#, Kotlin or Typescript output.
 
 ## Table of contents
 
@@ -267,7 +267,8 @@ The Node API exports an object:
   compile: function(sourceCode, options){} // Creates a class string,
   generators: {
     csharp: function(){},
-    kotlin: function(){}
+    kotlin: function(){},
+    typescript: function(){}
   },
   parsers: {
     javascript: function(){},
@@ -300,7 +301,7 @@ Base class that generated classes will extend
 
 **generator**: `Function` = `generators.csharp`
 
-Set output language. Curently, `C#` and `Kotlin` are supported out of the box but new ones can be added. A generator is a function that takes `propTypes` (an object describing the classes to create), `className` (the name of the react component) and an options object. It is expected to return a `string`. The easiest way of adding a new language is probably to clone `lib/stringify/csharp` and work from there. If you do make a generator for another language, please consider submitting a PR!
+Set output language. Curently, `C#`, `Kotlin` and `Typescripts` are supported out of the box but new ones can be added. A generator is a function that takes `propTypes` (an object describing the classes to create), `className` (the name of the react component) and an options object. It is expected to return a `string`. The easiest way of adding a new language is probably to clone `lib/stringify/csharp` and work from there. If you do make a generator for another language, please consider submitting a PR!
 
 **indent**: `Number` = `2`
 
