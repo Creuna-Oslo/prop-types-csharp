@@ -4,6 +4,7 @@ const fsExtra = require('fs-extra');
 const path = require('path');
 
 const filterPaths = require('./filter-paths');
+const getFileExtension = require('./get-file-extension');
 const generateClasses = require('./generate-classes');
 const { log, logError } = require('./log');
 
@@ -28,6 +29,9 @@ const badArrayOption = key =>
 // Reading this from the bottom is probably the easiest.
 PropTypesCSharpPlugin.prototype.apply = function(compiler) {
   const isAsync = this.options.async;
+
+  const fileExtension =
+    getFileExtension(this.options.compilerOptions.generator) || 'cs';
 
   // In 'development' mode the class generation runs in parallel (using child_process.fork) in order to not degrade developer experience.
   const generateClassesAsync = isAsync
@@ -74,7 +78,10 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
       if (!result.error) {
         result.classes.forEach(({ code, className }) => {
           if (code && className) {
-            const filePath = path.join(this.outputPath, `${className}.cs`);
+            const filePath = path.join(
+              this.outputPath,
+              `${className}.${fileExtension}`
+            );
             const asset = { source: () => code, size: () => code.length };
             compilation.assets[filePath] = asset;
           }
@@ -101,7 +108,10 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
           if (code && className) {
             const basePath = path.join(compiler.outputPath, this.outputPath);
             fsExtra.ensureDirSync(basePath);
-            fs.writeFileSync(path.join(basePath, `${className}.cs`), code);
+            fs.writeFileSync(
+              path.join(basePath, `${className}.${fileExtension}`),
+              code
+            );
           }
         });
       }

@@ -5,6 +5,8 @@ const tempy = require('tempy');
 const test = require('ava');
 const webpack = require('webpack');
 
+const { generators } = require('../../index.js');
+
 const { classes } = require('../../fixtures/javascript/source-code');
 const normalize = require('../utils/_normalize-string');
 const webpackConfig = require('../../fixtures/javascript/webpack.config');
@@ -37,7 +39,7 @@ const runWebpackAndTestError = (title, entry, expectedErrorMessage) => {
       t.is(normalize(expectedErrorMessage), normalize(compilation.errors[0]));
 
       const CSharpFilePaths = compilation.assets
-        .filter(asset => asset.name.match(/\.cs$/))
+        .filter(asset => asset.name.endsWith('.cs'))
         .map(file => file.name);
 
       t.is(CSharpFilePaths.length, 0);
@@ -53,7 +55,7 @@ runWebpackAndTest(
   (t, compilation) => {
     const { outputPath } = compilation;
     const CSharpFilePaths = compilation.assets
-      .filter(asset => asset.name.match(/\.cs$/))
+      .filter(asset => asset.name.endsWith('.cs'))
       .map(file => file.name);
 
     t.is(CSharpFilePaths.length, 2);
@@ -90,7 +92,7 @@ runWebpackAndTest(
     const { outputPath } = compilation;
 
     const CSharpFilePaths = compilation.assets
-      .filter(asset => asset.name.match(/\.cs$/))
+      .filter(asset => asset.name.endsWith('.cs'))
       .map(file => file.name);
 
     const CSharpFiles = CSharpFilePaths.reduce((accum, filePath) => {
@@ -104,6 +106,19 @@ runWebpackAndTest(
       normalize(classes.baseClassComponent),
       normalize(CSharpFiles.BaseClassComponent)
     );
+  }
+);
+
+runWebpackAndTest(
+  'Sets correct file extension',
+  './fixtures/javascript/app.js',
+  { compilerOptions: { generator: generators.kotlin } },
+  (t, compilation) => {
+    const kotlinFilePaths = compilation.assets.filter(asset =>
+      asset.name.endsWith('.kt')
+    );
+
+    t.is(2, kotlinFilePaths.length);
   }
 );
 
