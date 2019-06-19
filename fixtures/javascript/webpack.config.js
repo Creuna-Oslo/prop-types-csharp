@@ -2,14 +2,16 @@ const path = require('path');
 
 const PropTypesCSharpPlugin = require('../../webpack-plugin');
 
-module.exports = function(env = {}, options = {}) {
+const defaultPluginOptions = { path: 'classes' };
+
+module.exports = function(env = {}, pluginOptions = {}) {
   return {
     entry: env.entry || './fixtures/javascript/app.js',
     output: {
       path: env.path || path.resolve(__dirname, '..', 'dist'),
       filename: '[name].js'
     },
-    mode: options.mode,
+    mode: 'production',
     module: {
       rules: [
         {
@@ -36,10 +38,7 @@ module.exports = function(env = {}, options = {}) {
       extensions: ['.js', '.jsx']
     },
     plugins: [
-      new PropTypesCSharpPlugin({
-        compilerOptions: env.compilerOptions,
-        path: 'classes'
-      })
+      new PropTypesCSharpPlugin({ ...defaultPluginOptions, ...pluginOptions })
     ]
   };
 };
