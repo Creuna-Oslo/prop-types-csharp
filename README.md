@@ -8,6 +8,7 @@ This package has tools for generating classes from React components using propTy
 
 ## Table of contents
 
+- [TLDR config](#tldr)
 - [General concepts](#general)
 - [Typescript](#typescript)
 - [About generated classes](#classes)
@@ -19,7 +20,57 @@ This package has tools for generating classes from React components using propTy
 ## Install
 
 ```
-yarn add @creuna/prop-types-csharp
+npm install --save-dev @creuna/prop-types-csharp
+```
+
+## <a id="tldr"></a> TLDR config
+
+### Webpack plugin
+
+Config example. See complete list of options [below](#webpack)
+
+```js
+const PropTypesCSharpPlugin = require('@creuna/prop-types-csharp/webpack-plugin');
+const { generators, parsers } = require('@creua/prop-types-csharp');
+
+module.exports = {
+  entry: { ... },
+  output: { ... },
+  plugins: [
+    new PropTypesCSharpPlugin({
+      exclude: ['node_modules', 'some/path/to/exclude'],
+      compilerOptions: {
+        parser: parsers.typescript, // Optional
+        generator: generators.kotlin // Optional
+      }
+    })
+  ]
+};
+```
+
+### Babel plugin
+
+Read more [below](#babel)
+
+```json
+{
+  "plugins": ["@creuna/prop-types-csharp/babel-plugin"]
+}
+```
+
+### Eslint plugin
+
+Read more [below](#eslint)
+
+`npm install --save-dev @creuna/eslint-plugin-prop-types-csharp`
+
+```json
+{
+  "plugins": ["@creuna/eslint-plugin-prop-types-csharp"],
+  "rules": {
+    "@creuna/prop-types-csharp/all": 2
+  }
+}
 ```
 
 ## <a id="general"></a> General concepts
@@ -166,7 +217,7 @@ MyComponent.propTypes: {
 };
 ```
 
-## <a id="typescript"></a> Typescript
+## <a id="typescript"></a> Typescript as input language
 
 The class generator will determine the name of the generated class based on how prop types are defined:
 
@@ -344,29 +395,6 @@ const { className, code } = compile(sourceCode, {
 ## <a id="webpack"></a>Webpack plugin
 
 The plugin will extract PropType definitions from `.jsx` files (configurable) and convert them into `.cs` class files (also configurable). If the build already has errors when this plugin runs, it aborts immediately.
-
-### Config example
-
-```js
-const PropTypesCSharpPlugin = require('@creuna/prop-types-csharp/webpack-plugin');
-const { parsers } = require('@creua/prop-types-csharp');
-
-module.exports = function(env, options = {}) {
-  return {
-    entry: { ... },
-    output: { ... },
-    module: { ... },
-    plugins: [
-      new PropTypesCSharpPlugin({
-        exclude: ['node_modules', 'some/path/to/exclude'],
-        compilerOptions: {
-          parser: parsers.typescript
-        }
-      })
-    ]
-  };
-};
-```
 
 ### Options: `Object`
 

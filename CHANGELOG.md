@@ -1,3 +1,7 @@
+# 4.0.1
+
+- Adds TLDR section to README
+
 # 4.0.0
 
 - BREAKING (generator API): Generators are now passed the `propTypes` object instead of a `definitions` array, and must call `utils/flatten-definitions.js` manually if needed.
