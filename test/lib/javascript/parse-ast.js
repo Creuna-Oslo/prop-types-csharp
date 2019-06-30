@@ -115,7 +115,7 @@ test(
 test(
   'oneOfType with exclude',
   template,
-  `({ a: oneOf([string, number]) })`,
+  `({ a: oneOfType([string, number]) })`,
   { a: { type: 'exclude' } },
   {}
 );
