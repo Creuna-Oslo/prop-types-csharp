@@ -6,12 +6,10 @@ const generateClasses = require('../../webpack-plugin/generate-classes');
 test('Generates classes', t => {
   t.plan(2);
 
-  const { classes, error } = generateClasses({
-    modulePaths: [
-      path.join(__dirname, '../../fixtures/javascript/class-component.jsx'),
-      path.join(__dirname, '../../fixtures/javascript/func-component.jsx')
-    ]
-  });
+  const { classes, error } = generateClasses([
+    path.join(__dirname, '../../fixtures/javascript/class-component.jsx'),
+    path.join(__dirname, '../../fixtures/javascript/func-component.jsx')
+  ]);
 
   t.is(null, error);
   t.is(classes.filter(({ error }) => !error).length, 2);
@@ -27,9 +25,7 @@ test('Returns error on duplicate component names', t => {
     '../../fixtures/javascript/nested-component/func-component.jsx'
   );
 
-  const { error } = generateClasses({
-    modulePaths: [component1Path, component2Path]
-  });
+  const { error } = generateClasses([component1Path, component2Path]);
 
   const expectedError = `Found duplicate component names in:
 FunctionalComponent (${component1Path})
@@ -43,7 +39,7 @@ test('Returns class generation error', t => {
     __dirname,
     '../../fixtures/javascript/error-component.jsx'
   );
-  const { classes } = generateClasses({ modulePaths: [modulePath] });
+  const { classes } = generateClasses([modulePath]);
   const expectedError = `
 ${modulePath}
 Invalid type for prop 'a' ('object').

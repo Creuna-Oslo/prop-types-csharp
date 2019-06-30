@@ -1,19 +1,10 @@
-const logError = (isAsync, compilation, error) => {
-  const errorMessage = `C# class generator plugin\n${error}`;
-
-  compilation.errors.push(errorMessage);
-
-  if (!isAsync) {
-    return;
-  }
-
-  // Since class generation is running async when using webpack dev server, pushing warnings to the compilation does not output anything to the shell (it does show in the browser though). Writing to process.stdout manually fixes this.
-  process.stdout.write(`\nERROR in ${errorMessage}\n`);
+const logError = (compilation, error) => {
+  compilation.errors.push(`C# class generator plugin\n${error}`);
 };
 
 // Writes errors/warnings and status messages (if enabled)
-const log = (options, isAsync, compilation, { classes, duration, error }) => {
-  const errorLogger = logError.bind(null, isAsync, compilation);
+const log = (options, compilation, { classes, duration, error }) => {
+  const errorLogger = logError.bind(null, compilation);
 
   if (error) errorLogger(error);
 

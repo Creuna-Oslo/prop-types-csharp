@@ -1,6 +1,3 @@
-const { fork } = require('child_process');
-const fs = require('fs');
-const fsExtra = require('fs-extra');
 const path = require('path');
 
 const filterPaths = require('./filter-paths');
@@ -11,7 +8,6 @@ const { log, logError } = require('./log');
 function PropTypesCSharpPlugin(options) {
   this.options = Object.assign(
     {
-      async: false, // Fallback is webpackConfig.mode === 'production'
       compilerOptions: {},
       exclude: ['node_modules'],
       fileExtension: undefined,
@@ -29,37 +25,21 @@ const badArrayOption = key =>
 // This function defines a lot of things before actually calling them.
 // Reading this from the bottom is probably the easiest.
 PropTypesCSharpPlugin.prototype.apply = function(compiler) {
-  const isAsync = this.options.async;
-
   const fileExtension =
     this.options.fileExtension ||
     getFileExtension(this.options.compilerOptions.generator) ||
     'cs';
 
-  // In 'development' mode the class generation runs in parallel (using child_process.fork) in order to not degrade developer experience.
-  const generateClassesAsync = isAsync
-    ? fork(path.join(__dirname, './generate-classes'))
-    : null;
-
   // Compiler 'emit' callback. Receives a webpack compilation object that holds information about compiled modules (and tons of other stuff) and lets us add our own assets and errors/warnings.
   const emit = compilation => {
-    // Add to 'this' to be able to reference in log function when running in parallel
-    this.compilation = compilation;
-    this.outputPath = path.normalize(this.options.path);
-
-    // Don't attempt class generation if compilation has errors
-    if (compilation.errors.length) {
-      return;
-    }
-
     const assertArray = (arr, message) =>
-      Array.isArray(arr) || logError(isAsync, compilation, message);
+      Array.isArray(arr) ? true : logError(compilation, message);
 
-    if (!assertArray(this.options.exclude, badArrayOption('exclude'))) {
-      return;
-    }
-
-    if (!assertArray(this.options.match, badArrayOption('match'))) {
+    if (
+      compilation.errors.length || // Abort if compilation has errors
+      !assertArray(this.options.exclude, badArrayOption('exclude')) ||
+      !assertArray(this.options.match, badArrayOption('match'))
+    ) {
       return;
     }
 
@@ -73,60 +53,27 @@ PropTypesCSharpPlugin.prototype.apply = function(compiler) {
       this.options.exclude
     );
 
-    const { compilerOptions } = this.options;
+    const outputPath = path.normalize(this.options.path);
+    const result = generateClasses(modulePaths, this.options.compilerOptions);
+    log(this.options, compilation, result);
 
-    if (!isAsync) {
-      const result = generateClasses({ modulePaths, compilerOptions });
-
-      if (!result.error) {
-        result.classes.forEach(({ code, className }) => {
-          if (code && className) {
-            const filePath = path.join(
-              this.outputPath,
-              `${className}.${fileExtension}`
-            );
-            const asset = { source: () => code, size: () => code.length };
-            compilation.assets[filePath] = asset;
-          }
-        });
-      }
-
-      log(this.options, isAsync, compilation, result);
-    } else {
-      // Run class generation in parallel
-      generateClassesAsync.send({ modulePaths, compilerOptions });
+    if (!result.error) {
+      result.classes.forEach(({ code, className }) => {
+        if (code && className) {
+          const fileName = `${className}.${fileExtension}`;
+          const filePath = path.join(outputPath, fileName);
+          const asset = { source: () => code, size: () => code.length };
+          compilation.assets[filePath] = asset;
+        }
+      });
     }
   };
 
-  // Attach async class generation
-  if (isAsync) {
-    generateClassesAsync.on('message', result => {
-      if (!this.compilation) {
-        return;
-      }
-
-      // Write files to disk since webpack dev server doesn't do so
-      if (!result.error) {
-        result.classes.forEach(({ code, className }) => {
-          if (code && className) {
-            const basePath = path.join(compiler.outputPath, this.outputPath);
-            fsExtra.ensureDirSync(basePath);
-            fs.writeFileSync(
-              path.join(basePath, `${className}.${fileExtension}`),
-              code
-            );
-          }
-        });
-      }
-
-      log(this.options, isAsync, this.compilation, result);
-    });
-  }
-
-  // Attach to compiler 'emit' hook. Supports both Webpack > 4 syntax (compiler.hooks) and old syntax.
   if (compiler.hooks) {
+    // Webpack >= 4
     compiler.hooks.emit.tap({ name: 'PropTypesCSharpPlugin' }, emit);
   } else {
+    // Webpack < 4
     compiler.plugin('emit', emit);
   }
 };
