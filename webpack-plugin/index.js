@@ -5,78 +5,70 @@ const getFileExtension = require('./get-file-extension');
 const generateClasses = require('./generate-classes');
 const { log, logError } = require('./log');
 
+const defaultOptions = {
+  compilerOptions: {},
+  exclude: ['node_modules'],
+  fileExtension: undefined,
+  log: false,
+  match: [/\.jsx$/],
+  path: ''
+};
+
 function PropTypesCSharpPlugin(options) {
-  this.options = Object.assign(
-    {
-      compilerOptions: {},
-      exclude: ['node_modules'],
-      fileExtension: undefined,
-      log: false,
-      match: [/\.jsx$/],
-      path: ''
-    },
-    options
-  );
+  this.options = Object.assign({}, defaultOptions, options);
 }
 
-const badArrayOption = key =>
-  `Bad configuration: options.${key} is not an array`;
-
-// This function defines a lot of things before actually calling them.
-// Reading this from the bottom is probably the easiest.
 PropTypesCSharpPlugin.prototype.apply = function(compiler) {
+  compiler.hooks.emit.tap(
+    { name: 'PropTypesCSharpPlugin' },
+    compilation => runThePlugin(compilation, this.options) // This callback runs every time the 'emit' webpack event occurs
+  );
+};
+
+function runThePlugin(compilation, options) {
+  const assertArray = (arr, name) =>
+    Array.isArray(arr)
+      ? true
+      : logError(compilation, `Bad configuration: ${name} is not an array`);
+
+  if (
+    compilation.errors.length || // Abort if compilation has errors
+    !assertArray(options.exclude, 'options.exclude') ||
+    !assertArray(options.match, 'options.match')
+  ) {
+    return;
+  }
+
+  if (options.log) {
+    process.stdout.write('[C# plugin]: Generating classes...\n');
+  }
+
+  const modulePaths = filterPaths(
+    Array.from(compilation.fileDependencies),
+    options.match,
+    options.exclude
+  );
+
+  const result = generateClasses(modulePaths, options.compilerOptions);
+  log(options, compilation, result);
+
+  const outputPath = path.normalize(options.path);
   const fileExtension =
-    this.options.fileExtension ||
-    getFileExtension(this.options.compilerOptions.generator) ||
+    options.fileExtension ||
+    getFileExtension(options.compilerOptions.generator) ||
     'cs';
 
-  // Compiler 'emit' callback. Receives a webpack compilation object that holds information about compiled modules (and tons of other stuff) and lets us add our own assets and errors/warnings.
-  const emit = compilation => {
-    const assertArray = (arr, message) =>
-      Array.isArray(arr) ? true : logError(compilation, message);
-
-    if (
-      compilation.errors.length || // Abort if compilation has errors
-      !assertArray(this.options.exclude, badArrayOption('exclude')) ||
-      !assertArray(this.options.match, badArrayOption('match'))
-    ) {
-      return;
-    }
-
-    if (this.options.log) {
-      process.stdout.write('[C# plugin]: Generating classes...\n');
-    }
-
-    const modulePaths = filterPaths(
-      Array.from(compilation.fileDependencies),
-      this.options.match,
-      this.options.exclude
-    );
-
-    const outputPath = path.normalize(this.options.path);
-    const result = generateClasses(modulePaths, this.options.compilerOptions);
-    log(this.options, compilation, result);
-
-    if (!result.error) {
-      result.classes.forEach(({ code, className }) => {
-        if (code && className) {
-          const fileName = `${className}.${fileExtension}`;
-          const filePath = path.join(outputPath, fileName);
-          const asset = { source: () => code, size: () => code.length };
-          compilation.assets[filePath] = asset;
-        }
-      });
-    }
-  };
-
-  if (compiler.hooks) {
-    // Webpack >= 4
-    compiler.hooks.emit.tap({ name: 'PropTypesCSharpPlugin' }, emit);
-  } else {
-    // Webpack < 4
-    compiler.plugin('emit', emit);
+  if (!result.error) {
+    result.classes.forEach(({ code, className }) => {
+      if (code && className) {
+        const fileName = `${className}.${fileExtension}`;
+        const filePath = path.join(outputPath, fileName);
+        const asset = { source: () => code, size: () => code.length };
+        compilation.assets[filePath] = asset;
+      }
+    });
   }
-};
+}
 
 PropTypesCSharpPlugin['default'] = PropTypesCSharpPlugin;
 module.exports = PropTypesCSharpPlugin;
