@@ -1,3 +1,8 @@
+# 5.0.0
+
+- BREAKING: Removes `async` option from Webpack plugin. Use the `writeToDisk` option in `webpack-dev-server` instead.
+- BREAKING: Removes support for `webpack < 4`
+
 # 4.0.1
 
 - Adds TLDR section to README

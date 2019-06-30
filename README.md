@@ -398,13 +398,6 @@ The plugin will extract PropType definitions from `.jsx` files (configurable) an
 
 ### Options: `Object`
 
-**async**: `Boolean` = `false`
-
-It's recommended to set this to true when running with webpack dev server for these reasons:
-
-- The build can finish before class generation is done, meaning faster hot reloading of the browser.
-- Classes are written to disk by the plugin (Webpack dev server only writes to memory). Handy if you have generated classes in version control and don't want to do a production build before each commit.
-
 **compilerOptions**: `Object`
 
 Options passed to the compiler, such as input language and formatting choices. Supported options are listed in the [Node.js API options](#compiler-options)
@@ -428,6 +421,10 @@ A file is included if its path matches any of the matching patterns (unless it m
 **path**: `String`
 
 Path relative to `output.path` to put `.cs` files.
+
+### Webpack dev server
+
+When working with `webpack-dev-server`, the class files will be written to memory instead of disk by default. If you have generated classes included in source control, it could be a good idea to use Webpack dev server's `writeToDisk` option.
 
 ## <a id="babel"></a>Babel plugin
 
