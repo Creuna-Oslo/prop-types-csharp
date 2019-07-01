@@ -85,14 +85,14 @@ test(
   'Extracts component reference',
   template,
   'C.propTypesMeta = { a: SomeComponent };',
-  { a: { type: 'SomeComponent' } }
+  { a: { type: 'ref', ref: 'SomeComponent' } }
 );
 
 test(
   'Transforms Array',
   template,
   'C.propTypesMeta = { a: [SomeComponent] };',
-  { a: { type: 'arrayOf', children: { type: 'SomeComponent' } } }
+  { a: { type: 'arrayOf', children: { type: 'ref', ref: 'SomeComponent' } } }
 );
 
 test(

@@ -1,3 +1,8 @@
+# 6.0.0
+
+- BREAKING: Removes support for referencing individual properties of other components' propTypes.
+- BREAKING: Removes compiler option `instantiateProperties`. The option did not work across different output languages.
+
 # 5.0.0
 
 - BREAKING: Removes `async` option from Webpack plugin. Use the `writeToDisk` option in `webpack-dev-server` instead.

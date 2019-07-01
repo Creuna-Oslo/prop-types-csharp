@@ -24,7 +24,7 @@ test(
       name: 'Component',
       properties: {
         type: 'shape',
-        children: { a: { type: 'a', parents: ['Component'] } }
+        children: { a: { type: 'ref', ref: 'a', parents: ['Component'] } }
       }
     },
     {
@@ -52,7 +52,7 @@ test(
       name: 'Component',
       properties: {
         type: 'shape',
-        children: { a: { type: 'a', parents: ['Component'] } }
+        children: { a: { type: 'ref', ref: 'a', parents: ['Component'] } }
       }
     },
     {
@@ -61,7 +61,7 @@ test(
         type: 'shape',
         parents: ['Component'],
         children: {
-          b: { type: 'b', parents: ['Component', 'a'] }
+          b: { type: 'ref', ref: 'b', parents: ['Component', 'a'] }
         }
       }
     },
@@ -140,7 +140,8 @@ test(
           a: {
             type: 'arrayOf',
             children: {
-              type: 'a',
+              type: 'ref',
+              ref: 'a',
               parents: ['Component']
             }
           }
@@ -182,7 +183,8 @@ test(
           a: {
             type: 'arrayOf',
             children: {
-              type: 'a',
+              type: 'ref',
+              ref: 'a',
               parents: ['Component']
             }
           }
@@ -195,8 +197,8 @@ test(
         type: 'shape',
         parents: ['Component'],
         children: {
-          b: { type: 'b', parents: ['Component', 'a'] },
-          d: { type: 'd', parents: ['Component', 'a'] }
+          b: { type: 'ref', ref: 'b', parents: ['Component', 'a'] },
+          d: { type: 'ref', ref: 'd', parents: ['Component', 'a'] }
         }
       }
     },
@@ -235,7 +237,7 @@ test(
       properties: {
         type: 'shape',
         children: {
-          a: { type: 'a', parents: ['Component'], isRequired: true }
+          a: { type: 'ref', ref: 'a', parents: ['Component'], isRequired: true }
         }
       }
     },
@@ -274,7 +276,8 @@ test(
             type: 'arrayOf',
             isRequired: true,
             children: {
-              type: 'a',
+              type: 'ref',
+              ref: 'a',
               parents: ['Component']
             }
           }
@@ -306,7 +309,7 @@ test(
       properties: {
         type: 'shape',
         children: {
-          a: { type: 'a', parents: ['Component'] }
+          a: { type: 'ref', ref: 'a', parents: ['Component'] }
         }
       }
     },
@@ -333,7 +336,7 @@ test(
       properties: {
         type: 'shape',
         children: {
-          a: { type: 'a', parents: ['Component'] }
+          a: { type: 'ref', ref: 'a', parents: ['Component'] }
         }
       }
     },
@@ -365,7 +368,7 @@ test(
         children: {
           a: {
             type: 'arrayOf',
-            children: { type: 'a', parents: ['Component'] }
+            children: { type: 'ref', ref: 'a', parents: ['Component'] }
           }
         }
       }

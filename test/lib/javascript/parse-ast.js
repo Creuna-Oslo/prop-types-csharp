@@ -153,7 +153,8 @@ test(
   {},
   {
     a: {
-      type: 'OtherComponent'
+      type: 'ref',
+      ref: 'OtherComponent'
     }
   }
 );
@@ -165,7 +166,8 @@ test(
   {},
   {
     a: {
-      type: 'OtherComponent'
+      type: 'ref',
+      ref: 'OtherComponent'
     }
   }
 );

@@ -358,10 +358,6 @@ Set output language. Curently, `C#`, `Kotlin` and `Typescripts` are supported ou
 
 Number of spaces of indentation in generated class
 
-**instantiateProperties**: `Boolean` = `false`
-
-Whether class properties should be instantiated or not. Does not apply to basic types like `string`, `int` or `bool`.
-
 **namespace**: `String`
 
 Namespace to wrap around generated class
