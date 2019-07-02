@@ -42,8 +42,9 @@ test('Returns class generation error', t => {
   const { classes } = generateClasses([modulePath]);
   const expectedError = `
 ${modulePath}
-Invalid type for prop 'a' ('object').
-Replace with 'PropTypes.shape' or provide a meta type\n`;
+Invalid type for prop 'a':
+Type 'object' is not supported.
+`;
 
   t.is(expectedError, classes[0].error);
 });

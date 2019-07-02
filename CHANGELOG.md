@@ -2,6 +2,7 @@
 
 - BREAKING: Removes support for referencing individual properties of other components' propTypes.
 - BREAKING: Removes compiler option `instantiateProperties`. The option did not work across different output languages.
+- BREAKING: Refactors parser API. Parsers must now apply `propTypesMeta` individually.
 
 # 5.0.0
 
