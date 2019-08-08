@@ -79,11 +79,11 @@ Read more [below](#eslint)
 
 Props of type `func`, `element`, `node` and `instanceOf` are ignored when creating classes because they make no sense in server-land.
 
-### Illegal propTypes
+### Unsupported propTypes
 
-Props of type `object` and `array` are ambiguous and cannot be included in classes as-is.
+Some propTypes are ambiguous and cannot be used for class generation.
 
-**object**
+**PropTypes.object**
 
 `object` should be replaced with `shape` or a `propTypesMeta` definition. Using the propTypes of another component is usually the best choice when passing props to child components:
 
@@ -103,13 +103,17 @@ public class Component {
 }
 ```
 
-**array**
+**PropTypes.array**
 
 `array` should be replaced by an `arrayOf` or have a `propTypesMeta` definition.
 
-**oneOfType**
+**PropTypes.any**
 
-`oneOfType` is currently also illegal until we figure out how to deal with it.
+Use a different type or a `propTypesMeta` definition.
+
+**PropTypes.symbol**
+
+Use a different type or a `propTypesMeta` definition.
 
 ### propTypesMeta (`String | Object`)
 
@@ -357,10 +361,6 @@ Set output language. Curently, `C#`, `Kotlin` and `Typescripts` are supported ou
 **indent**: `Number` = `2`
 
 Number of spaces of indentation in generated class
-
-**instantiateProperties**: `Boolean` = `false`
-
-Whether class properties should be instantiated or not. Does not apply to basic types like `string`, `int` or `bool`.
 
 **namespace**: `String`
 

@@ -67,7 +67,7 @@ test(
   template,
   {
     a: { type: 'objectOf', children: { type: 'string' } },
-    b: { type: 'objectOf', children: { type: 'Link' } },
+    b: { type: 'objectOf', children: { type: 'ref', ref: 'Link' } },
     c: {
       type: 'objectOf',
       children: { type: 'shape', children: { d: { type: 'string' } } }
@@ -137,7 +137,7 @@ test(
 test(
   'With baseClass and namespace',
   template,
-  { a: { type: 'Link' } },
+  { a: { type: 'ref', ref: 'Link' } },
   `import { BaseClass } from "./BaseClass";
   import { Link } from "./Link";
 

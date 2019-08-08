@@ -170,3 +170,64 @@ test(
   export default Component;`,
   undefined
 );
+
+test(
+  'Excluded props',
+  template,
+  `const Component = (props: {
+    a: string,
+    b?: { c: string }
+  }) => {};
+  Component.propTypesMeta = {
+    a: "exclude",
+    b: { c: "exclude" }
+  };
+  export default Component;`,
+  `${csharpImports}
+  public class Component
+  {
+    public Component_B B { get; set; }
+  }
+  public class Component_B
+  {
+  }`
+);
+
+test(
+  'Meta types',
+  template,
+  `const Component = (props: {
+    a?: number,
+    b?: { c?: number },
+    d?: number[]
+  }) => {};
+  Component.propTypesMeta = {
+    a: "float?",
+    b: { c: "double" },
+    d: ["int?"]
+  };
+  export default Component;`,
+  `${csharpImports}
+  public class Component
+  {
+    public float? A { get; set; }
+    public Component_B B { get; set; }
+    public IList<int?> D { get; set; }
+  }
+  public class Component_B
+  {
+    public double C { get; set; }
+  }`
+);
+
+test(
+  'Replaces "number" with "int" by default',
+  template,
+  `const Component = (props: { a?: number }) => {};
+  export default Component;`,
+  `${csharpImports}
+  public class Component
+  {
+    public int A { get; set; }
+  }`
+);

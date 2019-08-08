@@ -218,24 +218,6 @@ test(
 );
 
 test(
-  'Reference to property of other component',
-  template,
-  `import A from '../a';
-  const Component = () => {};
-  Component.propTypes = {
-    simple: A.propTypes.c,
-    list: PropTypes.arrayOf(A.propTypes.c)
-  };
-  export default Component;`,
-  `${csharpImports}
-  public class Component
-  {
-    public A_C Simple { get; set; }
-    public IList<A_C> List { get; set; }
-  }`
-);
-
-test(
   'Without propTypes literal and with exclude meta',
   template,
   `const Component = () => {};
@@ -271,7 +253,7 @@ test(
   {
     public IList<IList<IList<Component_A>>> A { get; set; }
   }
-  
+
   public class Component_A
   {
     public string B { get; set; }
@@ -302,39 +284,6 @@ test(
   {
     public string D { get; set; }
   }`
-);
-
-test(
-  'Supports instantiating class properties',
-  template,
-  `const Component = () => {};
-  Component.propTypes= {
-    a: PropTypes.arrayOf(PropTypes.string),
-    b: PropTypes.arrayOf(PropTypes.exact(Link.propTypes)),
-    c: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
-    d: PropTypes.number,
-    e: PropTypes.exact(Link.propTypes),
-    f: PropTypes.objectOf(PropTypes.exact(Link.propTypes)),
-    g: PropTypes.shape({ h: PropTypes.string })
-  };
-  export default Component;`,
-  `${csharpImports}
-  public class Component
-  {
-    public IList<string> A { get; set; } = new List<string>();
-    public IList<Link> B { get; set; } = new List<Link>();
-    public IList<IList<string>> C { get; set; } = new List<List<string>>();
-    public int D { get; set; }
-    public Link E { get; set; } = new Link();
-    public IDictionary<string, Link> F { get; set; } = new Dictionary<string, Link>();
-    public Component_G G { get; set; } = new Component_G();
-  }
-  
-  public class Component_G
-  {
-    public string H { get; set; }
-  }`,
-  { instantiateProperties: true }
 );
 
 test(

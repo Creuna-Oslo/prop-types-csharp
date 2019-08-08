@@ -3,10 +3,9 @@ const generateClass = require('../lib');
 const { components } = require('../fixtures/javascript/source-code');
 
 console.log(
-  generateClass({
+  generateClass(components.funcComponent, {
     baseClass: 'ReactComponent',
     indent: 4,
-    namespace: 'Namespace',
-    sourceCode: components.funcComponent
+    namespace: 'Namespace'
   }).code
 );
