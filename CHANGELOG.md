@@ -3,6 +3,7 @@
 - BREAKING: Removes support for referencing individual properties of other components' propTypes.
 - BREAKING: Removes compiler option `instantiateProperties`. The option did not work across different output languages.
 - BREAKING: Refactors parser API. Parsers must now apply `propTypesMeta` individually.
+- BREAKING: Refactors generator API. References now have a `type` (`"ref"`) and a `ref` property that cointains the name of the referenced thing.
 
 # 5.0.0
 
