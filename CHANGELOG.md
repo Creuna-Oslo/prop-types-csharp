@@ -1,3 +1,7 @@
+# 6.1.0
+
+- Eslint plugin: Adds warning when referencing a member expression that is not a reference to the prop types of another component.
+
 # 6.0.0
 
 - BREAKING: Removes support for referencing individual properties of other components' propTypes.

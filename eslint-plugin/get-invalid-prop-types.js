@@ -74,9 +74,21 @@ const getInvalidPropTypes = (objectExpression, scope) => {
       });
     }
 
-    // Recursively check object literals inside PropTypes.shape
-    if (t.isCallExpression(value) && propTypeName === 'shape') {
+    // Check member expressions or recursively check object literals inside shape and exact
+    if (
+      t.isCallExpression(value) &&
+      ['shape', 'exact'].includes(propTypeName)
+    ) {
       const [argument] = value.arguments;
+
+      if (
+        t.isMemberExpression(argument) &&
+        !t.isIdentifier(argument.property, { name: 'propTypes' })
+      ) {
+        return Object.assign(accum, {
+          [key]: { node: argument, message: messages.illegalReference() }
+        });
+      }
 
       return Object.assign(accum, {
         [key]: getInvalidPropTypes(argument, scope)

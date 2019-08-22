@@ -253,6 +253,18 @@ const invalidCases = [
   [
     'import arr from "./arr"; A.propTypes = { c: PropTypes.oneOf(arr) };',
     messages.importedArrayReference()
+  ],
+
+  // Invalid reference in shape
+  [
+    'A.propTypes = { b: PropTypes.shape(Something.somethingElse) };',
+    messages.illegalReference()
+  ],
+
+  // Invalid reference in exact
+  [
+    'A.propTypes = { b: PropTypes.exact(Something.somethingElse) };',
+    messages.illegalReference()
   ]
 ]
   .map(([code, ...errors]) => [code + footer, ...errors])

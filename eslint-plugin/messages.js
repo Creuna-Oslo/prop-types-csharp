@@ -9,6 +9,8 @@ module.exports = {
     `Expected one of [${Object.values(metaTypes)}] but got '${value}'.`,
   illegalFunctionCall: () => `Illegal function call`,
   illegalIdentifier: () => `Illegal identifier`,
+  illegalReference: () =>
+    `Illegal reference. Only components' propTypes can be referenced.`,
   importedArrayReference: () => `Imported arrays are not supported.`,
   importedObjectReference: () => `Imported objects are not supported.`,
   missingObjectReference: () => 'Missing object value for prop.',
