@@ -22,7 +22,7 @@ const runWebpack = (entry, pluginOptions, callback) => {
 };
 
 const runWebpackAndTest = (title, entry, pluginOptions, assertionFn) => {
-  test.cb(title, t => {
+  test.serial.cb(title, t => {
     runWebpack(entry, pluginOptions, compilation => {
       const { errors } = compilation;
       if (errors && errors.length > 0) t.fail(compilation.errors);
@@ -33,7 +33,7 @@ const runWebpackAndTest = (title, entry, pluginOptions, assertionFn) => {
 };
 
 const runWebpackAndTestError = (title, entry, expectedErrorMessage) => {
-  test.cb(title, t => {
+  test.serial.cb(title, t => {
     runWebpack(entry, {}, compilation => {
       t.is(1, compilation.errors.length);
       t.is(normalize(expectedErrorMessage), normalize(compilation.errors[0]));
