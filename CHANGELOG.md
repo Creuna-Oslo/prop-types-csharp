@@ -1,3 +1,8 @@
+# 6.1.1
+
+- Fixes string keys for objects not working in `PropTypes.oneOf`
+- Adds error message for computed object keys in `PropTypes.oneOf`
+
 # 6.1.0
 
 - Eslint plugin: Adds warning when referencing a member expression that is not a reference to the prop types of another component.

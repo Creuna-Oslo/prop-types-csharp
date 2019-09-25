@@ -76,6 +76,14 @@ test(
 );
 
 test(
+  'oneOf Object.keys with string keys',
+  template,
+  `({ a: oneOf(Object.keys({ "a/b": "c" })) })`,
+  {},
+  { a: { type: 'oneOf', children: ['a/b'] } }
+);
+
+test(
   'Removes client-only props',
   template,
   `({ a: element, b: elementType, c: func, d: instanceOf(), e: node })`,
@@ -360,6 +368,14 @@ test(
   `({ a: arrayOf(object) })`,
   `Invalid type for prop 'a':
 Type 'object' is not supported.`
+);
+
+test(
+  'Throws on dynamic object keys in oneOf',
+  throwsTemplate,
+  `({ a: oneOf(Object.keys({ [something]: "a" })) })`,
+  `Invalid type for prop 'a':
+Computed object keys are not supported.`
 );
 
 test(
