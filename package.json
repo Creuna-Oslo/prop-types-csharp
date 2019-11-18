@@ -20,7 +20,7 @@
     "build": "webpack --config=fixtures/javascript/webpack.config --mode=production",
     "lint": "eslint lib eslint-plugin babel-plugin webpack-plugin test",
     "test": "nyc --reporter=html --reporter=text ava --verbose",
-    "test:ci": "nyc ava && nyc report --reporter=text-lcov | coveralls",
+    "test:ci": "nyc ava && nyc report --reporter=text-lcov",
     "test:babel": "ava --verbose ./test/babel-plugin",
     "test:eslint": "ava ./test/eslint-plugin",
     "test:lib": "ava ./test/lib",
