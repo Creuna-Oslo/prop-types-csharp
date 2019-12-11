@@ -88,6 +88,14 @@ test(
   { baseClass: 'BaseClass', className: 'Component' }
 );
 
+test(
+  'With header',
+  template,
+  basicDefinition,
+  `// Some header here\n${imports}\n` + basicClass,
+  { header: ['// Some header here'].join('\n') }
+);
+
 // Base class should only be applied to the class that doesn't have 'parents'
 test(
   'Nested properties with base class',
