@@ -358,6 +358,10 @@ Base class that generated classes will extend
 
 Set output language. Curently, `C#`, `Kotlin` and `Typescripts` are supported out of the box but new ones can be added. A generator is a function that takes `propTypes` (an object describing the classes to create), `className` (the name of the react component) and an options object. It is expected to return a `string`. The easiest way of adding a new language is probably to clone `lib/stringify/csharp` and work from there. If you do make a generator for another language, please consider submitting a PR!
 
+**header**: `String`
+
+A string that is inserted at the top of all generated files. Good for adding generic comments or imports
+
 **indent**: `Number` = `2`
 
 Number of spaces of indentation in generated class

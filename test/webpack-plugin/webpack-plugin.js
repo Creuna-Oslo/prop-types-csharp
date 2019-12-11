@@ -80,12 +80,13 @@ runWebpackAndTest(
 );
 
 runWebpackAndTest(
-  'Adds base class',
+  'Adds namespace, baseclass and header',
   './fixtures/javascript/app-baseclass.js',
   {
     compilerOptions: {
       namespace: 'Namespace',
-      baseClass: 'BaseClass'
+      baseClass: 'BaseClass',
+      header: ['// This is a header', 'using Something;'].join('\n')
     }
   },
   (t, compilation) => {

@@ -1,3 +1,7 @@
+# 6.2.0
+
+- Adds `header` compiler option, used to insert arbitrary content at the top of every generated file
+
 # 6.1.1
 
 - Fixes string keys for objects not working in `PropTypes.oneOf`
