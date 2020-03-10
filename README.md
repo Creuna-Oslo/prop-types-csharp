@@ -31,7 +31,7 @@ Config example. See complete list of options [below](#webpack)
 
 ```js
 const PropTypesCSharpPlugin = require('@creuna/prop-types-csharp/webpack-plugin');
-const { generators, parsers } = require('@creua/prop-types-csharp');
+const { generators, parsers } = require('@creuna/prop-types-csharp');
 
 module.exports = {
   entry: { ... },
